@@ -117,7 +117,6 @@ void CRenderableBillboards::render( const CRenderContext& ctx )
 {
 	CD3DDevice& device = CD3DDevice::getInstance();
 	IDirect3DDevice9& dx = device.getDevice();
-	CRenderStats& stats = device.getStats();
 	
 	// set IB
 	assert( mIB );
@@ -140,10 +139,5 @@ void CRenderableBillboards::render( const CRenderContext& ctx )
 		device.setVertexBuffer( 0, &vb, 0, chunk.getStride() );
 		device.setDeclarationFVF( FVF_XYZ_DIFFUSE_TEX1 );
 		dx.DrawIndexedPrimitive( D3DPT_TRIANGLELIST, chunk.getOffset(), 0, chunk.getSize(), 0, chunk.getSize()/2 );
-		
-		// stats
-		stats.incDrawCalls();
-		stats.incVerticesRendered( chunk.getSize() );
-		stats.incPrimsRendered( chunk.getSize()/2 );
 	}
 }

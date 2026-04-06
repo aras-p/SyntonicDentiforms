@@ -8,7 +8,6 @@
 
 #include "dingus/utils/noncopyable.h"
 #include "Proxies.h"
-#include "../renderer/RenderStats.h"
 
 
 namespace dingus {
@@ -48,10 +47,6 @@ public:
 	/// Passivate device after device loss (before reset).
 	void passivateDevice();
 
-	const CRenderStats& getStats() const { return mStats; }
-	CRenderStats& getStats() { return mStats; }
-
-	
 	// --------------------------------
 	// device capabilities
 
@@ -133,7 +128,6 @@ private:
 
 private:
 	D3DCAPS9			mCaps;
-	CRenderStats		mStats;
 	D3DSURFACE_DESC		mBackBufferDesc;
 	D3DSURFACE_DESC		mMainZStencilDesc;
 

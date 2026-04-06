@@ -15,9 +15,6 @@ add_library(dingus STATIC
     dingus/dingus/animator/AnimType.cpp
 
     dingus/dingus/console/Console.cpp
-    dingus/dingus/console/D3DConsoleRenderingContext.cpp
-    dingus/dingus/console/FileConsoleRenderingContext.cpp
-    dingus/dingus/console/W32StdConsoleRenderingContext.cpp
     dingus/dingus/console/WDebugConsoleRenderingContext.cpp
 
     dingus/dingus/dxutils/D3DApplication.cpp
@@ -51,7 +48,6 @@ add_library(dingus STATIC
     dingus/dingus/renderer/RenderableMesh.cpp
     dingus/dingus/renderer/RenderCamera.cpp
     dingus/dingus/renderer/RenderContext.cpp
-    dingus/dingus/renderer/RenderStats.cpp
 
     dingus/dingus/resource/AnimationBundle.cpp
     dingus/dingus/resource/CubeTextureBundle.cpp

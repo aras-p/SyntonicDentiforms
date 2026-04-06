@@ -222,9 +222,6 @@ void CRenderContext::renderRenderables()
 				
 				// end old fx
 				currFX->endFx();
-
-				// stats
-				device.getStats().incEffectChanges();
 			}
 			// set new fx
 			currFX = newFX;
@@ -266,9 +263,6 @@ void CRenderContext::renderRenderables()
 		currFX->endPass();
 		// end old fx
 		currFX->endFx();
-		
-		// stats
-		device.getStats().incEffectChanges();
 	}
 
 	//
@@ -393,7 +387,6 @@ int CRenderContext::directSetFX( CD3DXEffect& fx )
 			mDirectCurrFX->beginPass( mDirectCurrPasses-1 );
 			mDirectCurrFX->endPass();
 			mDirectCurrFX->endFx();
-			device.getStats().incEffectChanges();
 		}
 		// see HW/SW VP
 		if( device.getVertexProcessing() == CD3DDevice::VP_MIXED )

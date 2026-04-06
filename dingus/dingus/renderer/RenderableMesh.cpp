@@ -38,7 +38,6 @@ void CRenderableMesh::render( CRenderContext const& ctx )
 
 	CD3DDevice& device = CD3DDevice::getInstance();
 	IDirect3DDevice9& dx = device.getDevice();
-	CRenderStats& stats = device.getStats();
 
 	device.setIndexBuffer( &mMesh->getIB() );
 	device.setVertexBuffer( 0, &mMesh->getVB(), 0, mMesh->getVertexStride() );
@@ -55,9 +54,4 @@ void CRenderableMesh::render( CRenderContext const& ctx )
 	if( FAILED( hres ) ) {
 		THROW_DXERROR( hres, "failed to DIP" );
 	}
-
-	// stats
-	stats.incDrawCalls();
-	stats.incVerticesRendered( group.getVertexCount() );
-	stats.incPrimsRendered( group.getPrimCount() );
 }

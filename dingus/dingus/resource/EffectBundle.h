@@ -45,18 +45,6 @@ public:
 	void	setOptimizeShaders( bool opt ) { mOptimizeShaders = opt; }
 	const std::string& getLastErrors() const { return mLastErrors; }
 
-	/**
-	 *  Adds macro (or replaces same-named one).
-	 *  After changing a bunch of macros, call reload() to actually reload effects.
-	 *  NOTE: name/value strings are not copied, so look at their lifetime!
-	 */
-	void setMacro( const char* name, const char* value );
-	/**
-	 *  Removes macro.
-	 *  After changing a bunch of macros, call reload() to actually reload effects.
-	 */
-	void removeMacro( const char* name );
-
 	virtual void createResource();
 	virtual void activateResource();
 	virtual void passivateResource();
@@ -73,12 +61,6 @@ private:
 	
 	ID3DXEffect* loadEffect( const CResourceId& id, const CResourceId& fullName ) const;
 
-	/// @return index into macro array, or -1 if not found.
-	int		findMacro( const char* name ) const;
-	
-
-	typedef std::vector<D3DXMACRO>	TMacroVector;
-
 private:
 	CEffectStateManager*	mStateManager;
 	ID3DXEffectPool*		mSharedPool;
@@ -86,8 +68,6 @@ private:
 
 	bool					mOptimizeShaders;
 	mutable std::string		mLastErrors;
-
-	TMacroVector			mMacros;
 };
 
 

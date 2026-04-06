@@ -63,8 +63,6 @@ void CD3DDevice::activateDevice()
 	assert( mMainZStencil );
 	mMainZStencil->GetDesc( &mMainZStencilDesc );
 	mActiveZS = mMainZStencil;
-
-	mStats.reset();
 }
 
 void CD3DDevice::passivateDevice()
@@ -160,7 +158,6 @@ void CD3DDevice::internalSetRenderTarget( IDirect3DSurface9* rt, int index )
 	// redundant set check
 #ifndef DISABLE_FILTERING
 	if( mActiveRT[index] == rt ) {
-		++mStats.filtered.renderTarget;
 		return;
 	}
 #endif
@@ -171,7 +168,6 @@ void CD3DDevice::internalSetRenderTarget( IDirect3DSurface9* rt, int index )
 		THROW_DXERROR( hr, "failed to set render target" );
 
 	mActiveRT[index] = rt;
-	++mStats.changes.renderTarget;
 }
 
 void CD3DDevice::setZStencil( CD3DSurface* zs )
@@ -191,7 +187,6 @@ void CD3DDevice::internalSetZStencil( IDirect3DSurface9* zs )
 	// redundant set check
 #ifndef DISABLE_FILTERING
 	if( mActiveZS == zs ) {
-		++mStats.filtered.zStencil;
 		return;
 	}
 #endif
@@ -202,7 +197,6 @@ void CD3DDevice::internalSetZStencil( IDirect3DSurface9* zs )
 		THROW_DXERROR( hr, "failed to set z/stencil" );
 
 	mActiveZS = zs;
-	++mStats.changes.zStencil;
 }
 
 void CD3DDevice::clearTargets( bool clearRT, bool clearZ, bool clearStencil, D3DCOLOR color, float z, DWORD stencil )
@@ -247,7 +241,6 @@ void CD3DDevice::setIndexBuffer( CD3DIndexBuffer* ib )
 	// redundant set check
 #ifndef DISABLE_FILTERING
 	if( mActiveIB == ib ) {
-		++mStats.filtered.ibuffer;
 		return;
 	}
 #endif
@@ -258,7 +251,6 @@ void CD3DDevice::setIndexBuffer( CD3DIndexBuffer* ib )
 		THROW_DXERROR( hr, "failed to set indices" );
 
 	mActiveIB = ib;
-	++mStats.changes.ibuffer;
 }
 
 void CD3DDevice::setVertexBuffer( int stream,  CD3DVertexBuffer* vb, unsigned int offset, unsigned int stride )
@@ -270,7 +262,6 @@ void CD3DDevice::setVertexBuffer( int stream,  CD3DVertexBuffer* vb, unsigned in
 	IDirect3DVertexBuffer9* vb9 = vb ? vb->getObject() : NULL;
 #ifndef DISABLE_FILTERING
 	if( mActiveVB[stream]==vb9 && mActiveVBOffset[stream]==offset && mActiveVBStride[stream]==stride ) {
-		++mStats.filtered.vbuffer;
 		return;
 	}
 #endif
@@ -283,7 +274,6 @@ void CD3DDevice::setVertexBuffer( int stream,  CD3DVertexBuffer* vb, unsigned in
 	mActiveVB[stream] = vb9;
 	mActiveVBOffset[stream] = offset;
 	mActiveVBStride[stream] = stride;
-	++mStats.changes.vbuffer;
 }
 
 void CD3DDevice::setDeclaration( CD3DVertexDecl& decl )
@@ -294,7 +284,6 @@ void CD3DDevice::setDeclaration( CD3DVertexDecl& decl )
 	// redundant set check
 #ifndef DISABLE_FILTERING
 	if( mActiveDeclaration == &decl ) {
-		++mStats.filtered.declarations;
 		return;
 	}
 #endif
@@ -306,7 +295,6 @@ void CD3DDevice::setDeclaration( CD3DVertexDecl& decl )
 
 	mActiveDeclaration = &decl;
 	mActiveFVF = 0; // FVF and declaration are coupled!
-	++mStats.changes.declarations;
 }
 
 void CD3DDevice::setDeclarationFVF( DWORD fvf )
@@ -317,7 +305,6 @@ void CD3DDevice::setDeclarationFVF( DWORD fvf )
 	// redundant set check
 #ifndef DISABLE_FILTERING
 	if( mActiveFVF == fvf ) {
-		++mStats.filtered.declarations;
 		return;
 	}
 #endif
@@ -329,5 +316,4 @@ void CD3DDevice::setDeclarationFVF( DWORD fvf )
 
 	mActiveFVF = fvf; 
 	mActiveDeclaration = NULL; // FVF and declaration are coupled!
-	++mStats.changes.declarations;
 }

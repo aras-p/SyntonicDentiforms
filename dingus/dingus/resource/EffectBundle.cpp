@@ -19,53 +19,7 @@ CEffectBundle::CEffectBundle( const std::string& predir )
 	mOptimizeShaders(true), mLastErrors("")
 {
 	addExtension( ".fx" );
-	mMacros.reserve( 16 );
-	// last macro must be NULL
-	mMacros.push_back( D3DXMACRO() );
-	mMacros.back().Name = mMacros.back().Definition = NULL;
 };
-
-void CEffectBundle::setMacro( const char* name, const char* value )
-{
-	int idx = findMacro( name );
-	if( idx >= 0 ) {
-		// have existing one, replace
-		mMacros[idx].Definition = value;
-	} else {
-		// replace last (which was NULL)
-		int lastIdx = mMacros.size()-1;
-		mMacros[lastIdx].Name = name;
-		mMacros[lastIdx].Definition = value;
-		// last macro must be NULL
-		mMacros.push_back( D3DXMACRO() );
-		mMacros.back().Name = mMacros.back().Definition = NULL;
-	}
-}
-
-void CEffectBundle::removeMacro( const char* name )
-{
-	int idx = findMacro( name );
-	if( idx >= 0 ) {
-		// copy pre-last in place of removed one (last one is NULL)
-		int preLastIdx = mMacros.size()-2;
-		mMacros[idx] = mMacros[preLastIdx];
-		// set pre-last to NULL
-		mMacros[preLastIdx].Name = mMacros[preLastIdx].Definition = NULL;
-		// remove last
-		mMacros.pop_back();
-	}
-}
-
-int CEffectBundle::findMacro( const char* name ) const
-{
-	int n = mMacros.size() - 1; // last one is NULL anyway
-	for( int i = 0; i < n; ++i ) {
-		if( !strcmp(name,mMacros[i].Name) )
-			return i;
-	}
-	return -1; // not found
-}
-
 
 ID3DXEffect* CEffectBundle::loadEffect( const CResourceId& id, const CResourceId& fullName ) const
 {
@@ -79,7 +33,7 @@ ID3DXEffect* CEffectBundle::loadEffect( const CResourceId& id, const CResourceId
 	HRESULT hres = D3DXCreateEffectFromFile(
 		&CD3DDevice::getInstance().getDevice(),
 		fullName.getUniqueName().c_str(),
-		&mMacros[0],
+		NULL,
 		NULL, // TBD ==> includes
 		(mOptimizeShaders ? 0 : D3DXSHADER_SKIPOPTIMIZATION) | D3DXSHADER_ENABLE_BACKWARDS_COMPATIBILITY,
 		mSharedPool,

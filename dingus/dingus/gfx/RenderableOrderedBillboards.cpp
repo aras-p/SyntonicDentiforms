@@ -76,7 +76,6 @@ void CRenderableOrderedBillboards::render( const CRenderContext& ctx )
 {
 	CD3DDevice& device = CD3DDevice::getInstance();
 	IDirect3DDevice9& dx = device.getDevice();
-	CRenderStats& stats = device.getStats();
 
 	if( mBills.empty() )
 		return;
@@ -110,9 +109,6 @@ void CRenderableOrderedBillboards::render( const CRenderContext& ctx )
 		// new texture
 		texture = b.texture;
 		texStart = i;
-
-		// stats
-		stats.incDrawCalls();
 	}
 	// last portion
 	// set texture on effect
@@ -125,10 +121,4 @@ void CRenderableOrderedBillboards::render( const CRenderContext& ctx )
 	// draw portion
 	dx.DrawIndexedPrimitive( D3DPT_TRIANGLELIST,
 		mChunk->getOffset() + texStart*4, 0, (n-texStart)*4, 0, (n-texStart)*2 );
-	// stats
-	stats.incDrawCalls();
-
-	// stats
-	stats.incVerticesRendered( mChunk->getSize() );
-	stats.incPrimsRendered( mChunk->getSize()/2 );
 }

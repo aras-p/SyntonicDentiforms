@@ -12,7 +12,6 @@
 
 #include <dingus/gfx/geometry/DynamicVBManager.h>
 
-#include <dingus/console/W32StdConsoleRenderingContext.h>
 #include <dingus/console/WDebugConsoleRenderingContext.h>
 
 
@@ -41,7 +40,7 @@ CSystem::CSystem()
 
 	// init console
 #ifdef _DEBUG
-	mStdConsoleCtx = new CW32StdConsoleRenderingContext();
+	mStdConsoleCtx = new CWDebugConsoleRenderingContext();
 	dingus::CConsole::getInstance().setDefaultRenderingContext( *mStdConsoleCtx );
 #endif
 };
@@ -162,7 +161,6 @@ HRESULT CSystem::performOneTime()
 	//
 	// pipeline
 
-	device.getStats().reset();
 	appPerform();
 
 	return S_OK;

@@ -92,16 +92,10 @@ void CRenderableBuffer::render( CRenderContext const& ctx )
 
 	CD3DDevice& device = CD3DDevice::getInstance();
 	IDirect3DDevice9& dx = device.getDevice();
-	CRenderStats& stats = device.getStats();
 	
 	applyStreams();
 	dx.DrawPrimitive( getPrimType(), mStartVertex, getPrimCount() );
 	unapplyStreams();
-	
-	// stats
-	stats.incDrawCalls();
-	stats.incVerticesRendered( /* TBD */ getPrimCount() );
-	stats.incPrimsRendered( getPrimCount() );
 }
 
 
@@ -130,7 +124,6 @@ void CRenderableIndexedBuffer::render( CRenderContext const& ctx )
 
 	CD3DDevice& device = CD3DDevice::getInstance();
 	IDirect3DDevice9& dx = device.getDevice();
-	CRenderStats& stats = device.getStats();
 
 	applyStreams();
 
@@ -142,9 +135,4 @@ void CRenderableIndexedBuffer::render( CRenderContext const& ctx )
 	unapplyStreams();
 
 	//device.setIndexBuffer( NULL );
-
-	// stats
-	stats.incDrawCalls();
-	stats.incVerticesRendered( mNumVertices );
-	stats.incPrimsRendered( getPrimCount() );
 }
