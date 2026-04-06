@@ -39,7 +39,6 @@ add_library(dingus STATIC
 
     dingus/dingus/renderer/EffectParams.cpp
     dingus/dingus/renderer/EffectParamsNotifier.cpp
-    dingus/dingus/renderer/EffectStateManager.cpp
     dingus/dingus/renderer/Renderable.cpp
     dingus/dingus/renderer/RenderableBuffer.cpp
     dingus/dingus/renderer/RenderableMesh.cpp

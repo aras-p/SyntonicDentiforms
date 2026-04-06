@@ -9,13 +9,12 @@
 #include "EffectBundle.h"
 #include "../utils/Errors.h"
 #include "../kernel/D3DDevice.h"
-#include "../renderer/EffectStateManager.h"
 
 using namespace dingus;
 
 CEffectBundle::CEffectBundle( const std::string& predir )
 :	CStorageResourceBundle<CD3DXEffect>(predir),
-	mStateManager(0), mSharedPool(0),
+	mSharedPool(0),
 	mOptimizeShaders(true), mLastErrors("")
 {
 	addExtension( ".fx" );
@@ -29,7 +28,6 @@ ID3DXEffect* CEffectBundle::loadEffect( const CResourceId& id, const CResourceId
 	mLastErrors = "";
 
 	assert( mSharedPool );
-	assert( mStateManager );
 	HRESULT hres = D3DXCreateEffectFromFile(
 		&CD3DDevice::getInstance().getDevice(),
 		fullName.getUniqueName().c_str(),
@@ -56,9 +54,6 @@ ID3DXEffect* CEffectBundle::loadEffect( const CResourceId& id, const CResourceId
 	if( errors )
 		errors->Release();
 
-	// set state manager
-	fx->SetStateManager( mStateManager );
-
 	return fx;
 }
 
@@ -72,12 +67,6 @@ CD3DXEffect* CEffectBundle::loadResourceById( const CResourceId& id, const CReso
 
 void CEffectBundle::createResource()
 {
-	// create state manager
-	assert( !mStateManager );
-	mStateManager = new CEffectStateManager();
-	assert( mStateManager );
-	mStateManager->AddRef();
-
 	// create pool
 	assert( !mSharedPool );
 	D3DXCreateEffectPool( &mSharedPool );
@@ -98,9 +87,6 @@ void CEffectBundle::createResource()
 
 void CEffectBundle::activateResource()
 {
-	assert( mStateManager );
-	mStateManager->reset();
-
 	// call reset on effects
 	TResourceMap::iterator it;
 	for( it = mResourceMap.begin(); it != mResourceMap.end(); ++it ) {
@@ -136,10 +122,5 @@ void CEffectBundle::deleteResource()
 	assert( mSharedPool );
 	mSharedPool->Release();
 	mSharedPool = NULL;
-
-	// release state manager
-	assert( mStateManager );
-	mStateManager->Release();
-	mStateManager = NULL;
 }
 

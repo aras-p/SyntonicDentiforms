@@ -54,7 +54,6 @@ private:
 	ID3DXEffect* loadEffect( const CResourceId& id, const CResourceId& fullName ) const;
 
 private:
-	CEffectStateManager*	mStateManager;
 	ID3DXEffectPool*		mSharedPool;
 
 	bool					mOptimizeShaders;
