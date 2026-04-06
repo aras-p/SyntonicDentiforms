@@ -21,7 +21,6 @@ namespace dingus {
 class CD3DDevice : public noncopyable {
 public:
 	enum { VS_FFP = 0, VS_1_1, VS_2_0, VS_3_0 };
-	enum { VP_PURE_HW = 0, VP_HW, VP_MIXED, VP_SW };
 	enum { MRT_COUNT = 4, VSTREAM_COUNT = 16 };
 public:
 	static CD3DDevice& getInstance() { return mSingleInstance; }
@@ -52,10 +51,6 @@ public:
 
 	const D3DCAPS9& getCaps() const { return mCaps; }
 	
-	/// @return One of VS_ constants.
-	int getVShaderVersion() const { return mVShaderVersion; }
-	/// @return One of VP_ constants.
-	int getVertexProcessing() const { return mVertexProcessing; }
 	/// Number of MRTs supported
 	int getMRTCount() const { return mCaps.NumSimultaneousRTs; }
 
@@ -135,9 +130,6 @@ private:
 	IDirect3DSurface9*	mBackBuffer;
 	IDirect3DSurface9*	mMainZStencil;
 	
-	int					mVShaderVersion;
-	int					mVertexProcessing;
-
 	float				mBackBufferAspect;
 
 	// active things, for redundant filtering

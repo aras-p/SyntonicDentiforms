@@ -22,8 +22,7 @@ CD3DDevice CD3DDevice::mSingleInstance;
 CD3DDevice::CD3DDevice()
 :	mDevice(NULL),
 	mBackBuffer(NULL),
-	mMainZStencil(NULL),
-	mVShaderVersion(VS_FFP)
+	mMainZStencil(NULL)
 {
 	resetCachedD3DObjs();
 }
@@ -97,7 +96,6 @@ void CD3DDevice::setDevice( IDirect3DDevice9* dx )
 	mDevice = dx;
 	if( !mDevice ) {
 		memset( &mCaps, 0, sizeof(mCaps) );
-		mVShaderVersion = VS_FFP;
 		assert( !mBackBuffer );
 		assert( !mMainZStencil );
 		return;
@@ -105,28 +103,6 @@ void CD3DDevice::setDevice( IDirect3DDevice9* dx )
 	assert( mDevice );
 	mDevice->GetDeviceCaps( &mCaps );
 
-	// VS version
-	DWORD vs = mCaps.VertexShaderVersion;
-	if( vs >= D3DVS_VERSION(3,0) )
-		mVShaderVersion = VS_3_0;
-	else if( vs >= D3DVS_VERSION(2,0) )
-		mVShaderVersion = VS_2_0;
-	else if( vs >= D3DVS_VERSION(1,1) )
-		mVShaderVersion = VS_1_1;
-	else
-		mVShaderVersion = VS_FFP;
-
-	// vertex processing
-	D3DDEVICE_CREATION_PARAMETERS createParams;
-	mDevice->GetCreationParameters( &createParams );
-	DWORD flags = createParams.BehaviorFlags;
-	if( flags & D3DCREATE_HARDWARE_VERTEXPROCESSING )
-		mVertexProcessing = (flags&D3DCREATE_PUREDEVICE) ? VP_PURE_HW : VP_HW;
-	else if( flags & D3DCREATE_MIXED_VERTEXPROCESSING )
-		mVertexProcessing = VP_MIXED;
-	else
-		mVertexProcessing = VP_SW;
-	
 	assert( !mBackBuffer );
 	assert( !mMainZStencil );
 }

@@ -46,13 +46,6 @@ void CMesh::createResource( int vertCount, int idxCount,
 
 	DWORD usage = 0;
 	D3DPOOL bufpool = D3DPOOL_MANAGED;
-	if( (dx.getVertexProcessing() == CD3DDevice::VP_SW) ||
-		(dx.getVertexProcessing() == CD3DDevice::VP_MIXED && vertFormat.getSkinMode() != CVertexFormat::SKIN_NONE) ||
-		(dx.getVertexProcessing() == CD3DDevice::VP_MIXED && vertCount==4 && idxCount==6) ) // HACK
-	{
-		usage |= D3DUSAGE_SOFTWAREPROCESSING;
-		bufpool = D3DPOOL_SYSTEMMEM;
-	}
 
 	IDirect3DVertexBuffer9* vb = 0;
 	hr = dx.getDevice().CreateVertexBuffer( mVertexCount * mVertexStride, usage, 0, bufpool, &vb, 0 );

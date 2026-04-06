@@ -30,23 +30,12 @@ void CD3DXEffect::setObject( ID3DXEffect* object )
 void CD3DXEffect::init()
 {
 	CD3DDevice& dx = CD3DDevice::getInstance();
-	mSoftwareVertexProcessed = false;
-	if( dx.getVertexProcessing() != CD3DDevice::VP_SW )
-		dx.getDevice().SetSoftwareVertexProcessing( FALSE );
-	bool okhwvp = tryInit();
-	if( !okhwvp ) {
-		mSoftwareVertexProcessed = true;
-		if( dx.getVertexProcessing() != CD3DDevice::VP_SW )
-			dx.getDevice().SetSoftwareVertexProcessing( TRUE );
-		bool okswvp = tryInit();
-		if( !okswvp ) {
-			// no valid technique found, throw exception
-			std::string msg = "no valid techniques found in effect";
-			CConsole::CON_ERROR.write( msg );
-			THROW_ERROR( msg );
-		}
-		if( dx.getVertexProcessing() != CD3DDevice::VP_SW )
-			dx.getDevice().SetSoftwareVertexProcessing( FALSE );
+	bool ok = tryInit();
+	if( !ok ) {
+		// no valid technique found, throw exception
+		std::string msg = "no valid techniques found in effect";
+		CConsole::CON_ERROR.write( msg );
+		THROW_ERROR( msg );
 	}
 }
 
@@ -79,29 +68,10 @@ bool CD3DXEffect::tryInit()
 		fx->GetBool( annot, &backToFront );
 	mBackToFrontSorted = backToFront ? true : false;
 
-	// vertex shader version
-	annot = fx->GetAnnotationByName( tech, "vshader" );
-	int vsVersion = CD3DDevice::VS_FFP;
-	if( annot != NULL ) {
-		float vsv;
-		fx->GetFloat( annot, &vsv );
-		if( vsv < 1.1f )
-			vsVersion = CD3DDevice::VS_FFP;
-		else if( vsv < 2.0f )
-			vsVersion = CD3DDevice::VS_1_1;
-		else if( vsv < 3.0f )
-			vsVersion = CD3DDevice::VS_2_0;
-		else
-			vsVersion = CD3DDevice::VS_3_0;
-	}
-	if( vsVersion > CD3DDevice::getInstance().getVShaderVersion() )
-		mSoftwareVertexProcessed = true;
 
 	// sort value
 	mSortValue = 0;
 	mSortValue += mBackToFrontSorted ? 0x10 : 0x00;
-	mSortValue += mSoftwareVertexProcessed ? 0 : 1;
-	//mSortValue += vsVersion;
 
 	return true;
 }

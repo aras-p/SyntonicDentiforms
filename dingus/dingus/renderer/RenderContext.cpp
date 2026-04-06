@@ -119,12 +119,6 @@ void CRenderContext::renderRenderables()
 {
 	CD3DDevice& device = CD3DDevice::getInstance();
 
-	//
-	// turn SWVP off (just in case)
-
-	if( device.getVertexProcessing() == CD3DDevice::VP_MIXED )
-		device.getDevice().SetSoftwareVertexProcessing( false );
-
 	// here we have our renderables attached and sorted by (with the exception
 	// of back-to-front):
 	//	1. priority,
@@ -135,7 +129,6 @@ void CRenderContext::renderRenderables()
 	int sz = mRenderables.size();
 
 	CD3DXEffect*	currFX = NULL;
-	bool			currSWVP = false;
 
 	//
 	// go thru all renderables
@@ -187,12 +180,6 @@ void CRenderContext::renderRenderables()
 			// set new fx
 			currFX = newFX;
 			itFxStart = itR;
-			// check SWVP change
-			bool newSWVP = newFX->isSoftwareVertexProcessed();
-			if( newSWVP != currSWVP && device.getVertexProcessing() == CD3DDevice::VP_MIXED ) {
-				currSWVP = newSWVP;
-				device.getDevice().SetSoftwareVertexProcessing( newSWVP );
-			}
 		}
 	}
 
@@ -225,12 +212,6 @@ void CRenderContext::renderRenderables()
 		// end old fx
 		currFX->endFx();
 	}
-
-	//
-	// and turn SWVP off
-
-	if( device.getVertexProcessing() == CD3DDevice::VP_MIXED )
-		device.getDevice().SetSoftwareVertexProcessing( false );
 }
 
 void CRenderContext::perform()
@@ -263,11 +244,6 @@ void CRenderContext::perform()
 
 void CRenderContext::directBegin()
 {
-	// turn SWVP off (just in case)
-	CD3DDevice& device = CD3DDevice::getInstance();
-	if( device.getVertexProcessing() == CD3DDevice::VP_MIXED )
-		device.getDevice().SetSoftwareVertexProcessing( false );
-
 	assert( !mInsideDirect );
 	assert( !mDirectCurrFX );
 	mInsideDirect = true;
@@ -298,11 +274,6 @@ void CRenderContext::directEnd()
 	mDirectCurrPasses = 0;
 
 	mGlobalEffect->endFx();
-
-	// turn SWVP off (just in case)
-	CD3DDevice& device = CD3DDevice::getInstance();
-	if( device.getVertexProcessing() == CD3DDevice::VP_MIXED )
-		device.getDevice().SetSoftwareVertexProcessing( false );
 }
 
 void CRenderContext::directRender( CRenderable& r )
@@ -345,9 +316,6 @@ int CRenderContext::directSetFX( CD3DXEffect& fx )
 			mDirectCurrFX->endPass();
 			mDirectCurrFX->endFx();
 		}
-		// see HW/SW VP
-		if( device.getVertexProcessing() == CD3DDevice::VP_MIXED )
-			device.getDevice().SetSoftwareVertexProcessing( fx.isSoftwareVertexProcessed() );
 
 		// begin new one
 		mDirectCurrFX = &fx;

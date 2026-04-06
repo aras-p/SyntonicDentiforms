@@ -39,8 +39,6 @@ public:
 	void	setObject( ID3DXEffect* object );
 
 	bool	isBackToFrontSorted() const { return mBackToFrontSorted; }
-	//int		getVShaderVersion() const { return mVShaderVersion; }
-	bool	isSoftwareVertexProcessed() const { return mSoftwareVertexProcessed; }
 
 	/**
 	 *  For sorting, computed from other params in ascending order.
@@ -56,8 +54,6 @@ private:
 private:
 	int		mSortValue; // value computed from other params, for sorting
 	bool	mBackToFrontSorted;
-	//int		mVShaderVersion;
-	bool	mSoftwareVertexProcessed;
 };
 
 
