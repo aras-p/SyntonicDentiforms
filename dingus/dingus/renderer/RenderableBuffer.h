@@ -60,8 +60,6 @@ public:
 	/** Get primitive count to render. */
 	int getPrimCount() const { return mPrimCount; }
 
-	virtual const CD3DVertexBuffer*	getUsedVB() const { return mVB[0]; }
-
 protected:
 	void	applyStreams();
 	void	unapplyStreams();
@@ -94,7 +92,6 @@ public:
 	int getStartVertex() const { return mStartVertex; }
 	
 	virtual void render( const CRenderContext& ctx );
-	virtual const CD3DIndexBuffer*	getUsedIB() const { return NULL; }
 	
 private:
 	DECLARE_POOLED_ALLOC(dingus::CRenderableBuffer);
@@ -141,7 +138,6 @@ public:
 	int getStartIndex() const { return mStartIndex; }
 
 	virtual void render( const CRenderContext& ctx );
-	virtual const CD3DIndexBuffer* getUsedIB() const { return mIB; }
 	
 private:
 	DECLARE_POOLED_ALLOC(dingus::CRenderableIndexedBuffer);

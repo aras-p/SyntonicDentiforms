@@ -62,11 +62,6 @@ public:
 	 */
 	virtual void render( const CRenderContext& ctx ) { };
 
-	/// Return used VB ("main" one, eg. stream zero) - for sorting by VB
-	virtual const CD3DVertexBuffer*	getUsedVB() const = 0;
-	/// Return used IB - for sorting by IB
-	virtual const CD3DIndexBuffer*	getUsedIB() const = 0;
-
 private:
 	// Effect and it's params
 	CEffectParams	mParams;

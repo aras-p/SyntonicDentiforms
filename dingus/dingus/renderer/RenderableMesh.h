@@ -23,9 +23,6 @@ public:
 
 	virtual void render( const CRenderContext& ctx );
 	
-	virtual const CD3DVertexBuffer*	getUsedVB() const { return &mMesh->getVB(); }
-	virtual const CD3DIndexBuffer*	getUsedIB() const { return &mMesh->getIB(); }
-	
 private:
 	DECLARE_POOLED_ALLOC(dingus::CRenderableMesh);
 private:

@@ -101,18 +101,6 @@ struct SRenderableSorter {
 		if( ea != eb )
 			return ea < eb;
 
-		// by used IB
-		const CD3DIndexBuffer* iba = ra->getUsedIB();
-		const CD3DIndexBuffer* ibb = rb->getUsedIB();
-		if( iba != ibb )
-			return iba < ibb;
-
-		// by used VB
-		const CD3DVertexBuffer* vba = ra->getUsedVB();
-		const CD3DVertexBuffer* vbb = rb->getUsedVB();
-		if( vba != vbb )
-			return vba < vbb;
-
 		// just by pointers...
 		return ra < rb;
 	};

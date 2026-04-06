@@ -53,9 +53,6 @@ public:
 
 	virtual void render( const CRenderContext& ctx );
 
-	virtual const CD3DVertexBuffer*	getUsedVB() const { return CDynamicVBManager::getInstance().getBuffer(); };
-	virtual const CD3DIndexBuffer*	getUsedIB() const { return mIB; };
-
 private:
 	typedef SVertexXyzDiffuseTex1		TVertex;
 	typedef std::vector<SOBillboard>	TBillVector;
