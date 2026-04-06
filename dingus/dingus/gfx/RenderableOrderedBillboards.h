@@ -37,8 +37,7 @@ public:
  *
  *  Renders billboards (aka sprites, or screen-aligned textured
  *  quads). Preserves billboard submitting order - this may be not very
- *  efficient if billboards use different textures. Use CRenderableBillboards
- *  if order doesn't matter.
+ *  efficient if billboards use different textures.
  */
 class CRenderableOrderedBillboards : public CRenderable, public IRenderListener {
 public:

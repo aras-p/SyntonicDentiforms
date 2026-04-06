@@ -36,23 +36,6 @@ CRenderContext::CRenderContext()
 
 // --------------------------------------------------------------------------
 
-void CRenderContext::beforeRendering()
-{
-	TListenerVector::iterator it, itEnd = getListeners().end();
-	for( it = getListeners().begin(); it != getListeners().end(); ++it ) {
-		assert( *it );
-		(*it)->beforeRendering( *this );
-	}
-}
-void CRenderContext::afterRendering()
-{
-	TListenerVector::iterator it, itEnd = getListeners().end();
-	for( it = getListeners().begin(); it != getListeners().end(); ++it ) {
-		assert( *it );
-		(*it)->afterRendering( *this );
-	}
-}
-
 void CRenderContext::initGlobalFX()
 {
 	if( !mGlobalInited ) {
@@ -272,8 +255,6 @@ void CRenderContext::perform()
 {
 	initGlobalFX();
 
-	beforeRendering();
-
 	CD3DDevice& device = CD3DDevice::getInstance();
 	IDirect3DDevice9* dx = &device.getDevice();
 	assert( dx );
@@ -291,8 +272,6 @@ void CRenderContext::perform()
 
 	mGlobalEffect->endPass();
 	mGlobalEffect->endFx();
-
-	afterRendering();
 
 	clear();
 }

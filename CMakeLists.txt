@@ -28,7 +28,6 @@ add_library(dingus STATIC
     dingus/dingus/gfx/geometry/VBChunk.cpp
     dingus/dingus/gfx/geometry/VBChunkHelper.cpp
     dingus/dingus/gfx/Mesh.cpp
-    dingus/dingus/gfx/RenderableBillboards.cpp
     dingus/dingus/gfx/RenderableOrderedBillboards.cpp
     dingus/dingus/gfx/VertexFormat.cpp
 
@@ -36,8 +35,6 @@ add_library(dingus STATIC
     dingus/dingus/kernel/ProxyEffect.cpp
     dingus/dingus/kernel/SystemClock.cpp
 
-    dingus/dingus/math/Transform.cpp
-    dingus/dingus/math/Triangle.cpp
     dingus/dingus/math/Vector3.cpp
 
     dingus/dingus/renderer/EffectParams.cpp

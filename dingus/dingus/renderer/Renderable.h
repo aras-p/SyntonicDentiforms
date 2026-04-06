@@ -27,13 +27,6 @@ public:
 };
 
 
-class CRenderListenerAdapter : public IRenderListener {
-public:
-	virtual void beforeRender( CRenderable& r ) { };
-	virtual void afterRender( CRenderable& r ) { };
-};
-
-
 /**
  *  Base renderable class.
  *

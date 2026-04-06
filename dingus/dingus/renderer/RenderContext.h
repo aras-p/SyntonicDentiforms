@@ -8,32 +8,15 @@
 
 
 #include "RenderCamera.h"
-#include "../utils/AbstractNotifier.h"
 #include "EffectParams.h"
-
-
 
 
 namespace dingus {
 
-class CRenderContext;
 class CRenderable;
 
 
-/**
- *  Gets notified when scene rendering occurs.
- */
-class IRenderContextListener {
-public:
-	virtual ~IRenderContextListener() = 0 {};
-	
-	virtual void beforeRendering( CRenderContext& ctx ) = 0;
-	virtual void afterRendering( CRenderContext& ctx ) = 0;
-};
-
-
-
-class CRenderContext : public CSimpleNotifier<IRenderContextListener> {
+class CRenderContext {
 public:
 	CRenderContext();
 
@@ -62,11 +45,6 @@ private:
 	void	sortRenderables();
 	void	renderRenderables();
 	void	initGlobalFX();
-
-	/// Notifies IRenderContextListeners
-	void beforeRendering();
-	/// Notifies IRenderContextListeners
-	void afterRendering();
 
 private:
 	typedef std::vector<CRenderable*>	TRenderableVector;
