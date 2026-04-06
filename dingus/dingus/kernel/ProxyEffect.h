@@ -61,14 +61,6 @@ private:
 };
 
 
-// We have API changes in D3DX effects from Summer 2004...
-#undef USE_D3DX_SUMMER_2004
-#if D3DX_VERSION >= 0x0902 && D3DX_SDK_VERSION >= 22
-	#define USE_D3DX_SUMMER_2004
-#endif
-
-
-
 inline int CD3DXEffect::beginFx( DWORD flags )
 {
 	UINT p;
@@ -83,25 +75,17 @@ inline void	CD3DXEffect::endFx()
 }
 inline void	CD3DXEffect::beginPass( int p )
 {
-#ifdef USE_D3DX_SUMMER_2004
 	HRESULT hr = getObject()->BeginPass( p );
-#else
-	HRESULT hr = getObject()->Pass( p );
-#endif
 	assert( SUCCEEDED(hr) );
 }
 inline void	CD3DXEffect::endPass()
 {
-#ifdef USE_D3DX_SUMMER_2004
 	HRESULT hr = getObject()->EndPass();
-#endif
 	assert( SUCCEEDED(hr) );
 }
 inline void CD3DXEffect::commitParams()
 {
-#ifdef USE_D3DX_SUMMER_2004
 	HRESULT hr = getObject()->CommitChanges();
-#endif
 	assert( SUCCEEDED(hr) );
 }
 
