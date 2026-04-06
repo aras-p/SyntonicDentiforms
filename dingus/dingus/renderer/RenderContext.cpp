@@ -228,9 +228,7 @@ void CRenderContext::perform()
 	int passes = mGlobalEffect->beginFx( FX_PARAMS );
 	mGlobalEffect->beginPass( 0 );
 
-	// sort
 	sortRenderables();
-	// renderRenderables
 	renderRenderables();
 
 	mGlobalEffect->endPass();
@@ -289,7 +287,7 @@ void CRenderContext::directRender( CRenderable& r )
 	assert( mDirectCurrFX == fx );
 	r.getParams().applyToEffect();
 
-	// renderRenderables all passes
+	// render all passes
 	assert( mDirectCurrPasses > 0 );
 	r.beforeRender();
 	for( int p = 0; p < mDirectCurrPasses-1; ++p ) {
@@ -322,14 +320,4 @@ int CRenderContext::directSetFX( CD3DXEffect& fx )
 		mDirectCurrPasses = fx.beginFx( FX_PARAMS );
 	}
 	return mDirectCurrPasses;
-}
-
-void CRenderContext::directFXPassBegin( int pass )
-{
-	mDirectCurrFX->beginPass( pass );
-}
-
-void CRenderContext::directFXPassEnd()
-{
-	mDirectCurrFX->endPass();
 }

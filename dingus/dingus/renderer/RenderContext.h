@@ -38,8 +38,6 @@ public:
 	void directRender( CRenderable& r );
 	void directEnd();
 	int directSetFX( CD3DXEffect& fx ); // returns pass count-1
-	void directFXPassBegin( int pass );
-	void directFXPassEnd();
 	
 private:
 	void	sortRenderables();
