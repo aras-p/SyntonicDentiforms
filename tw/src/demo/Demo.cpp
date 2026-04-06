@@ -16,7 +16,6 @@
 #include <dingus/math/Plane.h>
 #include <dingus/math/MathUtils.h>
 #include <dingus/resource/IndexBufferFillers.h>
-#include <dingus/resource/CubeTextureBundle.h>
 
 
 #define WITHMUSIC
@@ -240,7 +239,6 @@ void CDemo::appInitialize()
 	G_RCTX->getGlobalParams().addVector3Ref( "vLightDir", gLightCamera.mMatrix.getAxisZ() );
 	G_RCTX->getGlobalParams().addTexture( "tShadow", *RGET_STEX(RT_SHADOWRT) );
 	G_RCTX->getGlobalParams().addTexture( "tCookie", *RGET_TEX("SpotLight") );
-	//G_RCTX->getGlobalParams().addCubeTexture( "tNormalizer", *CCubeTextureBundle::getInstance().getResourceById("Normalizer") );
 
 	// --------------------------------
 	// preload

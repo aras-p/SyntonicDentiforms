@@ -50,9 +50,7 @@ add_library(dingus STATIC
     dingus/dingus/renderer/RenderContext.cpp
 
     dingus/dingus/resource/AnimationBundle.cpp
-    dingus/dingus/resource/CubeTextureBundle.cpp
     dingus/dingus/resource/EffectBundle.cpp
-    dingus/dingus/resource/EffectInitListeners.cpp
     dingus/dingus/resource/IndexBufferBundle.cpp
     dingus/dingus/resource/MeshBundle.cpp
     dingus/dingus/resource/MeshSerializer.cpp

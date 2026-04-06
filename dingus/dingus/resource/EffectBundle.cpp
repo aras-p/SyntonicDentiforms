@@ -15,7 +15,7 @@ using namespace dingus;
 
 CEffectBundle::CEffectBundle( const std::string& predir )
 :	CStorageResourceBundle<CD3DXEffect>(predir),
-	mStateManager(0), mSharedPool(0), mInitListener(0),
+	mStateManager(0), mSharedPool(0),
 	mOptimizeShaders(true), mLastErrors("")
 {
 	addExtension( ".fx" );
@@ -58,9 +58,6 @@ ID3DXEffect* CEffectBundle::loadEffect( const CResourceId& id, const CResourceId
 
 	// set state manager
 	fx->SetStateManager( mStateManager );
-
-	if( mInitListener )
-		mInitListener->onInitEffect( *fx );
 
 	return fx;
 }

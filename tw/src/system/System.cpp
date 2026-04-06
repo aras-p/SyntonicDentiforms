@@ -6,7 +6,6 @@
 
 #include <dingus/renderer/EffectParamsNotifier.h>
 
-#include <dingus/resource/CubeTextureBundle.h>
 #include <dingus/resource/VertexDeclBundle.h>
 #include <dingus/resource/IndexBufferBundle.h>
 
@@ -64,7 +63,6 @@ HRESULT CSystem::initialize()
 	mDeviceManager = new dingus::CDeviceResourceManager();
 
 	CTextureBundle::init( mDataPath + "tex/" );
-	CCubeTextureBundle::init( mDataPath + "tex/" );
 	CMeshBundle::init( mDataPath + "mesh/" );
 	CEffectBundle::init( mDataPath + "fx/" );
 	CAnimationBundle::init( mDataPath + "anim/" );
@@ -83,7 +81,6 @@ HRESULT CSystem::initialize()
 	mDeviceManager->add( CSharedSurfaceBundle::getInstance() );
 	mDeviceManager->add( vbManager );
 	mDeviceManager->add( CTextureBundle::getInstance() );
-	mDeviceManager->add( CCubeTextureBundle::getInstance() );
 	mDeviceManager->add( CMeshBundle::getInstance() );
 	mDeviceManager->add( CEffectBundle::getInstance() );
 	mDeviceManager->add( CVertexDeclBundle::getInstance() );
@@ -234,7 +231,6 @@ HRESULT CSystem::shutdown()
 	CDynamicVBManager::finalize();
 
 	CTextureBundle::finalize();
-	CCubeTextureBundle::finalize();
 	CMeshBundle::finalize();
 	CEffectBundle::finalize();
 	CAnimationBundle::finalize();

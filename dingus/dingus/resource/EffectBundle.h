@@ -16,13 +16,6 @@ namespace dingus {
 class CEffectStateManager;
 
 
-class IEffectInitListener {
-public:
-	virtual ~IEffectInitListener() = 0 { }
-	virtual void onInitEffect( ID3DXEffect& fx ) = 0;
-};
-
-
 /**
  *  D3DX Effects bundle.
  *
@@ -40,7 +33,6 @@ public:
 		assignInstance( *bundle );
 	}
 
-	void setInitListener( IEffectInitListener* l ) { mInitListener = l; }
 	bool	isOptimizingShaders() const { return mOptimizeShaders; }
 	void	setOptimizeShaders( bool opt ) { mOptimizeShaders = opt; }
 	const std::string& getLastErrors() const { return mLastErrors; }
@@ -64,7 +56,6 @@ private:
 private:
 	CEffectStateManager*	mStateManager;
 	ID3DXEffectPool*		mSharedPool;
-	IEffectInitListener*	mInitListener;
 
 	bool					mOptimizeShaders;
 	mutable std::string		mLastErrors;
