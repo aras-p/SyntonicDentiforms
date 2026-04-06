@@ -22,7 +22,11 @@ CSystem::CSystem()
 	mCreationHeight 		= 480;
 	mWindowTitle			= "Syntonic Dentiforms";
 
+#ifdef _DEBUG
+	const bool devMode = true;
+#else
 	const bool devMode = false;
+#endif
 	mStartFullscreen		= !devMode;
 	mVSyncFullscreen		= !devMode;
 	mSelectDeviceAtStartup	= !devMode;

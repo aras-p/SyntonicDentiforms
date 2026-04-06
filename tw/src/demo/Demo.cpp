@@ -112,12 +112,8 @@ CDemo::CDemo()
 
 bool CDemo::appCheckDevice( const D3DCAPS9& caps, DWORD behavior, D3DFORMAT bbFormat ) const
 {
-	if( caps.PixelShaderVersion < D3DPS_VERSION(1,1) )
+	if( caps.PixelShaderVersion < D3DPS_VERSION(2,0) )
 		return false;
-	if( caps.PixelShaderVersion < D3DPS_VERSION(2,0) ) {
-		if( !(behavior & D3DCREATE_SOFTWARE_VERTEXPROCESSING) )
-			return false;
-	}
 	return true;
 }
 
