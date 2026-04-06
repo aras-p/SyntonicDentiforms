@@ -87,6 +87,7 @@ target_compile_definitions(dingus PRIVATE
     _MBCS
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
+    _CRT_SECURE_NO_WARNINGS
 )
 
 target_compile_options(dingus PRIVATE
@@ -135,6 +136,7 @@ target_compile_definitions(Demo PRIVATE
     _MBCS
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
+    _CRT_SECURE_NO_WARNINGS
 )
 
 target_compile_options(Demo PRIVATE
