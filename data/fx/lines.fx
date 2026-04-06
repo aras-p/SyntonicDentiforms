@@ -15,7 +15,7 @@ VS_PCUV vsMain( VS_PCUV i ) {
 
 technique tec0 {
 	pass P0 {
-		VertexShader = compile vs_1_1 vsMain();
+		VertexShader = compile vs_2_0 vsMain();
 		PixelShader = NULL;
 		Texture[0]   = (tBase);
 		

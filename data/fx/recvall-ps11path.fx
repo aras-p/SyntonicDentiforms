@@ -36,8 +36,8 @@ float4 psMain11( VS_OUTPUT i ) : COLOR {
 
 technique tecPS11 {
 	pass P0 {
-		VertexShader = compile vs_1_1 vsMain11();
-		PixelShader = compile ps_1_1 psMain11();
+		VertexShader = compile vs_2_0 vsMain11();
+		PixelShader = compile ps_2_0 psMain11();
 		Sampler[0] = (smpShadow);
 		Sampler[1] = (smpCookie);
 

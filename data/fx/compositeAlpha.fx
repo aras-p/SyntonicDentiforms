@@ -54,8 +54,8 @@ float4 psMain11( VS_PUV2 i ) : COLOR
 
 technique tec11 {
 	pass P0 {
-		VertexShader = compile vs_1_1 vsMain();
-		PixelShader = compile ps_1_1 psMain11();
+		VertexShader = compile vs_2_0 vsMain();
+		PixelShader = compile ps_2_0 psMain11();
 
 		ZEnable = False;
 		ZWriteEnable = False;

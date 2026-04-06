@@ -8,7 +8,7 @@ float4	vFixUV;
 
 technique tec0 {
 	pass P0 {
-		VertexShader = compile vs_1_1 vsBillboard(vFixUV);
+		VertexShader = compile vs_2_0 vsBillboard(vFixUV);
 		PixelShader = NULL;
 
 		ZEnable = False;

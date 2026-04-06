@@ -65,7 +65,7 @@ inline void gVSLightTerms( float4 p, float3 n, float4x4 w,
 inline half4 gPSLight( half3 n, half3 l, half3 h, half shadow )
 {
 	half diff = saturate( dot( n, l ) ) * fLightDiffuse;
-	half spec = pow( dot( h, n ), fLightK );
+	half spec = pow( max(0.0, dot( h, n )), fLightK );
 	half4 res;
 	res.rgb = diff + spec;
 	res.a = spec;

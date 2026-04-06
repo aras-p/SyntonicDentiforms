@@ -1,9 +1,6 @@
 #ifndef __SHARED_FX
 #define __SHARED_FX
 
-#include "_defines.fx"
-
-
 // various global (not per-object) parameters are here
 
 // --------------------------------------------------------------------------

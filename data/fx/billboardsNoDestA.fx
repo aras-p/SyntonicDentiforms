@@ -38,8 +38,8 @@ float4 psMain( VS_PCUV i ) : COLOR
 
 technique tec0 {
 	pass P0 {
-		VertexShader = compile vs_1_1 vsMain();
-		PixelShader = compile ps_1_1 psMain();
+		VertexShader = compile vs_2_0 vsMain();
+		PixelShader = compile ps_2_0 psMain();
 
 		ZEnable = False;
 		ZWriteEnable = False;

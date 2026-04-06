@@ -18,7 +18,7 @@ VS_P vsMain( VS_P i ) {
 
 technique tec0 {
 	pass P0 {
-		VertexShader = compile vs_1_1 vsMain();
+		VertexShader = compile vs_2_0 vsMain();
 		PixelShader = NULL;
 
 		TextureFactor = (vShadowID);

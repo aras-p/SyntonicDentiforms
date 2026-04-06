@@ -13,8 +13,8 @@ float4 psMain() : COLOR
 
 technique tec0 {
 	pass P0 {
-		VertexShader = compile vs_1_1 vsBillboard(vFixUV);
-		PixelShader = compile ps_1_1 psMain();
+		VertexShader = compile vs_2_0 vsBillboard(vFixUV);
+		PixelShader = compile ps_2_0 psMain();
 
 		ZEnable = False;
 		ZWriteEnable = False;

@@ -44,7 +44,7 @@ pixelshader psMain = asm {
 
 technique tecPS11 {
 	pass P0 {
-		VertexShader = compile vs_1_1 vsMain();
+		VertexShader = compile vs_2_0 vsMain();
 		PixelShader = (psMain);
 		PixelShaderConstant[0] = (vShadowID);
 		Sampler[0] = (smpShadow);

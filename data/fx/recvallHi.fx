@@ -4,12 +4,6 @@ float4x4	mWorld;
 float4x4	mWorldView;
 float4x4	mWVP;
 
-// --------------------------------------------------------------------------
-//  2.0
-
-#ifdef ENABLE_PS20_PATH
-
-
 struct VS_OUTPUT20 {
 	float4	pos 	: POSITION;
 	half4	uvShadow	: TEXCOORD0;
@@ -43,7 +37,7 @@ float4 psMain20( VS_OUTPUT20 i ) : COLOR
 
 technique tecPS20 {
 	pass P0 {
-		VertexShader = compile vs_1_1 vsMain20();
+		VertexShader = compile vs_2_0 vsMain20();
 		PixelShader = compile ps_2_0 psMain20();
 	}
 	pass PLast {
@@ -51,9 +45,3 @@ technique tecPS20 {
 		Texture[1] = NULL;
 	}
 }
-
-#endif
-
-
-#include "recvall-ps14path.fx"
-#include "recvall-ps11path.fx"
