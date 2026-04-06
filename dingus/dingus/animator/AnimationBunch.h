@@ -6,6 +6,8 @@
 #ifndef __ANIMATION_BUNCH_H
 #define __ANIMATION_BUNCH_H
 
+#include "dingus/utils/noncopyable.h"
+
 #include "Animation.h"
 #include "../math/Vector3.h"
 #include "../math/Quaternion.h"
@@ -23,7 +25,7 @@ namespace dingus {
  *  all animations in particular bunch must have the same logical structure
  *  (that is, same internal hierarchy and curve names).
  */
-class CAnimationBunch : public boost::noncopyable {
+class CAnimationBunch : public noncopyable {
 public:
 	typedef IAnimation<SVector3>	TVector3Animation;
 	typedef IAnimation<SQuaternion>	TQuatAnimation;

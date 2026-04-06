@@ -6,6 +6,7 @@
 #ifndef __CREFCOUNTED_H
 #define __CREFCOUNTED_H
 
+#include "dingus/utils/noncopyable.h"
 
 #define DingusSmartPtr intrusive_ptr
 

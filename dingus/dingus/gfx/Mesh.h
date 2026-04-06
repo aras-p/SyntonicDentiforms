@@ -6,6 +6,8 @@
 #ifndef __GFX_MESH_H
 #define __GFX_MESH_H
 
+#include "dingus/utils/noncopyable.h"
+
 #include "VertexFormat.h"
 #include "../math/Vector3.h"
 #include "../math/AABox.h"
@@ -15,7 +17,7 @@
 namespace dingus {
 
 
-class CMesh : public boost::noncopyable {
+class CMesh : public noncopyable {
 public:
 	/**
 	 *  A subset of a mesh. Mesh can have multiple subsets, eg. when portions

@@ -6,6 +6,8 @@
 #ifndef D3D_ENUM_H__
 #define D3D_ENUM_H__
 
+#include "dingus/utils/noncopyable.h"
+
 namespace dingus {
 
 
@@ -39,7 +41,7 @@ typedef std::vector<SD3DAdapterInfo*>				TAdapterInfoVector;
  *  A combo of adapter format, back buffer format, and windowed/fulscreen that
  *  is compatible with a particular D3D device and the application.
  */
-struct SD3DDeviceCombo : public boost::noncopyable {
+struct SD3DDeviceCombo : public noncopyable {
 public:
 	/// A depth/stencil buffer format that is incompatible with a multisample type.
 	struct SDSMSConflict {
@@ -68,7 +70,7 @@ public:
 /**
  *  Info on D3D device. Includes list of D3DDeviceCombos that work with it.
  */
-struct SD3DDeviceInfo : public boost::noncopyable {
+struct SD3DDeviceInfo : public noncopyable {
 public:
 	SD3DDeviceInfo() : adapterOrdinal(-1), deviceType(D3DDEVTYPE_HAL) { }
     ~SD3DDeviceInfo();
@@ -86,7 +88,7 @@ public:
 /**
  *  Display adapter info.
  */
-struct SD3DAdapterInfo : public boost::noncopyable {
+struct SD3DAdapterInfo : public noncopyable {
 public:
     ~SD3DAdapterInfo();
 

@@ -6,6 +6,7 @@
 #ifndef __D3D_DEVICE_H
 #define __D3D_DEVICE_H
 
+#include "dingus/utils/noncopyable.h"
 #include "Proxies.h"
 #include "../renderer/RenderStats.h"
 
@@ -18,7 +19,7 @@ namespace dingus {
  *  Singleton of D3D device and some convenience stuff: caps, main backbuffer
  *  and z/stencil, etc.
  */
-class CD3DDevice : public boost::noncopyable {
+class CD3DDevice : public noncopyable {
 public:
 	enum { VS_FFP = 0, VS_1_1, VS_2_0, VS_3_0 };
 	enum { VP_PURE_HW = 0, VP_HW, VP_MIXED, VP_SW };

@@ -6,6 +6,8 @@
 #ifndef __ANIMATION_H
 #define __ANIMATION_H
 
+#include "dingus/utils/noncopyable.h"
+
 namespace dingus {
 
 
@@ -21,7 +23,7 @@ namespace dingus {
  *  @param _V Value type.
  */
 template<typename _V>
-class IAnimation : public boost::noncopyable {
+class IAnimation : public noncopyable {
 public:
 	typedef _V value_type;
 
