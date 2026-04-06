@@ -7,7 +7,7 @@
 #define __CREFCOUNTED_H
 
 
-#define DingusSmartPtr boost::intrusive_ptr
+#define DingusSmartPtr intrusive_ptr
 
 
 namespace dingus {
@@ -17,9 +17,9 @@ namespace dingus {
  *
  *  Has zero ref count when constructed.
  *  
- *  Intended for use with boost::intrusive_ptr.
+ *  Intended for use with intrusive_ptr.
  */
-class CRefCounted : public boost::noncopyable {
+class CRefCounted : public noncopyable {
 public:
 	CRefCounted() : mRefCount(0) { }
 	virtual ~CRefCounted() { }
@@ -52,13 +52,11 @@ inline int CRefCounted::decRef() {
 
 
 //
-// for boost::intrusive_ptr<clazz>
+// for intrusive_ptr<clazz>
 
 #define IMPLEMENT_INTRUSIVE_PTR(clazz) \
-namespace boost { \
 inline void intrusive_ptr_add_ref( clazz* p ) { p->incRef(); } \
-inline void intrusive_ptr_release( clazz* p ) { p->decRef(); } \
-}
+inline void intrusive_ptr_release( clazz* p ) { p->decRef(); }
 
 IMPLEMENT_INTRUSIVE_PTR(dingus::CRefCounted);
 

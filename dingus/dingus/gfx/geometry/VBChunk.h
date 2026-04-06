@@ -13,7 +13,7 @@ namespace dingus {
 
 class CVBChunk : public CRefCounted {
 public:
-	typedef boost::intrusive_ptr<CVBChunk>	TSharedPtr;
+	typedef intrusive_ptr<CVBChunk>	TSharedPtr;
 
 public:
 	CVBChunk( CD3DVertexBuffer& vb, byte* data, int offset, int count, int stride );

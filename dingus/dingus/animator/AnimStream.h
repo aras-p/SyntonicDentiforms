@@ -27,7 +27,7 @@ class IAnimStream : public CRefCounted {
 public:
 	typedef _V value_type;
 	typedef IAnimStream<_V> this_type;
-	typedef boost::intrusive_ptr<this_type> TSharedPtr;
+	typedef intrusive_ptr<this_type> TSharedPtr;
 public:
 	virtual ~IAnimStream() = 0 { }
 

@@ -20,7 +20,7 @@ namespace dingus {
  */
 class IIndexBufferFiller : public CRefCounted {
 public:
-	typedef boost::intrusive_ptr<IIndexBufferFiller> TSharedPtr;
+	typedef intrusive_ptr<IIndexBufferFiller> TSharedPtr;
 public:
 	virtual ~IIndexBufferFiller() = 0 { }
 	virtual void fillIB( CD3DIndexBuffer& ib, int elements, D3DFORMAT format ) = 0;

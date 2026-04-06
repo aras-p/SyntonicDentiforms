@@ -27,7 +27,7 @@ public:
 	typedef _S::TSharedPtr				streamptr_type;
 	typedef _S::value_type				value_type;
 	typedef CAnimStreamMixer<_S,_DEL>	this_type;
-	typedef boost::intrusive_ptr<this_type>	TSharedPtr;
+	typedef intrusive_ptr<this_type>	TSharedPtr;
 
 public:
 	// ----------------------------------------------------------------------

@@ -11,7 +11,7 @@ namespace dingus {
 
 class ITextureCreator : public CRefCounted {
 public:
-	typedef boost::intrusive_ptr<ITextureCreator>	TSharedPtr;
+	typedef intrusive_ptr<ITextureCreator>	TSharedPtr;
 public:
 	virtual ~ITextureCreator() = 0 { }
 	virtual IDirect3DTexture9* createTexture() = 0;

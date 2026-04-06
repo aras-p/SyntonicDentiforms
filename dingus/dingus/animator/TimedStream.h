@@ -19,7 +19,7 @@ class CTimedAnimStream : public CAbstractTimedAnimStream<_T> {
 public:
 	typedef CTimedAnimStream<value_type> this_type;
 	typedef IAnimation<value_type> animation_type;
-	typedef boost::intrusive_ptr<this_type> TSharedPtr;
+	typedef intrusive_ptr<this_type> TSharedPtr;
 public:
 	CTimedAnimStream( animation_type& animation, float duration, bool repeating, int firstCurveIndex = 0, float startTime = anim_time() )
 		: CAbstractTimedAnimStream<_T>(duration,repeating,firstCurveIndex,startTime), mAnimation(&animation) { }

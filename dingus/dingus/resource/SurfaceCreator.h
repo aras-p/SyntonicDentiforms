@@ -13,7 +13,7 @@ namespace dingus {
 
 class ISurfaceCreator : public CRefCounted {
 public:
-	typedef boost::intrusive_ptr<ISurfaceCreator>	TSharedPtr;
+	typedef intrusive_ptr<ISurfaceCreator>	TSharedPtr;
 public:
 	virtual ~ISurfaceCreator() = 0 { }
 	virtual IDirect3DSurface9* createSurface() = 0;
