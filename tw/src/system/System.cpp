@@ -40,8 +40,10 @@ CSystem::CSystem()
 	mDataPath = "data/";
 
 	// init console
-	//mStdConsoleCtx = new CW32StdConsoleRenderingContext();
-	//dingus::CConsole::getInstance().setDefaultRenderingContext( *mStdConsoleCtx );
+#ifdef _DEBUG
+	mStdConsoleCtx = new CW32StdConsoleRenderingContext();
+	dingus::CConsole::getInstance().setDefaultRenderingContext( *mStdConsoleCtx );
+#endif
 };
 
 

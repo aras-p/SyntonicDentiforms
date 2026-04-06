@@ -81,7 +81,7 @@ ID3DXEffect* CEffectBundle::loadEffect( const CResourceId& id, const CResourceId
 		fullName.getUniqueName().c_str(),
 		&mMacros[0],
 		NULL, // TBD ==> includes
-		mOptimizeShaders ? 0 : D3DXSHADER_SKIPOPTIMIZATION,
+		(mOptimizeShaders ? 0 : D3DXSHADER_SKIPOPTIMIZATION) | D3DXSHADER_ENABLE_BACKWARDS_COMPATIBILITY,
 		mSharedPool,
 		&fx,
 		&errors );
