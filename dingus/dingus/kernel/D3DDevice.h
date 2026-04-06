@@ -119,8 +119,6 @@ private:
 	void	internalSetRenderTarget( IDirect3DSurface9* rt, int index );
 	void	internalSetZStencil( IDirect3DSurface9* zs );
 
-	void	resetCachedD3DObjs();
-
 private:
 	D3DCAPS9			mCaps;
 	D3DSURFACE_DESC		mBackBufferDesc;
@@ -131,16 +129,6 @@ private:
 	IDirect3DSurface9*	mMainZStencil;
 	
 	float				mBackBufferAspect;
-
-	// active things, for redundant filtering
-	IDirect3DSurface9*	mActiveRT[MRT_COUNT];
-	IDirect3DSurface9*	mActiveZS;
-	IDirect3DVertexBuffer9*	mActiveVB[VSTREAM_COUNT];
-	unsigned int		mActiveVBOffset[VSTREAM_COUNT];
-	unsigned int		mActiveVBStride[VSTREAM_COUNT];
-	CD3DIndexBuffer*	mActiveIB;
-	CD3DVertexDecl*		mActiveDeclaration;
-	DWORD				mActiveFVF;
 };
 
 }; // namespace

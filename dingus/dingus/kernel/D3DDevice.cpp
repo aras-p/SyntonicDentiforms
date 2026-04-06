@@ -13,10 +13,6 @@ using namespace dingus;
 
 CD3DDevice CD3DDevice::mSingleInstance;
 
-// define for testing only
-//#define DISABLE_FILTERING
-
-
 // --------------------------------------------------------------------------
 
 CD3DDevice::CD3DDevice()
@@ -24,23 +20,6 @@ CD3DDevice::CD3DDevice()
 	mBackBuffer(NULL),
 	mMainZStencil(NULL)
 {
-	resetCachedD3DObjs();
-}
-
-void CD3DDevice::resetCachedD3DObjs()
-{
-	int i;
-	for( i = 0; i < MRT_COUNT; ++i )
-		mActiveRT[i] = NULL;
-	mActiveZS = NULL;
-	for( i = 0; i < VSTREAM_COUNT; ++i ) {
-		mActiveVB[i] = NULL;
-		mActiveVBOffset[i] = 0;
-		mActiveVBStride[i] = 0;
-	}
-	mActiveIB = NULL;
-	mActiveDeclaration = NULL;
-	mActiveFVF = 0;
 }
 
 void CD3DDevice::activateDevice()
@@ -48,20 +27,16 @@ void CD3DDevice::activateDevice()
 	assert( !mMainZStencil );
 	assert( !mBackBuffer );
 
-	resetCachedD3DObjs();
-
 	// backbuffer
 	mDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &mBackBuffer );
 	assert( mBackBuffer );
 	mBackBuffer->GetDesc( &mBackBufferDesc );
 	mBackBufferAspect = (float)getBackBufferWidth() / (float)getBackBufferHeight();
-	mActiveRT[0] = mBackBuffer;
 
 	// Z/stencil
 	mDevice->GetDepthStencilSurface( &mMainZStencil );
 	assert( mMainZStencil );
 	mMainZStencil->GetDesc( &mMainZStencilDesc );
-	mActiveZS = mMainZStencil;
 }
 
 void CD3DDevice::passivateDevice()
@@ -131,19 +106,10 @@ void CD3DDevice::internalSetRenderTarget( IDirect3DSurface9* rt, int index )
 		return;
 	}
 
-	// redundant set check
-#ifndef DISABLE_FILTERING
-	if( mActiveRT[index] == rt ) {
-		return;
-	}
-#endif
-
 	// set RT
 	HRESULT hr = mDevice->SetRenderTarget( index, rt );
 	if( FAILED( hr ) )
 		THROW_DXERROR( hr, "failed to set render target" );
-
-	mActiveRT[index] = rt;
 }
 
 void CD3DDevice::setZStencil( CD3DSurface* zs )
@@ -160,19 +126,9 @@ void CD3DDevice::internalSetZStencil( IDirect3DSurface9* zs )
 {
 	assert( mDevice );
 
-	// redundant set check
-#ifndef DISABLE_FILTERING
-	if( mActiveZS == zs ) {
-		return;
-	}
-#endif
-
-	// set RT
 	HRESULT hr = mDevice->SetDepthStencilSurface( zs );
 	if( FAILED( hr ) )
 		THROW_DXERROR( hr, "failed to set z/stencil" );
-
-	mActiveZS = zs;
 }
 
 void CD3DDevice::clearTargets( bool clearRT, bool clearZ, bool clearStencil, D3DCOLOR color, float z, DWORD stencil )
@@ -214,19 +170,9 @@ void CD3DDevice::setIndexBuffer( CD3DIndexBuffer* ib )
 {
 	assert( mDevice );
 	
-	// redundant set check
-#ifndef DISABLE_FILTERING
-	if( mActiveIB == ib ) {
-		return;
-	}
-#endif
-
-	// set
 	HRESULT hr = mDevice->SetIndices( ib ? ib->getObject() : NULL );
 	if( FAILED( hr ) )
 		THROW_DXERROR( hr, "failed to set indices" );
-
-	mActiveIB = ib;
 }
 
 void CD3DDevice::setVertexBuffer( int stream,  CD3DVertexBuffer* vb, unsigned int offset, unsigned int stride )
@@ -234,22 +180,10 @@ void CD3DDevice::setVertexBuffer( int stream,  CD3DVertexBuffer* vb, unsigned in
 	assert( mDevice );
 	assert( stream >= 0 && stream < VSTREAM_COUNT );
 	
-	// redundant set check
 	IDirect3DVertexBuffer9* vb9 = vb ? vb->getObject() : NULL;
-#ifndef DISABLE_FILTERING
-	if( mActiveVB[stream]==vb9 && mActiveVBOffset[stream]==offset && mActiveVBStride[stream]==stride ) {
-		return;
-	}
-#endif
-
-	// set
 	HRESULT hr = mDevice->SetStreamSource( stream, vb9, offset, stride );
 	if( FAILED( hr ) )
 		THROW_DXERROR( hr, "failed to set vertex buffer" );
-
-	mActiveVB[stream] = vb9;
-	mActiveVBOffset[stream] = offset;
-	mActiveVBStride[stream] = stride;
 }
 
 void CD3DDevice::setDeclaration( CD3DVertexDecl& decl )
@@ -257,20 +191,9 @@ void CD3DDevice::setDeclaration( CD3DVertexDecl& decl )
 	assert( mDevice );
 	assert( &decl );
 	
-	// redundant set check
-#ifndef DISABLE_FILTERING
-	if( mActiveDeclaration == &decl ) {
-		return;
-	}
-#endif
-
-	// set
 	HRESULT hr = mDevice->SetVertexDeclaration( &decl ? decl.getObject() : NULL );
 	if( FAILED( hr ) )
 		THROW_DXERROR( hr, "failed to set declaration" );
-
-	mActiveDeclaration = &decl;
-	mActiveFVF = 0; // FVF and declaration are coupled!
 }
 
 void CD3DDevice::setDeclarationFVF( DWORD fvf )
@@ -278,18 +201,7 @@ void CD3DDevice::setDeclarationFVF( DWORD fvf )
 	assert( mDevice );
 	assert( fvf );
 	
-	// redundant set check
-#ifndef DISABLE_FILTERING
-	if( mActiveFVF == fvf ) {
-		return;
-	}
-#endif
-
-	// set
 	HRESULT hr = mDevice->SetFVF( fvf );
 	if( FAILED( hr ) )
 		THROW_DXERROR( hr, "failed to set declaration fvf" );
-
-	mActiveFVF = fvf; 
-	mActiveDeclaration = NULL; // FVF and declaration are coupled!
 }
