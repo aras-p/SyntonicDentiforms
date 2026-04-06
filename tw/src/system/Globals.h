@@ -4,8 +4,6 @@
 #include <dingus/renderer/RenderContext.h>
 #include <dingus/kernel/D3DDevice.h>
 
-#include <dingus/kernel/SystemClock.h>
-
 #include <dingus/resource/TextureBundle.h>
 #include <dingus/resource/MeshBundle.h>
 #include <dingus/resource/EffectBundle.h>

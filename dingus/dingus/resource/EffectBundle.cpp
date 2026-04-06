@@ -41,15 +41,13 @@ ID3DXEffect* CEffectBundle::loadEffect( const CResourceId& id, const CResourceId
 		std::string msg = "messages compiling effect '" + fullName.getUniqueName() + "'";
 		mLastErrors = (const char*)errors->GetBufferPointer();
 		msg += mLastErrors;
-		CConsole::CON_ERROR.write( msg );
+		assert(false);
 	}
 
 	if( FAILED( hres ) ) {
 		return NULL;
 	}
 	assert( fx );
-
-	CONSOLE.write( "fx loaded '" + id.getUniqueName() + "'" );
 
 	if( errors )
 		errors->Release();

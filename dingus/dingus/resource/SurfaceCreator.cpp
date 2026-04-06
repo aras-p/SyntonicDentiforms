@@ -9,7 +9,6 @@
 #include "SurfaceCreator.h"
 #include "../utils/Errors.h"
 #include "../kernel/D3DDevice.h"
-#include "../console/Console.h"
 
 using namespace dingus;
 
@@ -39,7 +38,6 @@ IDirect3DSurface9* CAbstractSurfaceCreator::internalCreate( int width, int heigh
 	}
 	if( FAILED( hres ) ) {
 		std::string msg = "failed to create surface";
-		CConsole::CON_ERROR.write(msg);
 		THROW_DXERROR( hres, msg );
 	}
 	assert( surface );
@@ -91,7 +89,6 @@ IDirect3DSurface9* CTextureLevelSurfaceCreator::createSurface()
 	hres = mTexture->getObject()->GetSurfaceLevel( mLevel, &surface );
 	if( FAILED( hres ) ) {
 		std::string msg = "failed to obtain texture level surface";
-		CConsole::CON_ERROR.write(msg);
 		THROW_DXERROR( hres, msg );
 	}
 	assert( surface );

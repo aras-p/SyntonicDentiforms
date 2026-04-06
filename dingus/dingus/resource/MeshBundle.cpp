@@ -32,7 +32,6 @@ bool CMeshBundle::loadMesh( const CResourceId& id, const CResourceId& fullName, 
 		return false;
 
 	mesh.computeAABBs();
-	CONSOLE.write( "mesh loaded '" + id.getUniqueName() + "'" );
 	return true;
 }
 

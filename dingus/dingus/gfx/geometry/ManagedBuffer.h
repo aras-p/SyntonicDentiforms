@@ -7,7 +7,6 @@
 #define __MANAGED_BUFFER_H
 
 #include "ChunkSource.h"
-#include "../../console/Console.h"
 
 namespace dingus {
 
@@ -39,11 +38,7 @@ public:
 
 		int byteCount = count*stride;
 		ASSERT_MSG( byteCount <= mCapacityBytes, "too much requested for lock. increase capacity of buffer" );
-		if( byteCount > mCapacityBytes ) {
-			CConsoleChannel& ch = CConsole::CON_WARNING;
-			ch << "DynaBuffer: too much requested for lock" << endl;
-			ch << "req bytes=" << byteCount << ", capacity bytes=" << mCapacityBytes << endl;
-			ch << "req verts=" << count << ", capacity verts=" << mCapacityBytes/stride << endl;
+		if (byteCount > mCapacityBytes) {
 			return TChunkPtr();
 		}
 		int modulo = mUsedBytes%stride;

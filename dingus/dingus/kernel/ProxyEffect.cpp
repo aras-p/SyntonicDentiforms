@@ -8,7 +8,6 @@
 
 #include "ProxyEffect.h"
 #include "D3DDevice.h"
-#include "../console/Console.h"
 #include "../utils/Errors.h"
 
 using namespace dingus;
@@ -34,7 +33,6 @@ void CD3DXEffect::init()
 	if( !ok ) {
 		// no valid technique found, throw exception
 		std::string msg = "no valid techniques found in effect";
-		CConsole::CON_ERROR.write( msg );
 		THROW_ERROR( msg );
 	}
 }

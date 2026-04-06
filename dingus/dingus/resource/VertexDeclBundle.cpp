@@ -44,7 +44,6 @@ IDirect3DVertexDeclaration9* CVertexDeclBundle::createDecl( const CVertexDesc& d
 	hres = CD3DDevice::getInstance().getDevice().CreateVertexDeclaration( els, &decl );
 	if( FAILED( hres ) ) {
 		std::string msg = "failed to create vertex decl";
-		CConsole::CON_ERROR.write(msg);
 		THROW_DXERROR( hres, msg );
 	}
 	assert( decl );

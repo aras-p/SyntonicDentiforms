@@ -47,7 +47,6 @@ CAnimationBunch* CAnimationBundle::loadResourceById( const CResourceId& id, cons
 	fread( &magic, 1, 4, f );
 	if( magic[0]!='D' || magic[1]!='A' || magic[2]!='N' || magic[3]!='I' ) {
 		std::string msg = "file isn't valid anim file! '" + fullName.getUniqueName() + "'";
-		CConsole::CON_ERROR.write( msg );
 		THROW_ERROR( msg );
 	}
 	// read anim type
@@ -80,15 +79,12 @@ CAnimationBunch* CAnimationBundle::loadResourceById( const CResourceId& id, cons
 	default:
 		{
 			std::string msg = "file contains unknown animation type! '" + fullName.getUniqueName() + "'";
-			CConsole::CON_WARNING.write( msg );
 			assert( false );
 		}
 	}
 
 	// close file
 	fclose( f );
-
-	CONSOLE.write( "animation loaded '" + id.getUniqueName() + "'" );
 
 	return bunch;
 }

@@ -7,13 +7,10 @@
 #define __RESOURCE_BUNDLE_H
 
 #include "ResourceId.h"
-#include "../console/Console.h"
 
 namespace dingus {
 
 class IResourceBundle {
-public:
-	static CConsoleChannel& CONSOLE;
 public:
 	virtual ~IResourceBundle() = 0 {};
 };

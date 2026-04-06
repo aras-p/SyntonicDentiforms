@@ -5,12 +5,6 @@
 #include <dingus/gfx/RenderableOrderedBillboards.h>
 
 // --------------------------------------------------------------------------
-// time
-
-#define TIME (float)CSystemClock::getInstance().getTime()
-#define DTIME (float)CSystemClock::getInstance().getLastPerformDuration()
-
-// --------------------------------------------------------------------------
 // misc
 
 #define RID_IB_QUADSTRIP "ibqstrip"

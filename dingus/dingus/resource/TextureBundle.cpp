@@ -45,7 +45,6 @@ IDirect3DTexture9* CTextureBundle::loadTexture( const CResourceId& id, const CRe
 		return NULL;
 
 	assert( texture );
-	CONSOLE.write( "texture loaded '" + id.getUniqueName() + "'" );
 	return texture;
 }
 

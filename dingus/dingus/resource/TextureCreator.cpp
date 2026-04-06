@@ -9,7 +9,6 @@
 #include "TextureCreator.h"
 #include "../utils/Errors.h"
 #include "../kernel/D3DDevice.h"
-#include "../console/Console.h"
 
 using namespace dingus;
 
@@ -33,7 +32,6 @@ IDirect3DTexture9* CFixedTextureCreator::createTexture()
 		&texture, NULL );
 	if( FAILED( hr ) ) {
 		std::string msg = "failed to create texture";
-		CConsole::CON_ERROR.write(msg);
 		THROW_DXERROR( hr, msg );
 	}
 	assert( texture );
@@ -56,7 +54,6 @@ IDirect3DTexture9* CScreenBasedTextureCreator::createTexture()
 		&texture, NULL );
 	if( FAILED( hr ) ) {
 		std::string msg = "failed to create texture";
-		CConsole::CON_ERROR.write(msg);
 		THROW_DXERROR( hr, msg );
 	}
 	assert( texture );
@@ -90,7 +87,6 @@ IDirect3DTexture9* CScreenBasedPow2TextureCreator::createTexture()
 		&texture, NULL );
 	if( FAILED( hr ) ) {
 		std::string msg = "failed to create texture";
-		CConsole::CON_ERROR.write(msg);
 		THROW_DXERROR( hr, msg );
 	}
 	assert( texture );

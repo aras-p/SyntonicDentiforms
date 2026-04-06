@@ -11,12 +11,8 @@
 
 #include <dingus/gfx/geometry/DynamicVBManager.h>
 
-#include <dingus/console/WDebugConsoleRenderingContext.h>
-
-
 CSystem::CSystem()
-:	mStdConsoleCtx(0),
-	mAppInited( false )
+:	mAppInited( false )
 {
 	mCreationWidth			= 640;
 	mCreationHeight 		= 480;
@@ -40,12 +36,6 @@ CSystem::CSystem()
 	mEnumeration.mMinStencilBits		= 0;
 	mEnumeration.mUsesMixedVP			= true;
 	mDataPath = "data/";
-
-	// init console
-#ifdef _DEBUG
-	mStdConsoleCtx = new CWDebugConsoleRenderingContext();
-	dingus::CConsole::getInstance().setDefaultRenderingContext( *mStdConsoleCtx );
-#endif
 };
 
 
@@ -154,16 +144,10 @@ HRESULT CSystem::activateDeviceObjects()
  */
 HRESULT CSystem::performOneTime()
 {
-	dingus::CD3DDevice& device = dingus::CD3DDevice::getInstance();
-
-	dingus::CSystemClock& c = dingus::CSystemClock::getInstance();
-	c.setTimes( mTime, mElapsedTime, c.getPerformCount()+1 );
-
-	//
-	// pipeline
+	//dingus::CSystemClock& c = dingus::CSystemClock::getInstance();
+	//c.setTimes( mTime, mElapsedTime, c.getPerformCount()+1 );
 
 	appPerform();
-
 	return S_OK;
 }
 
@@ -242,11 +226,6 @@ HRESULT CSystem::shutdown()
 	CSharedTextureBundle::finalize();
 	CSharedSurfaceBundle::finalize();
 	CIndexBufferBundle::finalize();
-
-	dingus::CSystemClock::finalize();
-	if( mStdConsoleCtx )
-		delete mStdConsoleCtx;
-	dingus::CConsole::finalize();
 
 	return S_OK;
 }

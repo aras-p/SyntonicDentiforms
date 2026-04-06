@@ -315,8 +315,7 @@ void CDemo::appInitialize()
 void gHackyKeyboard()
 {
 #ifndef WITHMUSIC
-	float dt = DTIME;
-	//float dt = 1.0f / 50.0f;
+	float dt = 1.0f / 60.0f;
 	if( GetAsyncKeyState(VK_LEFT) )		gDebugTime -= dt * 1.0f;
 	if( GetAsyncKeyState(VK_RIGHT) )	gDebugTime += dt * 1.0f;
 	if( GetAsyncKeyState(VK_PRIOR) )	gDebugTime -= dt * 5.0f;

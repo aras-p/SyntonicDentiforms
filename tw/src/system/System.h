@@ -6,7 +6,6 @@
 
 namespace dingus {
 	class CDeviceResourceManager;
-	class IConsoleRenderingContext;
 };
 
 
@@ -36,7 +35,6 @@ protected:
 private:
 	std::string 						mDataPath;
 	dingus::CDeviceResourceManager*		mDeviceManager;
-	dingus::IConsoleRenderingContext*	mStdConsoleCtx;
 	bool	mAppInited;
 };
 

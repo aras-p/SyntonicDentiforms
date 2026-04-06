@@ -14,9 +14,6 @@ add_library(dingus STATIC
     dingus/dingus/animator/AnimationBunch.cpp
     dingus/dingus/animator/AnimType.cpp
 
-    dingus/dingus/console/Console.cpp
-    dingus/dingus/console/WDebugConsoleRenderingContext.cpp
-
     dingus/dingus/dxutils/D3DApplication.cpp
     dingus/dingus/dxutils/D3DEnumeration.cpp
     dingus/dingus/dxutils/D3DSettings.cpp
@@ -33,7 +30,6 @@ add_library(dingus STATIC
 
     dingus/dingus/kernel/D3DDevice.cpp
     dingus/dingus/kernel/ProxyEffect.cpp
-    dingus/dingus/kernel/SystemClock.cpp
 
     dingus/dingus/math/Vector3.cpp
 
@@ -50,7 +46,6 @@ add_library(dingus STATIC
     dingus/dingus/resource/IndexBufferBundle.cpp
     dingus/dingus/resource/MeshBundle.cpp
     dingus/dingus/resource/MeshSerializer.cpp
-    dingus/dingus/resource/ResourceBundle.cpp
     dingus/dingus/resource/SharedSurfaceBundle.cpp
     dingus/dingus/resource/SharedTextureBundle.cpp
     dingus/dingus/resource/SurfaceCreator.cpp

@@ -43,7 +43,6 @@ IDirect3DIndexBuffer9* CIndexBufferBundle::createIB( const SIndexBufferDesc& d )
 		&ib, NULL );
 	if( FAILED( hres ) ) {
 		std::string msg = "failed to create IB";
-		CConsole::CON_ERROR.write(msg);
 		THROW_DXERROR( hres, msg );
 	}
 	assert( ib );

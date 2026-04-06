@@ -8,7 +8,6 @@
 
 #include "ResourceBundle.h"
 #include "ResourceId.h"
-#include "../console/Console.h"
 #include "../utils/Errors.h"
 
 
@@ -40,7 +39,6 @@ public:
 		}
 		// error
 		std::string msg = "Can't find resource '" + id.getUniqueName() + "'";
-		CConsole::CON_ERROR.write( msg );
 		THROW_ERROR( msg );
 	}
 
