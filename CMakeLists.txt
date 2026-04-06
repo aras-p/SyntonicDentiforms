@@ -66,7 +66,6 @@ add_library(dingus STATIC
 
     dingus/dingus/utils/Errors.cpp
     dingus/dingus/utils/MemoryPool.cpp
-    dingus/dingus/utils/mmgr.cpp
     dingus/dingus/utils/StringHelper.cpp
     dingus/dingus/utils/Timer.cpp
 )

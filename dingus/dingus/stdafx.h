@@ -51,9 +51,6 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
-// Memory manager. Intended for debug only, otherwise just comment this out.
-#include "utils/mmgr.h"
-
 // common
 #include "utils/intrusive_ptr.h"
 #include "utils/MemUtil.h"
