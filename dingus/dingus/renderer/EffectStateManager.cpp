@@ -9,6 +9,10 @@
 #include "EffectStateManager.h"
 #include "../kernel/D3DDevice.h"
 
+// {79AAB587-6DBC-4fa7-82DE-37FA1781C5CE}
+extern "C" const GUID __declspec(selectany) IID_ID3DXEffectStateManager = { 0x79aab587, 0x6dbc, 0x4fa7, 0x82, 0xde, 0x37, 0xfa, 0x17, 0x81, 0xc5, 0xce };
+
+
 using namespace dingus;
 
 // define for testing only
