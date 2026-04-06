@@ -40,14 +40,11 @@ public:
 class CRenderable : public CSimpleNotifier<IRenderListener> {
 public:
 	CRenderable( const SVector3* origin = 0, int priority = 0 )
-		: mOrigin(origin), mPriority(priority) { };
+		: mOrigin(origin) { };
 	virtual ~CRenderable() = 0 { };
 
 	const CEffectParams& getParams() const { return mParams; }
 	CEffectParams& getParams() { return mParams; }
-
-	int getPriority() const { return mPriority; }
-	void setPriority( int priority ) { mPriority = priority; }
 
 	const SVector3* getOrigin() const { return mOrigin; }
 	void setOrigin( const SVector3* o ) { mOrigin = o; }
@@ -73,8 +70,6 @@ public:
 private:
 	// Effect and it's params
 	CEffectParams	mParams;
-	// Render priority. Renderables with lesser priority will be rendered sooner.
-	int				mPriority;
 	// Origin of the renderable object, used for sorting. May be null.
 	const SVector3*	mOrigin;
 };

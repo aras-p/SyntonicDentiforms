@@ -23,7 +23,6 @@ public:
 	const SMatrix4x4& getViewMatrix() const { return mViewMatrix; }
 	const SMatrix4x4& getViewProjMatrix() const { return mViewProjMatrix; }
 	const SMatrix4x4& getProjectionMatrix() const { return mProjectionMatrix; };
-	const SVector4& getEye() const { return mEye; }
 	const SVector3& getEye3() const { return mCameraMatrix.getOrigin(); }
 	
 private:
@@ -35,7 +34,6 @@ private:
 	SMatrix4x4		mViewMatrix;
 	SMatrix4x4		mViewProjMatrix;
 	SMatrix4x4		mCameraRotMatrix;
-	SVector4		mEye;
 };
 
 

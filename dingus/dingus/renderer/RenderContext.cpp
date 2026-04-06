@@ -61,12 +61,6 @@ struct SRenderableSorter {
 		if( ra == rb )
 			return false;
 
-		// priority
-		int apri = ra->getPriority();
-		int bpri = rb->getPriority();
-		if( apri != bpri )
-			return apri < bpri;
-
 		const CD3DXEffect* ea = ra->getParams().getEffect();
 		const CD3DXEffect* eb = rb->getParams().getEffect();
 
