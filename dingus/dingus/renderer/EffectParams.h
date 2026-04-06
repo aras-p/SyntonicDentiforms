@@ -59,12 +59,6 @@ public:
 
 	void addTexture( TParamName name, const CD3DTexture& t ) { addProxy( name, t ); }
 	void removeTexture( TParamName name ) { removeParamProxy(name); }
-	void addCubeTexture( TParamName name, const CD3DCubeTexture& t ) { addProxy( name, t ); }
-	void removeCubeTexture( TParamName name ) { removeParamProxy(name); }
-	void addPixelShader( TParamName name, const CD3DPixelShader& t ) { addProxy( name, t ); }
-	void removePixelShader( TParamName name ) { removeParamProxy(name); }
-	void addVertexShader( TParamName name, const CD3DVertexShader& t ) { addProxy( name, t ); }
-	void removeVertexShader( TParamName name ) { removeParamProxy(name); }
 
 	void addPtr( TParamName name, int size, const void* ptr );
 

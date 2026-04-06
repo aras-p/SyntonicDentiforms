@@ -25,9 +25,6 @@ public:
 private:
 	CMesh*	mMesh;
 	int		mGroup;
-
-	//D3DXATTRIBUTERANGE	mAttrRange;
-	//unsigned int		mStride;
 };
 
 

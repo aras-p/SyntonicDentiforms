@@ -37,26 +37,6 @@ void CLineRenderer::renderStrip( int npoints, const SLinePoint* points, float ha
 	for( int i = 1; i < npoints; ++i ) {
 		const SLinePoint& ptA = points[i-1];
 		const SLinePoint& ptB = points[i];
-		//SVector3 camA, camB;
-		//D3DXVec3TransformCoord( &camA, &ptA.pos, &camViewMat );
-		//D3DXVec3TransformCoord( &camB, &ptB.pos, &camViewMat );
-
-		/*
-		// line direction on XZ plane
-		D3DXVECTOR2 lineDir( camB.x-camA.x, camB.y-camA.y );
-		D3DXVec2Normalize( &lineDir, &lineDir );
-
-		// perpendicular to line direction vector, scaled by halfWidth
-		float width2 = -lineDir.y * halfWidth;
-		float height2 = lineDir.x * halfWidth;
-
-		// transform by camera
-		SVector3 corner1( width2, height2, 0.0f );
-		SVector3 corner2( -width2, -height2, 0.0f );
-		SVector3 c1, c2;
-		D3DXVec3TransformCoord( &c1, &corner1, &camRotMat );
-		D3DXVec3TransformCoord( &c2, &corner2, &camRotMat );
-		*/
 		SVector3 segDir = ptB.pos - ptA.pos;
 		SVector3 side = segDir.cross( ptB.pos - camPos );
 		side.normalize();
