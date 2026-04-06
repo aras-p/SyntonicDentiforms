@@ -14,9 +14,6 @@
 
 using namespace dingus;
 
-DEFINE_POOLED_ALLOC(dingus::CRenderableMesh,256,false);
-
-
 CRenderableMesh::CRenderableMesh( CMesh& mesh, int group, const SVector3* origin, int priority )
 :	CRenderable( origin, priority ),
 	mMesh( &mesh ),

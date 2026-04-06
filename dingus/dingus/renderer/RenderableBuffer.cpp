@@ -13,9 +13,6 @@
 using namespace dingus;
 
 
-DEFINE_POOLED_ALLOC(dingus::CRenderableBuffer,128,false);
-DEFINE_POOLED_ALLOC(dingus::CRenderableIndexedBuffer,128,false);
-
 // --------------------------------------------------------------------------
 //  CAbstractRenderableBuffer
 // --------------------------------------------------------------------------
@@ -69,33 +66,6 @@ void CAbstractRenderableBuffer::unapplyStreams()
 	for( int q = 0; q <= mLargestActiveStream; ++q )
 		device.setVertexBuffer( q, NULL, 0, 0 );
 		*/
-}
-
-
-// --------------------------------------------------------------------------
-//  CRenderableBuffer
-// --------------------------------------------------------------------------
-
-CRenderableBuffer::CRenderableBuffer( const SVector3* origin, int priority )
-:	CAbstractRenderableBuffer( origin, priority ),
-	mStartVertex( 0 )
-{
-}
-
-
-void CRenderableBuffer::render( CRenderContext const& ctx )
-{
-	if( getLargestActiveStream() < 0 )
-		return;
-	if( getPrimCount() == 0 )
-		return;
-
-	CD3DDevice& device = CD3DDevice::getInstance();
-	IDirect3DDevice9& dx = device.getDevice();
-	
-	applyStreams();
-	dx.DrawPrimitive( getPrimType(), mStartVertex, getPrimCount() );
-	unapplyStreams();
 }
 
 

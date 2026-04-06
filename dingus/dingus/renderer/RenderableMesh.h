@@ -8,7 +8,6 @@
 
 #include "Renderable.h"
 #include "../gfx/Mesh.h"
-#include "../utils/MemoryPool.h"
 
 
 namespace dingus {
@@ -23,8 +22,6 @@ public:
 
 	virtual void render( const CRenderContext& ctx );
 	
-private:
-	DECLARE_POOLED_ALLOC(dingus::CRenderableMesh);
 private:
 	CMesh*	mMesh;
 	int		mGroup;

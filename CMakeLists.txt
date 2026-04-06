@@ -59,7 +59,6 @@ add_library(dingus STATIC
     dingus/dingus/resource/VertexDeclBundle.cpp
 
     dingus/dingus/utils/Errors.cpp
-    dingus/dingus/utils/MemoryPool.cpp
     dingus/dingus/utils/StringHelper.cpp
     dingus/dingus/utils/Timer.cpp
 )

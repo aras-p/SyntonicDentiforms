@@ -8,7 +8,6 @@
 
 #include "Renderable.h"
 #include "../kernel/Proxies.h"
-#include "../utils/MemoryPool.h"
 
 
 namespace dingus {
@@ -80,29 +79,6 @@ private:
 // --------------------------------------------------------------------------
 
 /**
- *  Vertex buffer renderable.
- */
-class CRenderableBuffer : public CAbstractRenderableBuffer {
-public:
-	CRenderableBuffer( const SVector3* origin = 0, int priority = 0 );
-
-	/** Set vertex index to start rendering from. */
-	void setStartVertex( int startVertex ) { mStartVertex = startVertex; }
-	/** Get vertex index to start rendering from. */
-	int getStartVertex() const { return mStartVertex; }
-	
-	virtual void render( const CRenderContext& ctx );
-	
-private:
-	DECLARE_POOLED_ALLOC(dingus::CRenderableBuffer);
-private:
-	int	mStartVertex;
-};
-
-
-// --------------------------------------------------------------------------
-
-/**
  *  Indexed vertex buffer renderable.
  */
 class CRenderableIndexedBuffer : public CAbstractRenderableBuffer {
@@ -139,8 +115,6 @@ public:
 
 	virtual void render( const CRenderContext& ctx );
 	
-private:
-	DECLARE_POOLED_ALLOC(dingus::CRenderableIndexedBuffer);
 private:
 	CD3DIndexBuffer*	mIB;
 	int		mBaseVertex;
