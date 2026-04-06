@@ -77,13 +77,6 @@ target_compile_definitions(dingus PRIVATE
     NOMINMAX
 )
 
-target_compile_options(dingus PRIVATE
-    /W3
-    /EHsc
-    $<$<CONFIG:Debug>:  /MDd /Od /Zi /RTC1>
-    $<$<CONFIG:Release>:/MD /O2 /Zi>
-)
-
 target_precompile_headers(dingus PRIVATE dingus/dingus/stdafx.h)
 
 add_executable(Demo WIN32
@@ -117,6 +110,11 @@ target_include_directories(Demo PRIVATE
 
 target_link_directories(Demo PRIVATE ${DXSDK_DIR}/Lib/x86)
 
+set_property(TARGET dingus PROPERTY CXX_STANDARD 17)
+set_property(TARGET dingus PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set_property(TARGET Demo PROPERTY CXX_STANDARD 17)
+set_property(TARGET Demo PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 target_compile_definitions(Demo PRIVATE
     WIN32
     _WINDOWS
@@ -125,13 +123,6 @@ target_compile_definitions(Demo PRIVATE
     $<$<CONFIG:Release>:NDEBUG>
     _CRT_SECURE_NO_WARNINGS
     NOMINMAX
-)
-
-target_compile_options(Demo PRIVATE
-    /W3
-    /EHsc
-    $<$<CONFIG:Debug>:  /MDd /Od /Zi /RTC1>
-    $<$<CONFIG:Release>:/MD /O2 /Zi>
 )
 
 target_precompile_headers(Demo PRIVATE tw/src/stdafx.h)
