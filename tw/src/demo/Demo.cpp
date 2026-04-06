@@ -308,7 +308,7 @@ void CDemo::appInitialize()
 #ifdef WITHMUSIC
 	gMusicPlayer = new CMusicPlayer();
 	gMusicPlayer->play( "data/music.ogg" );
-	gSceneStartTime = GET_TIME - DELAY_ACTION;
+	gSceneStartTime = float(GET_TIME - DELAY_ACTION);
 #else
 	gSceneMode = SC_SCENE;
 	gSceneIndex = 5;
@@ -557,7 +557,7 @@ void CDemo::appPerform()
 
 	double t = GET_TIME;
 	const double musicTime = t - DELAY_ACTION;
-	float st = t - gSceneStartTime;
+	float st = float(t - gSceneStartTime);
 	float sceneDur = gGetSceneDur();
 
 	CD3DDevice& dx = CD3DDevice::getInstance();
@@ -593,9 +593,9 @@ void CDemo::appPerform()
 	if( gCut.isInCut() ) {
 		if( !gIsLastCut() ) {
 			double cutDur = t - gCut.startTime;
-			float cutAlpha = cutDur / gCut.duration;
+			float cutAlpha = float(cutDur / gCut.duration);
 			sceneAlpha = gCut.curr + cutAlpha*0.01f;
-			gSceneStartTime = gCut.sceneStartTime + cutDur;
+			gSceneStartTime = float(gCut.sceneStartTime + cutDur);
 			if( cutDur >= gCut.duration ) {
 				float sdur = sceneDur;
 				if( gSceneMode == SC_OUTER )
@@ -673,7 +673,7 @@ void CDemo::appPerform()
 	// render credits
 
 	if( gCut.isInCut() && gSceneIndex!=SCENES-1 ) {
-		float cutAlpha = (t - gCut.startTime) / gCut.duration;
+		float cutAlpha = float((t - gCut.startTime) / gCut.duration);
 		gRenderCredits( cutAlpha );
 	}
 	
@@ -685,9 +685,9 @@ void CDemo::appPerform()
 		const double OVERSAMPLE = 1.0 / SYNCH_LEN;
 		double synt = musicTime / (SYNCH_LEN/30.0);
 		SVector3 beatPos0, beatPos1, beatPos2;
-		gAnimSynch->samplePos( synt - OVERSAMPLE, beatPos0 );
-		gAnimSynch->samplePos( synt, beatPos1 );
-		gAnimSynch->samplePos( synt + OVERSAMPLE, beatPos2 );
+		gAnimSynch->samplePos( float(synt - OVERSAMPLE), beatPos0 );
+		gAnimSynch->samplePos( float(synt), beatPos1 );
+		gAnimSynch->samplePos( float(synt + OVERSAMPLE), beatPos2 );
 		float beat = (beatPos0.y + beatPos1.y + beatPos2.y) * 0.08f;
 		beat = clamp( beat, 0.0f, 1.0f );
 		gOverlayColor2.set( beat, beat, beat, beat );
@@ -715,7 +715,7 @@ void CDemo::appPerform()
 	bool teethCut = false;
 	float cutTime = 0.0f;
 	if( gCut.isInCut() ) {
-		cutTime = t - gCut.startTime;
+		cutTime = float(t - gCut.startTime);
 		if( gSceneIndex == SCENES-1 ) {
 			CSceneTeeth* steeth = (CSceneTeeth*)gScenes[gSceneIndex];
 			steeth->renderTeethStuff( gCut.doneCount, sceneAlpha, cutTime/gCut.duration );
@@ -760,7 +760,7 @@ void CDemo::appPerform()
 				doClose();
 			}
 		}
-		gSceneStartTime = t;
+		gSceneStartTime = float(t);
 		gCut.reset();
 	}
 }

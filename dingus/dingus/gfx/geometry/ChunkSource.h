@@ -15,11 +15,11 @@ namespace dingus {
  *  Given the request to lock some element count, it provides a chunk
  *  object that represents the locked elements.
  */
-template<class CHUNK>
+template<typename CHUNK>
 class IChunkSource {
 public:
 	/** Smart pointer to chunk type. */
-	typedef	CHUNK::TSharedPtr	SHARED_CHUNK;
+	typedef typename CHUNK::TSharedPtr	SHARED_CHUNK;
 
 public:
 	virtual ~IChunkSource() = 0 {};

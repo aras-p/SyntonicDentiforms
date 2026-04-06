@@ -8,24 +8,24 @@
 
 namespace dingus {
 
-template< class _Ty, class _A = std::allocator<_Ty> >
+template< typename _Ty, typename _A = std::allocator<_Ty> >
 class fastvector {
 public:
 	typedef std::vector<_Ty, _A>	vector_type;
 public:
 	typedef fastvector<_Ty, _A>	this_type;
 
-	typedef vector_type::allocator_type allocator_type;
-	typedef vector_type::size_type size_type;
-	typedef vector_type::difference_type difference_type;
-	typedef vector_type::reference reference;
-	typedef vector_type::const_reference const_reference;
-	typedef vector_type::value_type value_type;
+	typedef typename vector_type::allocator_type allocator_type;
+	typedef typename vector_type::size_type size_type;
+	typedef typename vector_type::difference_type difference_type;
+	typedef typename vector_type::reference reference;
+	typedef typename vector_type::const_reference const_reference;
+	typedef typename vector_type::value_type value_type;
 
-	typedef vector_type::iterator iterator;
-	typedef vector_type::const_iterator const_iterator;
-	typedef vector_type::reverse_iterator reverse_iterator;
-	typedef vector_type::const_reverse_iterator const_reverse_iterator;
+	typedef typename vector_type::iterator iterator;
+	typedef typename vector_type::const_iterator const_iterator;
+	typedef typename vector_type::reverse_iterator reverse_iterator;
+	typedef typename vector_type::const_reverse_iterator const_reverse_iterator;
 
 private:
 	vector_type	v;

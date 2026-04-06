@@ -95,7 +95,7 @@ public:
 	public:
 		const_iterator()
 			{}
-		const_iterator( const TPoolletVector::const_iterator& plt, int idx = 0 )
+		const_iterator( const typename TPoolletVector::const_iterator& plt, int idx = 0 )
 			: mPoollet(plt), mIndex( idx ) { }
 		const_iterator( const const_iterator& ci )
 			: mPoollet(ci.mPoollet), mIndex(ci.mIndex) { }
@@ -128,7 +128,7 @@ public:
 		}
 
 	protected:
-		TPoolletVector::const_iterator	mPoollet;
+		typename TPoolletVector::const_iterator	mPoollet;
 		int								mIndex;
 	};
 
@@ -140,7 +140,7 @@ public:
 	public:
 		iterator()
 			{}
-		iterator( const TPoolletVector::iterator& plt, int idx = 0 )
+		iterator( const typename TPoolletVector::iterator& plt, int idx = 0 )
 			: mPoollet(plt), mIndex( idx ) { }
 		iterator( const iterator& ci )
 			: mPoollet(ci.mPoollet), mIndex(ci.mIndex) { }
@@ -172,13 +172,13 @@ public:
 			return !(*this == ci);
 		}
 
-		TPoolletVector::iterator&	getPoollet() { return mPoollet; }
-		const TPoolletVector::iterator& getPoollet() const { return mPoollet; }
+		typename TPoolletVector::iterator&	getPoollet() { return mPoollet; }
+		const typename TPoolletVector::iterator& getPoollet() const { return mPoollet; }
 		int& getIndex() { return mIndex; }
 		const int& getIndex() const { return mIndex; }
 
 	protected:
-		TPoolletVector::iterator	mPoollet;
+		typename TPoolletVector::iterator	mPoollet;
 		int							mIndex;
 	};
 
@@ -229,7 +229,7 @@ void CPool<T>::clear()
 }
 
 template<class T>
-T& CPool<T>::add( const T& value = T() )
+T& CPool<T>::add( const T& value )
 {
 	// search for space in poollets
 	TPoolletVector::iterator pli;
@@ -248,7 +248,7 @@ T& CPool<T>::add( const T& value = T() )
 }
 
 template<class T>
-CPool<T>::iterator CPool<T>::erase( iterator it )
+typename CPool<T>::iterator CPool<T>::erase( iterator it )
 {
 	TPoolletVector::iterator plti = it.getPoollet();
 	CPoollet& plt = **plti;

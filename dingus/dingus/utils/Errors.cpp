@@ -14,6 +14,6 @@ EBaseError::EBaseError( const std::string& msg, const char* fileName, int lineNu
 :	std::runtime_error( msg ), mFileName( fileName ), mLineNumber( lineNumber )
 {
 	char buf[100];
-	itoa( lineNumber, buf, 10 );
+	_itoa( lineNumber, buf, 10 );
 	mWhereMsg = msg + ' ' + fileName + ':' + buf;
 };

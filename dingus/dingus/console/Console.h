@@ -85,7 +85,7 @@ public:
 	CConsoleChannel& operator <<( CConsoleChannel& (__cdecl * _f)(CConsoleChannel&) ){  (*_f)(*this); return *this; };
 	CConsoleChannel& operator <<( const std::string& msg ) { buf += msg; return *this; }
 	CConsoleChannel& operator <<( const char* msg ) { buf += msg; return *this; }
-	CConsoleChannel& operator <<( int num ) { char msg[50]; itoa(num, msg, 10); buf += msg; return *this; }
+	CConsoleChannel& operator <<( int num ) { char msg[50]; _itoa(num, msg, 10); buf += msg; return *this; }
 	CConsoleChannel& operator <<( char c ) { buf += c; return *this; }
 	CConsoleChannel& operator <<( DWORD num ) { char msg[50]; sprintf(msg,"%u",num); buf += msg; return *this; }
 	CConsoleChannel& operator <<( float num ) { char msg[50]; sprintf(msg,"%g",num); buf += msg; return *this; }

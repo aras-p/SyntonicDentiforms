@@ -14,8 +14,8 @@ namespace dingus {
 	
 template <typename CHUNK, typename BUFFER>
 class CManagedBuffer {
-	typedef CHUNK::TSharedPtr		TChunkPtr;
-	typedef	fastvector<TChunkPtr>	TChunkVector;
+	typedef typename CHUNK::TSharedPtr		TChunkPtr;
+	typedef	typename fastvector<TChunkPtr>	TChunkVector;
 	
 public:
 	CManagedBuffer( int capacityBytes )
