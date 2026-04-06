@@ -79,7 +79,10 @@ target_include_directories(dingus PUBLIC
     ${CMAKE_SOURCE_DIR}/dingus
     ${DXSDK_DIR}/Include
 )
-target_link_directories(dingus PUBLIC ${DXSDK_DIR}/Lib/x86)
+target_link_directories(dingus PUBLIC
+    $<$<CONFIG:Debug>: ${DXSDK_DIR}/debug/lib/x86>
+    $<$<CONFIG:Release>: ${DXSDK_DIR}/release/lib/x86>
+)
 
 target_compile_definitions(dingus PRIVATE
     WIN32
@@ -88,6 +91,7 @@ target_compile_definitions(dingus PRIVATE
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
     _CRT_SECURE_NO_WARNINGS
+    NOMINMAX
 )
 
 target_compile_options(dingus PRIVATE
@@ -137,6 +141,7 @@ target_compile_definitions(Demo PRIVATE
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
     _CRT_SECURE_NO_WARNINGS
+    NOMINMAX
 )
 
 target_compile_options(Demo PRIVATE
@@ -150,9 +155,8 @@ target_precompile_headers(Demo PRIVATE tw/src/stdafx.h)
 
 target_link_libraries(Demo PRIVATE
     dingus
-    ${CMAKE_SOURCE_DIR}/tw/src/fmodvc.lib
     d3d9
-    $<$<CONFIG:Debug>:d3dx9dt>
+    $<$<CONFIG:Debug>:d3dx9d>
     $<$<CONFIG:Release>:d3dx9>
     winmm
     kernel32
