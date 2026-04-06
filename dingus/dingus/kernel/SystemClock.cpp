@@ -1,0 +1,20 @@
+// --------------------------------------------------------------------------
+// Dingus project - a collection of subsystems for game/graphics applications
+// Developed by nesnausk! team: www.nesnausk.org
+// --------------------------------------------------------------------------
+
+#include "../stdafx.h"
+#pragma hdrstop
+
+#include "SystemClock.h"
+
+using namespace dingus;
+
+
+void CSystemClock::setTimes( double time, double lastPerformDuration, int performCount )
+{
+	mTime = time-mResetTime;
+	mLastPerformDuration = lastPerformDuration;
+	mPerformCount = performCount;
+}
+

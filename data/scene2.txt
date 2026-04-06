@@ -1,0 +1,23 @@
+length = 600.0
+count = 7
+name=Outer  parent=NONE
+  pos=2.14691,-1.65539,3.92351
+  rot0=90.0,0.0,180.0 rot1=90.0,0.0,180.0 
+name=Axis  parent=NONE
+  pos=2.14691,-1.65539,-0.00161523
+  rot0=90.0,0.0,180.0 rot1=90.0,0.0,180.0 
+name=Inner  parent=NONE
+  pos=2.14691,-1.65539,2.10594
+  rot0=90.0,0.0,180.0 rot1=90.0,0.644578,180.0 
+name=GearC  parent=Inner
+  pos=-2.93496,1.01999,-5.0875
+  rot0=0.0,0.0,-11.4592 rot1=0.0,0.0,-4.29718 
+name=GearB  parent=GearC
+  pos=-1.9099e-007,4.42487e-007,6.65011e-007
+  rot0=3.2222e-007,0.0,0.0 rot1=3.2222e-007,0.0,0.0 
+name=GearA  parent=Inner
+  pos=-1.57201,0.218146,-2.7578
+  rot0=360.0,0.0,-11.4592 rot1=360.0,0.0,-35.33 
+name=InnerEnd  parent=Inner
+  pos=0.0,0.0,0.0
+  rot0=6.83019e-006,0.0,0.0 rot1=6.83019e-006,0.0,0.0 

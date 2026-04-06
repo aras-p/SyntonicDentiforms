@@ -1,0 +1,33 @@
+filterToon
+	2.0
+	//1.4, problems on Radeon 9000
+	1.1, two passes
+
+receiverHi
+	2.0	4 sample robust shadows
+	1.4	1 sample shadows, 2 passes
+	1.1	1 sample shadows, vertex lighting
+
+compositeAlpha
+	1.1 	Edge via LUT - faster
+	
+noShadowHi
+	2.0
+	1.1
+
+billboards, billboardsNoDestA
+	1.1
+caster, compositeAdd, lines
+	tss
+overlay, overlay2
+	1.1
+filterBloom
+	1.1
+noshadowHi
+	2.0
+	1.1
+receiverLo
+	1.1
+reflective
+	1.1
+	

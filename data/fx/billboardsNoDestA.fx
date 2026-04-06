@@ -1,0 +1,59 @@
+#include "_lib.fx"
+  
+texture		tBase;
+
+// --------------------------------------------------------------------------
+//  vertex shader
+
+VS_PCUV vsMain( VS_PCUV i )
+{
+    VS_PCUV o;
+	o.pos = i.pos;
+	o.pos.y = -o.pos.y;
+	o.color = i.color;
+	o.uv = i.uv;
+	return o;
+}
+
+// --------------------------------------------------------------------------
+//  pixel shader
+
+sampler smpBase = sampler_state {
+    Texture   = (tBase);
+    MipFilter = None;	MinFilter = Linear; MagFilter = Linear;
+    AddressU = Clamp; AddressV = Clamp;
+};
+
+float4 psMain( VS_PCUV i ) : COLOR
+{
+	float4 c = tex2D( smpBase, i.uv );
+	c *= i.color;
+	c.a = 1-c.a;
+	return c;
+}
+
+
+// --------------------------------------------------------------------------
+//  effect
+
+technique tec0 {
+	pass P0 {
+		VertexShader = compile vs_1_1 vsMain();
+		PixelShader = compile ps_1_1 psMain();
+
+		ZEnable = False;
+		ZWriteEnable = False;
+		CullMode = None;
+		
+		AlphaBlendEnable = True;
+		SrcBlend = InvSrcAlpha;
+		DestBlend = SrcAlpha;
+	}
+
+	pass PLast {
+		CullMode = <iCull>;
+		ZEnable = True;
+		ZWriteEnable = True;
+		AlphaBlendEnable = False;
+	}
+}
