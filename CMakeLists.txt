@@ -11,14 +11,6 @@ add_library(dingus STATIC
     dingus/dingus/animator/AnimationBunch.cpp
     dingus/dingus/animator/AnimType.cpp
 
-    #@TODO remove
-    #dingus/dingus/dxutils/D3DApplication.cpp
-    #dingus/dingus/dxutils/D3DEnumeration.cpp
-    #dingus/dingus/dxutils/D3DSettings.cpp
-    #dingus/dingus/dxutils/D3Dutil.cpp
-    #dingus/dingus/dxutils/DXUtil.cpp
-    #dingus/dingus/dxutils/DXUtils.rc
-
     dingus/dingus/gfx/geometry/DynamicVBManager.cpp
     dingus/dingus/gfx/Mesh.cpp
     dingus/dingus/gfx/RenderableOrderedBillboards.cpp
