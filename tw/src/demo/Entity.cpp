@@ -12,7 +12,7 @@ CCameraEntity::CCameraEntity()
 void CCameraEntity::setProjectionParams( float fov, float aspect, float znear, float zfar )
 {
 	mOrtho = false;
-	D3DXMatrixPerspectiveFovLH( &mProjectionMatrix, fov, aspect, znear, zfar );
+	mProjectionMatrix.perspectiveFovLH(fov, aspect, znear, zfar);
 	mFOV = fov;
 	mZNear = znear;
 	mZFar = zfar;
@@ -23,7 +23,7 @@ void CCameraEntity::setProjectionParams( float fov, float aspect, float znear, f
 void CCameraEntity::setOrthoParams( float width, float height, float znear, float zfar )
 {
 	mOrtho = true;
-	D3DXMatrixOrthoLH( &mProjectionMatrix, width, height, znear, zfar );
+	mProjectionMatrix.orthoLH(width, height, znear, zfar);
 	mZNear = znear;
 	mZFar = zfar;
 	mViewHalfWidth = width*0.5f;
@@ -53,7 +53,7 @@ dingus::SVector3 CCameraEntity::getWorldRay( float x, float y ) const
 	dingus::SMatrix4x4 m = mMatrix;
 	m.getOrigin().set(0,0,0);
 	dingus::SVector3 r = getCameraRay( x, y );
-	D3DXVec3TransformCoord( &r, &r, &m );
+	r = r.transformCoord(m);
 	return r;
 }
 

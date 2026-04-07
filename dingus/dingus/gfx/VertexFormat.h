@@ -90,29 +90,10 @@ public:
 
 	int calcVertexSize() const;
 	static int calcFloat3Size( eFloat3Mode flt3 );
-	static int calcFloat3Type( eFloat3Mode flt3 );
 	static int calcUVSize( eUVMode uv ) { return uv*4; }
-	static int calcUVType( eUVMode uv );
 	int calcSkinSize() const;
-	int calcSkinDataType() const;
 
-	//
-	// D3D vertex declaration building
-
-	/**
-	 *  Calculates the number of D3DVERTEXELEMENT9 enties that are needed to
-	 *  describe this vertex type.
-	 */
 	int calcComponentCount() const;
-
-	/**
-	 *  Fills in provided D3DVERTEXELEMENT9 array. The array must be of sufficient
-	 *  size (at least of calcComponentCount() value).
-	 *
-	 *  Sets the stream values and usage indices to stream parameter, except for UV
-	 *  coordinates - these are numbered from uvIdx.
-	 */
-	void calcVertexDecl( D3DVERTEXELEMENT9* elems, int stream, int uvIdx ) const;
 
 public:
 	bool operator< ( const CVertexFormat& fmt ) const { return mFormatBits < fmt.mFormatBits; }

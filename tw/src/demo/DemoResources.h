@@ -1,5 +1,8 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include <dingus/math/Vector4.h>
 #include <dingus/math/Matrix4x4.h>
 #include <dingus/gfx/RenderableOrderedBillboards.h>

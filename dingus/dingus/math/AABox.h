@@ -97,8 +97,8 @@ public:
 		v[5].set( mMax.x, mMin.y, mMax.z, 1.0f );
 		v[6].set( mMax.x, mMax.y, mMin.z, 1.0f );
 		v[7].set( mMax.x, mMax.y, mMax.z, 1.0f );
-		D3DXVec4TransformArray( v, sizeof(v[0]), v, sizeof(v[0]), &world, CORNERS );
-		D3DXVec4TransformArray( v, sizeof(v[0]), v, sizeof(v[0]), &viewProj, CORNERS );
+		SVector4TransformArray(v, v, &world, CORNERS);
+		SVector4TransformArray(v, v, &viewProj, CORNERS);
 		
 		int andFlags = 0xFFFF;
 		int orFlags  = 0;
@@ -145,7 +145,7 @@ public:
 		v[5].set( mMax.x, mMin.y, mMax.z, 1.0f );
 		v[6].set( mMax.x, mMax.y, mMin.z, 1.0f );
 		v[7].set( mMax.x, mMax.y, mMax.z, 1.0f );
-		D3DXVec4TransformArray( v, sizeof(v[0]), v, sizeof(v[0]), &worldViewProj, CORNERS );
+		SVector4TransformArray(v, v, &worldViewProj, CORNERS);
 		
 		int andFlags = 0xFFFF;
 		int orFlags  = 0;

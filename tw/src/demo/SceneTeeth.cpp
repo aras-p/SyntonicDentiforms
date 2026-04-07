@@ -182,8 +182,8 @@ void CSceneTeeth::initialize()
 		mesh.parent = parentname;
 		mesh.parentIdx = -1;
 		mesh.pos = pos;
-		mesh.rot = rot0 * (D3DX_PI/180.0f);
-		mesh.rotVel = (rot1-rot0) * (mLength*D3DX_PI/180.0f);
+		mesh.rot = rot0 * (M_PI/180.0f);
+		mesh.rotVel = (rot1-rot0) * (mLength* M_PI /180.0f);
 
 		// teeth?
 		if( CStringHelper::startsWith( mesh.name, "Tooth" ) ) {
@@ -254,8 +254,7 @@ void CSceneTeeth::evaluateMeshes( float t )
 				m = m * mMeshes[mGearsIdx[mesh.parentIdx]].mesh->mMatrix;
 			} else {
 				// animate
-				D3DXMatrixRotationQuaternion( &m, ta.mQuats[j] );
-				m.getOrigin() = ta.mVectors[j];
+				m = SMatrix4x4(ta.mVectors[j], ta.mQuats[j]);
 			}
 		}
 	}
@@ -318,7 +317,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 			bill->x2 = bill->x1 + BSIZE;
 			const float toothY = bill->y2 = bill->y1 + BSIZE*aspect / (ratios[pack][i]);
 			bill->texture = RGET_TEX(names[pack][i])->view_tex;
-			D3DXCOLOR c( 1, 1, 1, billAlpha );
+			uint32_t c = SVector4(1, 1, 1, billAlpha).toRGBA();
 			if( masks ) {
 				bill->x1 -= MEDGE;
 				bill->y1 -= MEDGE*aspect;
@@ -359,7 +358,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 		bill->y1 = -GRP_HEIGHT/2;
 		bill->x2 = GRP_WIDTH/2;
 		bill->y2 = GRP_HEIGHT/2;
-		D3DXCOLOR c( 1, 1, 1, 0.0f );
+		SVector4 c = SVector4( 1, 1, 1, 0.0f );
 		if( masks ) {
 			bill->x1 -= MEDGE*5;
 			bill->y1 -= MEDGE*5*aspect;
@@ -370,11 +369,11 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 			bill->y1 *= scale;
 			bill->x2 *= scale;
 			bill->y2 *= scale;
-			c.a = relT*3;
+			c.w = relT*3;
 		} else {
-			c.a = (relT-2);
+			c.w = (relT-2);
 		}
-		bill->color = c;
+		bill->color = c.toRGBA();
 		bill->texture = RGET_TEX("BondigoDuo")->view_tex;
 		bill->setWholeTexture();
 	}

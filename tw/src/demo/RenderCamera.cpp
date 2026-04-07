@@ -24,7 +24,9 @@ void CRenderCamera::setCameraMatrix( SMatrix4x4 const& matrix )
 	mCameraMatrix = matrix;
 	mCameraRotMatrix = matrix;
 	mCameraRotMatrix.getOrigin().set(0,0,0);
-	D3DXMatrixInverse( &mViewMatrix, NULL, &mCameraMatrix );
+
+	mViewMatrix = mCameraMatrix;
+	mViewMatrix.invert();
 	mViewProjMatrix = mViewMatrix * mProjectionMatrix;
 }
 

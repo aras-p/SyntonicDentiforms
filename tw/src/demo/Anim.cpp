@@ -41,8 +41,7 @@ void CAnim::sample( float t, SMatrix4x4& dest ) const
 	else
 		scale = mDefaultScale;
 
-	D3DXMatrixRotationQuaternion( &dest, &rot );
-	dest.getOrigin() = pos;
+	dest = SMatrix4x4(pos, rot);
 	dest.getAxisX() *= scale;
 	dest.getAxisY() *= scale;
 	dest.getAxisZ() *= scale;

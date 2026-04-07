@@ -5,21 +5,19 @@ if(NOT WIN32)
     message(FATAL_ERROR "Windows only for now")
 endif()
 
-# for now assume legacy DX SDK is installed here locally
-set(DXSDK_DIR "${CMAKE_SOURCE_DIR}/dxsdk" CACHE PATH "DirectX SDK root directory")
-
 add_library(dingus STATIC
     dingus/dingus/stdafx.cpp
 
     dingus/dingus/animator/AnimationBunch.cpp
     dingus/dingus/animator/AnimType.cpp
 
-    dingus/dingus/dxutils/D3DApplication.cpp
-    dingus/dingus/dxutils/D3DEnumeration.cpp
-    dingus/dingus/dxutils/D3DSettings.cpp
-    dingus/dingus/dxutils/D3Dutil.cpp
-    dingus/dingus/dxutils/DXUtil.cpp
-    dingus/dingus/dxutils/DXUtils.rc
+    #@TODO remove
+    #dingus/dingus/dxutils/D3DApplication.cpp
+    #dingus/dingus/dxutils/D3DEnumeration.cpp
+    #dingus/dingus/dxutils/D3DSettings.cpp
+    #dingus/dingus/dxutils/D3Dutil.cpp
+    #dingus/dingus/dxutils/DXUtil.cpp
+    #dingus/dingus/dxutils/DXUtils.rc
 
     dingus/dingus/gfx/geometry/DynamicVBManager.cpp
     dingus/dingus/gfx/Mesh.cpp
@@ -28,6 +26,7 @@ add_library(dingus STATIC
     dingus/dingus/gfx/VertexFormat.cpp
 
     dingus/dingus/math/Vector3.cpp
+    dingus/dingus/math/Vector4.cpp
 
     dingus/dingus/renderer/RenderableMesh.cpp
 
@@ -44,11 +43,8 @@ add_library(dingus STATIC
 
 target_include_directories(dingus PUBLIC
     ${CMAKE_SOURCE_DIR}/dingus
-    ${DXSDK_DIR}/Include
 )
 target_link_directories(dingus PUBLIC
-    $<$<CONFIG:Debug>: ${DXSDK_DIR}/debug/lib/x86>
-    $<$<CONFIG:Release>: ${DXSDK_DIR}/release/lib/x86>
 )
 
 target_compile_definitions(dingus PRIVATE
@@ -90,10 +86,7 @@ add_executable(Demo WIN32
 target_include_directories(Demo PRIVATE
     ${CMAKE_SOURCE_DIR}/dingus
     ${CMAKE_SOURCE_DIR}/tw/src
-    ${DXSDK_DIR}/Include
 )
-
-target_link_directories(Demo PRIVATE ${DXSDK_DIR}/Lib/x86)
 
 set_property(TARGET dingus PROPERTY CXX_STANDARD 17)
 set_property(TARGET dingus PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -114,9 +107,6 @@ target_precompile_headers(Demo PRIVATE tw/src/stdafx.h)
 
 target_link_libraries(Demo PRIVATE
     dingus
-    d3d9
-    $<$<CONFIG:Debug>:d3dx9d>
-    $<$<CONFIG:Release>:d3dx9>
     winmm
     kernel32
     user32

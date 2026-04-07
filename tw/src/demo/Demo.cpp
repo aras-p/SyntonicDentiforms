@@ -413,6 +413,25 @@ bool demo_init()
 	return true;
 }
 
+static void ReflectMatrix(SMatrix4x4& out, const SPlane& plane)
+{
+	SPlane nplane = plane.normalize();
+
+	out.identify();
+	out.m[0][0] = 1.0f - 2.0f * nplane.a * nplane.a;
+	out.m[0][1] = -2.0f * nplane.a * nplane.b;
+	out.m[0][2] = -2.0f * nplane.a * nplane.c;
+	out.m[1][0] = -2.0f * nplane.a * nplane.b;
+	out.m[1][1] = 1.0f - 2.0f * nplane.b * nplane.b;
+	out.m[1][2] = -2.0f * nplane.b * nplane.c;
+	out.m[2][0] = -2.0f * nplane.c * nplane.a;
+	out.m[2][1] = -2.0f * nplane.c * nplane.b;
+	out.m[2][2] = 1.0f - 2.0f * nplane.c * nplane.c;
+	out.m[3][0] = -2.0f * nplane.d * nplane.a;
+	out.m[3][1] = -2.0f * nplane.d * nplane.b;
+	out.m[3][2] = -2.0f * nplane.d * nplane.c;
+}
+
 void gRenderWallReflections()
 {
 	assert( gSceneMode == SC_SCENE );
@@ -438,7 +457,7 @@ void gRenderWallReflections()
 
 		SPlane reflPlane( planePos[currWall] + planeNrm[currWall]*0.05f, planeNrm[currWall] );
 		SMatrix4x4 reflectMat;
-		D3DXMatrixReflect( &reflectMat, &reflPlane );
+		ReflectMatrix(reflectMat, reflPlane);
 		
 		gWallCamera.mMatrix = gCamera.mMatrix * reflectMat;
 		gWallCamera.setProjFrom( gCamera );
@@ -479,7 +498,7 @@ void gRenderShadowMap()
 {
 	assert( gSceneMode == SC_SCENE );
 
-	gLightCamera.setProjectionParams( D3DX_PI/3, 1.0f, 0.2f, 35.0f );
+	gLightCamera.setProjectionParams( M_PI/3, 1.0f, 0.2f, 35.0f );
 	gLightCamera.setOntoRenderContext();
 	gLightViewProjMatrix = gRenderCam.getViewProjMatrix();
 
@@ -593,7 +612,7 @@ static void gRenderCredits( float cutAlpha )
 			if( dist > 0.6f )
 				ptA = 1.0f - (dist-0.6f)*3;
 		}
-		linepts[i].color = D3DXCOLOR(1,0,0,ptA);
+		linepts[i].color = SVector4(1,0,0,ptA).toRGBA();
 	}
 	gLineRenderer->renderStrip( LINE_PTS, linepts, lineWidth );
 
@@ -602,7 +621,7 @@ static void gRenderCredits( float cutAlpha )
 
 	sokol_texture* btex = RGET_TEX(outer?"CreditsB":"CreditsA");
 	const int BILLCOUNT = 16;
-	const D3DCOLOR BILLCOL = 0x18ffffff;
+	const uint32_t BILLCOL = 0x18ffffff;
 	const float SECOND_BILL_LOWER = outer ? HEIGHT*0.33f : 0.0f;
 	for( i = 0; i < BILLCOUNT; ++i ) {
 		const float edgeBill = edgeDistX * (1.0f + (float)i/BILLCOUNT*0.5f );
@@ -655,7 +674,7 @@ bool demo_update()
 	gBillboardsNoDestA->clear();
 	
 	float znear = 0.1f, zfar = 50.0f;
-	float camfov = D3DX_PI/4;
+	float camfov = M_PI/4;
 
 	//
 	// current scene and scene's alpha
@@ -727,7 +746,7 @@ bool demo_update()
 		float camDist = camo.length();
 		znear = (camDist < ext+0.1f) ? 0.1f : (camDist-ext);
 		zfar = camDist + ext;
-		camfov = D3DX_PI/5;
+		camfov = M_PI/5;
 	}
 
 	//

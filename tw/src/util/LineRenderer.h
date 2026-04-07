@@ -6,7 +6,7 @@
 
 struct SLinePoint {
 	SVector3	pos;
-	D3DCOLOR	color;
+	uint32_t    color;
 };
 
 class CLineRenderer {

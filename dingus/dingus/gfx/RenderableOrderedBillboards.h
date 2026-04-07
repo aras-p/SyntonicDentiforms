@@ -19,7 +19,7 @@ public:
 public:
 	float			x1, y1, x2, y2;
 	float			tu1, tv1, tu2, tv2;
-	D3DCOLOR		color;
+	uint32_t        color;
 	sg_view			texture;
 };
 

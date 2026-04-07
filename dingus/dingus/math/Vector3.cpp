@@ -3,40 +3,18 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#include "../stdafx.h"
-#pragma hdrstop
-
 #include "Vector3.h"
-#include "Constants.h"
-#include "FPU.h"
+#include "Matrix4x4.h"
 
 using namespace dingus;
 
-
-// Pretty straight from ODE sources :)
-void SVector3::planeSpace( SVector3& p, SVector3& q ) const
+SVector3 SVector3::transformCoord(const SMatrix4x4& pm) const
 {
-	if( fabsf( z ) > SQRT12 ) {
-		// choose p in y-z plane
-		float a = y*y + z*z;
-		float k = invSqrt( a );
-		p.x = 0;
-		p.y = -z*k;
-		p.z = y*k;
-		// set q = n cross p
-		q.x = a*k;
-		q.y = -x*p.z;
-		q.z = x*p.y;
-	} else {
-		// choose p in x-y plane
-		float a = x*x + y*y;
-		float k = invSqrt(a);
-		p.x = -y*k;
-		p.y = x*k;
-		p.z = 0;
-		// set q = n x p
-		q.x = -z*p.y;
-		q.y = z*p.x;
-		q.z = a*k;
-	}
+	SVector3 out;
+	float norm = pm.m[0][3] * x + pm.m[1][3] * y + pm.m[2][3] * z + pm.m[3][3];
+
+	out.x = (pm.m[0][0] * x + pm.m[1][0] * y + pm.m[2][0] * z + pm.m[3][0]) / norm;
+	out.y = (pm.m[0][1] * x + pm.m[1][1] * y + pm.m[2][1] * z + pm.m[3][1]) / norm;
+	out.z = (pm.m[0][2] * x + pm.m[1][2] * y + pm.m[2][2] * z + pm.m[3][2]) / norm;
+	return out;
 }

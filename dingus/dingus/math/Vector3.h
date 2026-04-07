@@ -3,26 +3,23 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#ifndef __VECTOR_3_H
-#define __VECTOR_3_H
+#pragma once
 
 namespace dingus {
+
+struct SMatrix4x4;
+
 
 // --------------------------------------------------------------------------
 
 /**
  *  3D vector.
  */
-struct SVector3 : public D3DXVECTOR3 {
+struct SVector3 {
 public:
 	SVector3();
 	SVector3( const float* f );
-	SVector3( const D3DXFLOAT16* f );
 	SVector3( float x, float y, float z );
-	SVector3( const D3DXVECTOR3& v );
-
-    operator D3DXVECTOR3*();
-    operator const D3DXVECTOR3*() const;
 
 	void		set( float vx, float vy, float vz );
 	float		length() const;
@@ -33,29 +30,56 @@ public:
 	SVector3	cross( const SVector3& v ) const;
 	SVector3	getNormalized() const;
 
-	/**
-	 *  Calculates plane space vectors from normal vector.
-	 *
-	 *  Takes this vector as "normal", generates P and Q vectors that are an
-	 *  orthonormal basis for the plane space perpendicular to normal (so that
-	 *  this, P and Q are all perpendicular to each other). Q will equal
-	 *  cross(this, p). If this is not unit length then P will be unit length
-	 *  but Q wont be.
-	 */
-	void		planeSpace( SVector3& p, SVector3& q ) const;
+	friend SVector3 operator+(const SVector3& a, const SVector3& b)
+	{
+		return SVector3(a.x + b.x, a.y + b.y, a.z + b.z);
+	}
+	friend SVector3 operator-(const SVector3& a, const SVector3& b)
+	{
+		return SVector3(a.x - b.x, a.y - b.y, a.z - b.z);
+	}
+	friend SVector3 operator-(const SVector3& a)
+	{
+		return SVector3(-a.x, -a.y, -a.z);
+	}
+	friend SVector3 operator*(const SVector3& a, float b)
+	{
+		return SVector3(a.x * b, a.y * b, a.z * b);
+	}
+
+	void operator+=(const SVector3& o)
+	{
+		x += o.x;
+		y += o.y;
+		z += o.z;
+	}
+	void operator-=(const SVector3& o)
+	{
+		x -= o.x;
+		y -= o.y;
+		z -= o.z;
+	}
+	void operator*=(float o)
+	{
+		x *= o;
+		y *= o;
+		z *= o;
+	}
+
+	SVector3 transformCoord(const SMatrix4x4& pm) const;
+
+	float x, y, z;
 };
 
 
-inline SVector3::SVector3() : D3DXVECTOR3() { };
-inline SVector3::SVector3( const float *f ) : D3DXVECTOR3(f) { };
-inline SVector3::SVector3( const D3DXFLOAT16 *f ) : D3DXVECTOR3(f) { };
-inline SVector3::SVector3( float vx, float vy, float vz ) : D3DXVECTOR3(vx,vy,vz) { };
-inline SVector3::SVector3( const D3DXVECTOR3& v ) : D3DXVECTOR3(v) { };
+inline SVector3::SVector3()  { };
+inline SVector3::SVector3( const float *f ) : x(f[0]), y(f[1]), z(f[2]) { };
+inline SVector3::SVector3( float vx, float vy, float vz ) : x(vx), y(vy), z(vz) { };
 
 inline void SVector3::set( float vx, float vy, float vz ) { x=vx; y=vy; z=vz; };
-inline float SVector3::length() const { return D3DXVec3Length(this); };
-inline float SVector3::lengthSq() const { return D3DXVec3LengthSq(this); };
-inline float SVector3::dot( const SVector3& v ) const { return D3DXVec3Dot(this,&v); }
+inline float SVector3::length() const { return sqrtf(x * x + y * y + z * z); };
+inline float SVector3::lengthSq() const { return x * x + y * y + z * z; };
+inline float SVector3::dot( const SVector3& v ) const { return x * v.x + y * v.y + z * v.z; }
 inline SVector3 SVector3::cross( const SVector3& v ) const {
 	SVector3 res;
 	res.x = y * v.z - z * v.y;
@@ -63,19 +87,35 @@ inline SVector3 SVector3::cross( const SVector3& v ) const {
     res.z = x * v.y - y * v.x;
 	return res;
 }
-inline void	SVector3::normalize() {
-	D3DXVec3Normalize( this, this );
+inline void	SVector3::normalize()
+{
+	float norm = length();
+	if (norm)
+	{
+		x /= norm;
+		y /= norm;
+		z /= norm;
+	}
+	else
+	{
+		x = y = z = 0.0f;
+	}
 }
-inline SVector3 SVector3::getNormalized() const {
+inline SVector3 SVector3::getNormalized() const
+{
 	SVector3 v;
-	D3DXVec3Normalize( &v, this );
+	float norm = length();
+	if (norm)
+	{
+		v.x = x / norm;
+		v.y = y / norm;
+		v.z = z / norm;
+	}
+	else
+	{
+		v.x = v.y = v.z = 0.0f;
+	}
 	return v;
 }
 
-inline SVector3::operator D3DXVECTOR3*() { return this; }
-inline SVector3::operator const D3DXVECTOR3*() const { return this; }
-
-
 }; // namespace
-
-#endif

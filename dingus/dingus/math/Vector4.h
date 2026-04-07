@@ -3,48 +3,44 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#ifndef __VECTOR_4_H
-#define __VECTOR_4_H
+#pragma once
 
 #include "Vector3.h"
 
 namespace dingus {
 
+struct SMatrix4x4;
 
 // --------------------------------------------------------------------------
 
 /**
  *  4D vector.
  */
-struct SVector4 : public D3DXVECTOR4 {
+struct SVector4 {
 public:
-	SVector4();
-	SVector4( const float* f );
-	SVector4( const D3DXFLOAT16* f );
-	SVector4( float x, float y, float z, float w );
-	SVector4( const D3DXVECTOR4& v );
-	SVector4( const SVector3& v ); // w=1
-
-    operator D3DXVECTOR4*();
-    operator const D3DXVECTOR4*() const;
+	SVector4() {};
+	SVector4(const float* f) : x(f[0]), y(f[1]), z(f[2]), w(f[3]) {};
+	SVector4(float xx, float yy, float zz, float ww) : x(xx), y(yy), z(zz), w(ww) {}
+	SVector4(const SVector3& v) : x(v.x), y(v.y), z(v.z), w(1.0f) {}
 
 	void		set( float vx, float vy, float vz, float vw );
+
+	uint32_t toRGBA() const
+	{
+		uint32_t dwR = x >= 1.0f ? 0xff : x <= 0.0f ? 0x00 : (uint32_t)(x * 255.0f + 0.5f);
+		uint32_t dwG = y >= 1.0f ? 0xff : y <= 0.0f ? 0x00 : (uint32_t)(y * 255.0f + 0.5f);
+		uint32_t dwB = z >= 1.0f ? 0xff : z <= 0.0f ? 0x00 : (uint32_t)(z * 255.0f + 0.5f);
+		uint32_t dwA = w >= 1.0f ? 0xff : w <= 0.0f ? 0x00 : (uint32_t)(w * 255.0f + 0.5f);
+
+		return (dwA << 24) | (dwR << 16) | (dwG << 8) | dwB;
+	}
+
+	float x, y, z, w;
 };
 
 
-inline SVector4::SVector4() : D3DXVECTOR4() { };
-inline SVector4::SVector4( const float *f ) : D3DXVECTOR4(f) { };
-inline SVector4::SVector4( const D3DXFLOAT16 *f ) : D3DXVECTOR4(f) { };
-inline SVector4::SVector4( float vx, float vy, float vz, float vw ) : D3DXVECTOR4(vx,vy,vz,vw) { };
-inline SVector4::SVector4( const D3DXVECTOR4& v ) : D3DXVECTOR4(v) { };
-inline SVector4::SVector4( const SVector3& v ) : D3DXVECTOR4(v.x,v.y,v.z,1) { };
-
 inline void SVector4::set( float vx, float vy, float vz, float vw ) { x=vx; y=vy; z=vz; w=vw; };
 
-inline SVector4::operator D3DXVECTOR4*() { return this; }
-inline SVector4::operator const D3DXVECTOR4*() const { return this; }
-
+void SVector4TransformArray(SVector4* out, const SVector4* in, const SMatrix4x4* matrix, int elements);
 
 }; // namespace
-
-#endif

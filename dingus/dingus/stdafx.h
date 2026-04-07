@@ -47,10 +47,6 @@
 #include <cstdarg>
 #include <malloc.h>
 
-// D3D
-#include <d3d9.h>
-#include <d3dx9.h>
-
 // common
 #include "utils/intrusive_ptr.h"
 #include "utils/MemUtil.h"

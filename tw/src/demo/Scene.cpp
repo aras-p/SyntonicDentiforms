@@ -57,8 +57,8 @@ void CScene::initialize()
 		mesh.parent = parentname;
 		mesh.parentIdx = -1;
 		mesh.pos = pos;
-		mesh.rot = rot0 * (D3DX_PI/180.0f);
-		mesh.rotVel = (rot1-rot0) * (mLength*D3DX_PI/180.0f);
+		mesh.rot = rot0 * (M_PI/180.0f);
+		mesh.rotVel = (rot1-rot0) * (mLength* M_PI /180.0f);
 		mesh.mesh = new CMeshEntity( meshPrefix + mesh.name );
 		mMeshes.push_back( mesh );
 
@@ -110,9 +110,9 @@ CMeshEntity* CScene::addStaticMesh( const std::string& name )
 void CScene::toMatrix( const SVector3& pos, const SVector3& rot, SMatrix4x4& m )
 {
 	SMatrix4x4 mrx, mry, mrz;
-	D3DXMatrixRotationX( &mrx, -rot.x );
-	D3DXMatrixRotationY( &mry, -rot.z );
-	D3DXMatrixRotationZ( &mrz, -rot.y );
+	mrx.rotationX(-rot.x);
+	mry.rotationY(-rot.z);
+	mrz.rotationZ(-rot.y);
 	m = mrx * mrz * mry;
 	m.getOrigin() = pos;
 }
@@ -131,7 +131,7 @@ void CScene::evaluateCamera( float t, SMatrix4x4& camera ) const
 {
 	SMatrix4x4 mr;
 	mAnimCamera->sample( t, camera );
-	D3DXMatrixRotationX( &mr, D3DX_PI/2 );
+	mr.rotationX(M_PI/2);
 	camera = mr * camera;
 }
 
@@ -139,7 +139,7 @@ void CScene::evaluateLight( float t, SMatrix4x4& light ) const
 {
 	SMatrix4x4 mr;
 	mAnimLight->sample( t, light );
-	D3DXMatrixRotationX( &mr, D3DX_PI/2 );
+	mr.rotationX(M_PI / 2);
 	light = mr * light;
 }
 

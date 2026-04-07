@@ -103,15 +103,17 @@ struct math_type_traits<SQuaternion> : public math_type_traits_base<SQuaternion>
 
 	template<typename _TT>
 	static inline SQuaternion interpolate( SQuaternion const& a1, SQuaternion const& a2, _TT const& t ) {
-		SQuaternion qo;
-		return *D3DXQuaternionSlerp( &qo, &a1, &a2, t );
+		SQuaternion o;
+		o.slerp(a1, a2, t);
+		return o;
 	};
 
 	// TBD: slerp for now
 	template<typename _TT>
 	static inline SQuaternion cm_interpolate( SQuaternion const& a0, SQuaternion const& a1, SQuaternion const& a2, SQuaternion const& a3, _TT const& t ) {
-		SQuaternion qo;
-		return *D3DXQuaternionSlerp( &qo, &a1, &a2, t );
+		SQuaternion o;
+		o.slerp(a1, a2, t);
+		return o;
 	};
 };
 
