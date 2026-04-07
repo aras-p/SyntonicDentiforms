@@ -29,7 +29,7 @@ public:
 	void	evaluate( float t, SMatrix4x4& light, SMatrix4x4& camera );
 	void	evaluateCamera( float t, SMatrix4x4& camera ) const;
 	void	evaluateLight( float t, SMatrix4x4& light ) const;
-	void	render( int renderMode );
+	void	render(eRenderMode renderMode, sg_bindings* binds);
 
 	int		getLength() const { return mLength; }
 

@@ -3,11 +3,8 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#include "../stdafx.h"
-#pragma hdrstop
-
 #include "MeshSerializer.h"
-#include "VertexDeclBundle.h"
+#include <vector>
 
 using namespace dingus;
 
@@ -26,11 +23,11 @@ static inline std::string gReadString( FILE* f )
 	return str;
 }
 
-bool CMeshSerializer::loadMeshFromFile( const char* fileName, CMesh& mesh )
+CMesh* CMeshSerializer::loadMeshFromFile( const char* fileName )
 {
 	// open file
 	FILE* f = fopen( fileName, "rb" );
-	if( !f ) return false;
+	if( !f ) return nullptr;
 
 	//
 	// read header
@@ -40,7 +37,7 @@ bool CMeshSerializer::loadMeshFromFile( const char* fileName, CMesh& mesh )
 	READ_4BYTE(magic);
 	if( magic[0]!='D' || magic[1]!='M' || magic[2]!='S' || magic[3]!='H' ) {
 		fclose( f );
-		return false;
+		return nullptr;
 	}
 	// header
 	int nverts, ntris, ngroups, vstride, istride, vformat;
@@ -57,24 +54,14 @@ bool CMeshSerializer::loadMeshFromFile( const char* fileName, CMesh& mesh )
 	assert( istride==2 || istride==4 );
 	assert( vformat != 0 );
 
-	// init mesh
-	assert( !mesh.isCreated() );
-	CVertexFormat format(vformat);
-	assert( format.calcVertexSize() == vstride );
-	CD3DVertexDecl* vertDecl = CVertexDeclBundle::getInstance().getResourceById( CVertexDesc( format ) );
-	mesh.createResource( nverts, ntris*3, format, istride, *vertDecl );
+	// read data
+	std::vector<uint8_t> vbData(vstride * nverts);
+	fread(vbData.data(), vstride, nverts, f);
 
-	// read vertices
-	void* vb = mesh.lockVB( false );
-	fread( vb, vstride, nverts, f );
-	mesh.unlockVB();
+	std::vector<uint8_t> ibData(istride * ntris * 3);
+	fread(ibData.data(), istride, ntris * 3, f);
 
-	// read indices
-	void* ib = mesh.lockIB( false );
-	fread( ib, istride, ntris*3, f );
-	mesh.unlockIB();
-
-	// read groups
+	std::vector<CMesh::CGroup> groups;
 	for( int i = 0; i < ngroups; ++i ) {
 		int vstart, vcount, fstart, fcount;
 		READ_4BYTE(vstart);
@@ -88,77 +75,15 @@ bool CMeshSerializer::loadMeshFromFile( const char* fileName, CMesh& mesh )
 			fstart = 0;
 			fcount = ntris;
 		}
-		mesh.addGroup( CMesh::CGroup(vstart,vcount,fstart,fcount) );
+		groups.emplace_back(CMesh::CGroup(vstart, vcount, fstart, fcount));
 	}
 
 	// close file
 	fclose( f );
-	return true;
-}
 
-/*
-CSkeletonInfo* CMeshSerializer::loadSkelInfoFromFile( const char* fileName )
-{
-	// open file
-	FILE* f = fopen( fileName, "rb" );
-	if( !f ) return NULL;
-
-	//
-	// read header
-
-	// magic
-	char magic[4];
-	READ_4BYTE(magic);
-	if( magic[0]!='D' || magic[1]!='M' || magic[2]!='S' || magic[3]!='H' ) {
-		fclose( f );
-		return NULL;
-	}
-	// header
-	int nverts, ntris, ngroups, vstride, istride, vformat;
-	READ_4BYTE(nverts);
-	READ_4BYTE(ntris);
-	READ_4BYTE(ngroups);
-	READ_4BYTE(vstride);
-	READ_4BYTE(vformat);
-	READ_4BYTE(istride);
-	assert( nverts > 0 );
-	assert( ntris > 0 );
-	assert( ngroups > 0 );
-	assert( vstride > 0 );
-	assert( istride==2 || istride==4 );
-	assert( vformat != 0 );
-
+	// init mesh
 	CVertexFormat format(vformat);
-	if( format.getSkinMode() == CVertexFormat::SKIN_NONE )
-		return NULL;
-
-	// skip mesh geometry data
-	int skelDataOffset = 0;
-	skelDataOffset += vstride * nverts; // vertices
-	skelDataOffset += istride * ntris * 3; // indices
-	skelDataOffset += 4*4 * ngroups; // groups
-	fseek( f, skelDataOffset, SEEK_CUR );
-
-	// read skel info
-	int nbones;
-	READ_4BYTE(nbones);
-	assert( nbones > 0 );
-	CSkeletonInfo* skelInfo = new CSkeletonInfo( nbones );
-	for( int b = 0; b < nbones; ++b ) {
-		std::string name = gReadString( f );
-		int parentIdx;
-		SMatrix4x4 boneMat;
-		boneMat.identify();
-		READ_4BYTE(parentIdx);
-		READ_4BYTE(boneMat._11); READ_4BYTE(boneMat._12); READ_4BYTE(boneMat._13);
-		READ_4BYTE(boneMat._21); READ_4BYTE(boneMat._22); READ_4BYTE(boneMat._23);
-		READ_4BYTE(boneMat._31); READ_4BYTE(boneMat._32); READ_4BYTE(boneMat._33);
-		READ_4BYTE(boneMat._41); READ_4BYTE(boneMat._42); READ_4BYTE(boneMat._43);
-		skelInfo->addBoneInfo( parentIdx, boneMat, name );
-	}
-
-	// close file
-	fclose( f );
-	return skelInfo;
+	assert(format.calcVertexSize() == vstride);
+	CMesh* mesh = new CMesh(nverts, ntris * 3, format, istride, vbData.data(), ibData.data(), ngroups, groups.data());
+	return mesh;
 }
-*/

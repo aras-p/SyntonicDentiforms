@@ -3,19 +3,11 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#ifndef __RENDER_ORDERED_BILLBOARDS_H
-#define __RENDER_ORDERED_BILLBOARDS_H
+#pragma once
 
-#include "../kernel/Proxies.h"
-#include "../renderer/Renderable.h"
-#include "../utils/Pool.h"
-#include "geometry/VBChunk.h"
-#include "geometry/VBManagerSource.h"
-
+#include "../tw/src/external/sokol_gfx.h"
 
 namespace dingus {
-
-
 
 struct SVertexXyzDiffuseTex1;
 struct SMatrix4x4;
@@ -28,7 +20,7 @@ public:
 	float			x1, y1, x2, y2;
 	float			tu1, tv1, tu2, tv2;
 	D3DCOLOR		color;
-	CD3DTexture*	texture;
+	sg_view			texture;
 };
 
 
@@ -39,34 +31,25 @@ public:
  *  quads). Preserves billboard submitting order - this may be not very
  *  efficient if billboards use different textures.
  */
-class CRenderableOrderedBillboards : public CRenderable, public IRenderListener {
+class CRenderableOrderedBillboards {
 public:
-	CRenderableOrderedBillboards( CD3DIndexBuffer& ib, CEffectParams::TParamName texParamName );
+	CRenderableOrderedBillboards(sg_buffer ib, sg_sampler sampler);
 	virtual ~CRenderableOrderedBillboards();
 	
 	SOBillboard& addBill() { mBills.push_back(SOBillboard()); return mBills.back(); };
 	void clear() { mBills.clear(); }
 
-	// IRenderListener
-	virtual void beforeRender( CRenderable& r );
-	virtual void afterRender( CRenderable& r );
-
-	virtual void render( const CRenderContext& ctx );
+	void render();
 
 private:
 	typedef SVertexXyzDiffuseTex1		TVertex;
 	typedef std::vector<SOBillboard>	TBillVector;
 
 private:
-	CD3DIndexBuffer*	mIB;
-	CVBManagerSource	mVBSource;
-	CEffectParams::TParamName	mTexParamName;
+	sg_buffer mIB;
+	sg_sampler mSampler;
 	TBillVector mBills;
-	CVBChunk::TSharedPtr mChunk;
 };
 
 
 }; // namespace
-
-
-#endif

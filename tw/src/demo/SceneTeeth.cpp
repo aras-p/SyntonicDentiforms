@@ -100,6 +100,7 @@ CSceneTeeth::CSceneTeeth( int number )
 	mAnimAxes[0] = new CAnim( "6/Axes", "Axis1", CAnim::POSITION | CAnim::ROTATION );
 	mAnimAxes[1] = new CAnim( "6/Axes", "Axis2", CAnim::POSITION | CAnim::ROTATION );
 
+	/* //@TODO
 	{
 		mToonQuad = new CRenderableMesh( *RGET_MESH("billboard"), 0 );
 		CEffectParams& ep = mToonQuad->getParams();
@@ -124,21 +125,6 @@ CSceneTeeth::CSceneTeeth( int number )
 		ep.addVector4( "vShadowID", SVector4(1.0f, 1.0f, 1.0f, 1.0f) );
 		ep.addMatrix4x4Ref( "mWVP", mMaskMeshWVP );
 	}
-	/*
-	{
-		mMaskGears[0] = new CRenderableMesh( *RGET_MESH("scene6/Gear1"), 0 );
-		CEffectParams& ep = mToothMaskMesh->getParams();
-		ep.setEffect( *RGET_FX("caster") );
-		ep.addVector4( "vShadowID", SVector4(1.0f, 1.0f, 1.0f, 1.0f) );
-		ep.addMatrix4x4Ref( "mWVP", mMaskMeshWVP );
-	}
-	{
-		mMaskGears[1] = new CRenderableMesh( *RGET_MESH("scene6/Gear2"), 0 );
-		CEffectParams& ep = mToothMaskMesh->getParams();
-		ep.setEffect( *RGET_FX("caster") );
-		ep.addVector4( "vShadowID", SVector4(1.0f, 1.0f, 1.0f, 1.0f) );
-		ep.addMatrix4x4Ref( "mWVP", mMaskMeshWVP );
-	}
 	*/
 }
 
@@ -148,9 +134,11 @@ CSceneTeeth::~CSceneTeeth()
 		delete mAnimTeeth[i];
 	delete mAnimAxes[0];
 	delete mAnimAxes[1];
+	/* @TODO
 	delete mToonQuad;
 	delete mCompositeQuad;
 	delete mToothMaskMesh;
+	*/
 }
 
 void CSceneTeeth::initialize()
@@ -273,7 +261,7 @@ void CSceneTeeth::evaluateMeshes( float t )
 	}
 }
 
-void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlpha, bool masks )
+void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlpha, bool masks, float aspect)
 {
 	const int BILLSPERPACK = 3;
 	static const char* names[TEETHPACKS][BILLSPERPACK] = {
@@ -313,7 +301,6 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 	const float MEDGE = 0.06f;
 
 	CRenderableOrderedBillboards& bills = *(masks ? gBillboardsNormal : gBillboardsNoDestA);
-	const float aspect = CD3DDevice::getInstance().getBackBufferAspect();
 	SOBillboard* bill;
 
 	if( pack != TEETHPACKS-1 ) {
@@ -330,7 +317,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 			bill->y1 = -1.0f + BEDGE*aspect;
 			bill->x2 = bill->x1 + BSIZE;
 			const float toothY = bill->y2 = bill->y1 + BSIZE*aspect / (ratios[pack][i]);
-			bill->texture = RGET_TEX(names[pack][i]);
+			bill->texture = RGET_TEX(names[pack][i])->view_tex;
 			D3DXCOLOR c( 1, 1, 1, billAlpha );
 			if( masks ) {
 				bill->x1 -= MEDGE;
@@ -354,7 +341,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 			bill->x2 = 1.0f - BEDGE;
 			bill->y2 = bill->y1 + (uvs[3]-uvs[1]) * texelScale*aspect;*/
 			bill->color = c;
-			bill->texture = RGET_TEX("Greetings");
+			bill->texture = RGET_TEX("Greetings")->view_tex;
 			bill->tu1 = uvs[0] / 1024.0f;	bill->tv1 = uvs[1] / 512.0f;
 			bill->tu2 = uvs[2] / 1024.0f;	bill->tv2 = uvs[3] / 512.0f;
 			if( masks ) {
@@ -388,15 +375,16 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 			c.a = (relT-2);
 		}
 		bill->color = c;
-		bill->texture = RGET_TEX("BondigoDuo");
+		bill->texture = RGET_TEX("BondigoDuo")->view_tex;
 		bill->setWholeTexture();
 	}
-	G_RCTX->directRender( bills );
+	//G_RCTX->directRender( bills ); //@TODO
 }
 
 
-void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha )
+void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float aspect )
 {
+#if 0 //@TODO
 	assert( pack >= 0 && pack < TEETHPACKS );
 	CTeethAnim& ta = *mAnimTeeth[pack];
 	int nteeth = ta.getCount();
@@ -463,7 +451,7 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha )
 				mMaskMeshWVP.getAxisX() *= toothMaskScale;
 				mMaskMeshWVP.getAxisY() *= toothMaskScale * toothMaskScale*0.5f;
 				mMaskMeshWVP.getAxisZ() *= toothMaskScale;
-				mMaskMeshWVP *= G_RCTX->getCamera().getViewProjMatrix();
+				mMaskMeshWVP *= gRenderCam.getViewProjMatrix();
 				G_RCTX->directRender( *mToothMaskMesh );
 			}
 		} else {
@@ -475,7 +463,7 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha )
 					mMaskMeshWVP.getAxisX() *= toothMaskScale;
 					mMaskMeshWVP.getAxisY() *= toothMaskScale * toothMaskScale*0.5f;
 					mMaskMeshWVP.getAxisZ() *= toothMaskScale;
-					mMaskMeshWVP *= G_RCTX->getCamera().getViewProjMatrix();
+					mMaskMeshWVP *= gRenderCam.getViewProjMatrix();
 					G_RCTX->directRender( *mToothMaskMesh );
 				}
 			}
@@ -517,17 +505,18 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha )
 	*/
 
 	G_RCTX->directEnd();
+#endif
 }
 
-void CSceneTeeth::renderTeethUI( int pack, float t, float cutAlpha )
+void CSceneTeeth::renderTeethUI( int pack, float t, float cutAlpha, float aspect)
 {
 	assert( pack >= 0 && pack < TEETHPACKS );
 	CTeethAnim& ta = *mAnimTeeth[pack];
 	float relT = ta.getRelTime( t );
 	int nteeth = ta.getCount();
 
-	CD3DDevice& dx = CD3DDevice::getInstance();
-	G_RCTX->directBegin();
-	renderTeethBills( pack, t, relT, cutAlpha, false );
-	G_RCTX->directEnd();
+	//CD3DDevice& dx = CD3DDevice::getInstance();
+	//G_RCTX->directBegin();
+	renderTeethBills( pack, t, relT, cutAlpha, false, aspect);
+	//G_RCTX->directEnd();
 }

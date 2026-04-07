@@ -45,13 +45,13 @@ public:
 	
 	virtual void	initialize();
 
-	void	renderTeethStuff( int pack, float t, float cutAlpha );
-	void	renderTeethUI( int pack, float t, float cutAlpha );
+	void	renderTeethStuff( int pack, float t, float cutAlpha, float aspect);
+	void	renderTeethUI( int pack, float t, float cutAlpha, float aspect);
 	
 protected:
 	virtual void	evaluateMeshes( float t );
 
-	static void renderTeethBills( int pack, float t, float relT, float cutAlpha, bool masks );
+	static void renderTeethBills( int pack, float t, float relT, float cutAlpha, bool masks, float aspect);
 
 private:
 	CAnim*			mAnimAxes[GEARS];
@@ -59,10 +59,11 @@ private:
 	int		mGearsIdx[GEARS];
 	CTeethAnim*	mAnimTeeth[TEETHPACKS];
 
+	/* @TODO
 	CRenderableMesh*	mToonQuad;
 	CRenderableMesh*	mCompositeQuad;
 	CRenderableMesh*	mToothMaskMesh;
-	CRenderableMesh*	mMaskGears[GEARS];
+	*/
 	SMatrix4x4			mMaskMeshWVP;
 };
 

@@ -1,9 +1,0 @@
-#include "_lib.fx"
-
-float4x4	mWorld;
-float4x4	mWorldView;
-float4x4	mWVP;
-
-float4		vShadowID;
-
-#include "receiver-ps11path.fx"

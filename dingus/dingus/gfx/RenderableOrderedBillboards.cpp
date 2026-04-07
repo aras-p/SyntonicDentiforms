@@ -3,46 +3,36 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#include "../stdafx.h"
-#pragma hdrstop
-
 #include "RenderableOrderedBillboards.h"
+#include "geometry/DynamicVBManager.h"
 
 #include "Vertices.h"
-#include "../kernel/D3DDevice.h"
 
 using namespace dingus;
 
 
 
 CRenderableOrderedBillboards::CRenderableOrderedBillboards(
-	CD3DIndexBuffer& ib, CEffectParams::TParamName texParamName )
-:	mIB( &ib ), mVBSource( sizeof(TVertex) ),
-	mTexParamName( texParamName )
+	sg_buffer ib, sg_sampler sampler)
+:	mIB( ib ),
+	mSampler(sampler)
 {
-	// add self as a listener
-	addListener( *this );
-	mChunk = 0;
+	ASSERT_MSG(ib.id != 0, "Billboards need an index buffer");
+	ASSERT_MSG(sampler.id != 0, "Billboards need a sampler");
 }
 
 CRenderableOrderedBillboards::~CRenderableOrderedBillboards()
 {
-	removeListener( *this );
 }
 
-
-// ------------------------------------------------------------------
-//  Rendering
-
-void CRenderableOrderedBillboards::beforeRender( CRenderable& r )
+void CRenderableOrderedBillboards::render()
 {
-	assert( !mChunk );
 	if( mBills.empty() )
 		return;
 	
 	// render into VB
-	mChunk = mVBSource.lock( mBills.size() * 4 ); // 4 verts per billboard
-	TVertex* vb = reinterpret_cast<TVertex*>( mChunk->getData() );
+	std::vector<TVertex> vbData(mBills.size() * 4); // 4 verts per billboard
+	TVertex* vb = vbData.data();
 	TBillVector::const_iterator bit, bitEnd = mBills.end();
 	for( bit = mBills.begin(); bit != bitEnd; ++bit ) {
 		const SOBillboard& bill = *bit;
@@ -63,62 +53,25 @@ void CRenderableOrderedBillboards::beforeRender( CRenderable& r )
 		vb->tu		= bill.tu1; vb->tv = bill.tv2;
 		++vb;
 	}
-	mChunk->unlock( 0 );
-}
 
-void CRenderableOrderedBillboards::afterRender( CRenderable& r )
-{
-	mChunk = 0;
-}
+	int vbOffset = dynamic_vb_append(vbData.data(), vbData.size() * sizeof(vbData[0]));
 
+	//@TODO: layout in pipeline
+	//device.setDeclarationFVF(FVF_XYZ_DIFFUSE_TEX1);
 
-void CRenderableOrderedBillboards::render( const CRenderContext& ctx )
-{
-	CD3DDevice& device = CD3DDevice::getInstance();
-	IDirect3DDevice9& dx = device.getDevice();
-
-	if( mBills.empty() )
-		return;
-	assert( mChunk );
-	
 	// set IB/VB
-	assert( mIB );
-	device.setIndexBuffer( mIB );
-	device.setVertexBuffer( 0, &mChunk->getVB(), 0, mChunk->getStride() );
-	device.setDeclarationFVF( FVF_XYZ_DIFFUSE_TEX1 );
+	sg_bindings bind = {};
+	bind.vertex_buffers[0] = dynamic_vb_get();
+	bind.vertex_buffer_offsets[0] = vbOffset;
+	bind.index_buffer = mIB;
+	bind.samplers[0] = mSampler;
 
-	// render pieces of billboards
-	CD3DTexture* texture = mBills[0].texture;
-	int texStart = 0;
-	int n = mBills.size();
-	for( int i = 1; i < n; ++i ) { // from second one
+	for (int i = 0; i < mBills.size(); ++i)
+	{
 		const SOBillboard& b = mBills[i];
-		if( b.texture == texture )
-			continue;
-		// set texture on effect
-		assert( texture );
-		// TBD: better supply handle, not name - would be faster
-		// TBD: refactor
-		getParams().getEffect()->getObject()->SetTexture( mTexParamName, texture->getObject() );
-		getParams().getEffect()->commitParams();
-
-		// draw portion
-		dx.DrawIndexedPrimitive( D3DPT_TRIANGLELIST,
-			mChunk->getOffset() + texStart*4, 0, (i-texStart)*4, 0, (i-texStart)*2 );
-
-		// new texture
-		texture = b.texture;
-		texStart = i;
+		bind.views[0] = b.texture;
+		bind.vertex_buffer_offsets[0] = vbOffset + i * sizeof(TVertex) * 4;
+		sg_apply_bindings(&bind);
+		sg_draw(0, 6, 1);
 	}
-	// last portion
-	// set texture on effect
-	assert( texture );
-	// TBD: better supply handle, not name - would be faster
-	// TBD: refactor
-	getParams().getEffect()->getObject()->SetTexture( mTexParamName, texture->getObject() );
-	getParams().getEffect()->commitParams();
-
-	// draw portion
-	dx.DrawIndexedPrimitive( D3DPT_TRIANGLELIST,
-		mChunk->getOffset() + texStart*4, 0, (n-texStart)*4, 0, (n-texStart)*2 );
 }

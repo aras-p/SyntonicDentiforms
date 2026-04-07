@@ -8,15 +8,13 @@
 
 #include "BundleSingleton.h"
 #include "StorageResourceBundle.h"
-#include "DeviceResource.h"
 #include "../gfx/Mesh.h"
 
 namespace dingus {
 
 
 class CMeshBundle :	public CStorageResourceBundle<CMesh>,
-					public CBundleSingleton<CMeshBundle>,
-					public IDeviceResource
+					public CBundleSingleton<CMeshBundle>
 {
 public:
 	static void init( const std::string& predir ) {
@@ -24,11 +22,6 @@ public:
 		assert( bundle );
 		assignInstance( *bundle );
 	}
-
-	virtual void createResource();
-	virtual void activateResource();
-	virtual void passivateResource();
-	virtual void deleteResource();
 
 protected:
 	virtual CMesh* loadResourceById( const CResourceId& id, const CResourceId& fullName );
@@ -38,9 +31,6 @@ private:
 	CMeshBundle( const std::string& predir );
 	virtual ~CMeshBundle() { clear(); };
 	friend CBundleSingleton<CMeshBundle>;
-	
-	/// @return false on not found
-	bool loadMesh( const CResourceId& id, const CResourceId& fullName, CMesh& mesh ) const;
 };
 
 

@@ -3,19 +3,44 @@
 #include "LineRenderer.h"
 #include <dingus/gfx/geometry/DynamicVBManager.h>
 
-
-
-CLineRenderer::CLineRenderer( CD3DIndexBuffer& ib )
+CLineRenderer::CLineRenderer()
 {
-	mRenderable = new CRenderableIndexedBuffer();
-	mRenderable->setIB( ib );
+	constexpr int kSegments = 1000;
+	constexpr int kQuadSize = 6;
+
+	// index data
+	uint16_t* ib = new uint16_t[kSegments * kQuadSize];
+	{
+		uint16_t* pib = ib;
+		for (int i = 0; i < kSegments; ++i) {
+			short base = i * 2;
+			pib[0] = base;
+			pib[1] = base + 2;
+			pib[2] = base + 1;
+			pib[3] = base + 2;
+			pib[4] = base + 3;
+			pib[5] = base + 1;
+			pib += 6;
+		}
+	}
+
+
+	// index buffer
+	sg_buffer_desc desc = {};
+	desc.usage.index_buffer = true;
+	desc.data.ptr = ib;
+	desc.data.size = kSegments * kQuadSize * 2;
+	desc.usage.immutable = true;
+	mIB = sg_make_buffer(&desc);
+	ASSERT_MSG(sg_query_buffer_state(mIB) == SG_RESOURCESTATE_VALID, "Failed to create Lines IB");
+
+	delete[] ib;
 }
 
 CLineRenderer::~CLineRenderer()
 {
-	delete mRenderable;
+	sg_destroy_buffer(mIB);
 }
-
 
 void CLineRenderer::renderStrip( int npoints, const SLinePoint* points, float halfWidth )
 {
@@ -23,29 +48,29 @@ void CLineRenderer::renderStrip( int npoints, const SLinePoint* points, float ha
 		return;
 	assert( points );
 
-	const SMatrix4x4& camRotMat = G_RCTX->getCamera().getCameraRotMatrix();
-	const SMatrix4x4& camViewMat = G_RCTX->getCamera().getViewMatrix();
-	const SVector3& camPos = G_RCTX->getCamera().getEye3();
+	const SMatrix4x4& camRotMat = gRenderCam.getCameraRotMatrix();
+	const SMatrix4x4& camViewMat = gRenderCam.getViewMatrix();
+	const SVector3& camPos = gRenderCam.getEye3();
 
 	int nverts = npoints * 2;
 	int ntris = (npoints-1)*2;
-	CVBChunk::TSharedPtr chunk = CDynamicVBManager::getInstance().allocateChunk( nverts, sizeof(TVertex) );
-	assert( chunk );
-	TVertex* vb = reinterpret_cast<TVertex*>( chunk->getData() );
+
+	TVertex* chunk = new TVertex[nverts];
+	TVertex* vb = chunk;
 
 	// fill VB with lines
-	for( int i = 1; i < npoints; ++i ) {
-		const SLinePoint& ptA = points[i-1];
+	for (int i = 1; i < npoints; ++i) {
+		const SLinePoint& ptA = points[i - 1];
 		const SLinePoint& ptB = points[i];
 		SVector3 segDir = ptB.pos - ptA.pos;
-		SVector3 side = segDir.cross( ptB.pos - camPos );
+		SVector3 side = segDir.cross(ptB.pos - camPos);
 		side.normalize();
 		side *= halfWidth;
 		SVector3 c1 = side;
 		SVector3 c2 = -side;
-		
+
 		// 2 or 4 line corners
-		if( i==1 ) {
+		if (i == 1) {
 			vb->p = ptA.pos + c1;
 			vb->diffuse = ptA.color;
 			vb->tu = 0.0f;
@@ -66,9 +91,13 @@ void CLineRenderer::renderStrip( int npoints, const SLinePoint* points, float ha
 		vb->tu = 1.0f; vb->tv = 1.0f;
 		++vb;
 	}
-	chunk->unlock();
+
+	int offset = dynamic_vb_append(chunk, nverts * sizeof(TVertex));
+	delete[] chunk;
 
 	// render
+	//@TODO
+	/*
 	mRenderable->setVB( chunk->getVB(), 0 );
 	mRenderable->setStride( chunk->getStride(), 0 );
 
@@ -80,4 +109,5 @@ void CLineRenderer::renderStrip( int npoints, const SLinePoint* points, float ha
 	mRenderable->setPrimType( D3DPT_TRIANGLELIST );
 
 	G_RCTX->directRender( *mRenderable );
+	*/
 }

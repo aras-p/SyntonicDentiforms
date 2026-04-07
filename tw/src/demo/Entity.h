@@ -1,5 +1,4 @@
-#ifndef __DEMO_ENTITY_H
-#define __DEMO_ENTITY_H
+#pragma once
 
 #include <dingus/math/Matrix4x4.h>
 
@@ -10,16 +9,18 @@ public:
 	CAbstractEntity() { mMatrix.identify(); mWVPMatrix.identify(); }
 	virtual ~CAbstractEntity() = 0 { }
 
+	/*
 	void addMatricesToParams( CEffectParams& ep ) const {
 		ep.addMatrix4x4Ref( "mWorld", mMatrix );
 		ep.addMatrix4x4Ref( "mWorldView", mWVMatrix );
 		ep.addMatrix4x4Ref( "mWVP", mWVPMatrix );
 	}
+	*/
 	
 	/// Updates WV/WVP from current matrix and current render camera
 	void updateMatrices() {
-		mWVMatrix = mMatrix * G_RCTX->getCamera().getViewMatrix();
-		mWVPMatrix = mMatrix * G_RCTX->getCamera().getViewProjMatrix();
+		mWVMatrix = mMatrix * gRenderCam.getViewMatrix();
+		mWVPMatrix = mMatrix * gRenderCam.getViewProjMatrix();
 	}
 
 public:
@@ -72,6 +73,3 @@ private:
 	float	mViewHalfWidth; // at distance 1
 	float	mViewHalfHeight; // at distance 1
 };
-
-
-#endif

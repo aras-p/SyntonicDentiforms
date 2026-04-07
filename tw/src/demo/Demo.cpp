@@ -1,7 +1,15 @@
 #include "stdafx.h"
 
+#include <dingus/renderer/RenderableMesh.h>
+#include <dingus/math/Matrix4x4.h>
+#include <dingus/math/Plane.h>
+#include <dingus/math/MathUtils.h>
+
+#include <dingus/gfx/geometry/DynamicVBManager.h>
+
 #include "Demo.h"
 #include "DemoResources.h"
+#include "Effect.h"
 #include "Scene.h"
 #include "SceneTeeth.h"
 #include "SceneOut.h"
@@ -10,15 +18,10 @@
 #include "../util/TextureProjector.h"
 #include "../util/LineRenderer.h"
 #include "../system/MusicPlayer.h"
+#include "../external/sokol_app.h"
+#include "../external/sokol_glue.h"
 
-#include <dingus/renderer/RenderableMesh.h>
-#include <dingus/math/Matrix4x4.h>
-#include <dingus/math/Plane.h>
-#include <dingus/math/MathUtils.h>
-#include <dingus/resource/IndexBufferFillers.h>
-
-
-#define WITHMUSIC
+//#define WITHMUSIC
 
 #ifdef WITHMUSIC
 	CMusicPlayer*	gMusicPlayer;
@@ -33,9 +36,9 @@
 
 // --------------------------------------------------------------------------
 
+GlobalUniforms g_global_u;
 
-int			gGlobalCullMode;
-SVector4	gScreenFixUVs;
+//int			gGlobalCullMode; //@TODO
 
 enum eSceneMode { SC_OUTER = 0, SC_SCENE };
 
@@ -83,15 +86,11 @@ CCameraEntity	gCamera;
 SMatrix4x4		gCameraViewProjMatrix;
 // light
 SMatrix4x4		gLightViewProjMatrix;
-SMatrix4x4		gLightShadowMatrix;
 CCameraEntity	gLightCamera;
 // reflective wals
 CMeshEntity*	gWallMeshes[CFACE_COUNT];
 const char*		gWallNames[CFACE_COUNT] = { "CubePX", "CubeNX", "CubePY", "CubeNY", "CubePZ", "CubeNZ" };
-const char*		gWallTexs[CFACE_COUNT] = { RT_REFL_PX, RT_REFL_NX, RT_REFL_PY, RT_REFL_NY, RT_REFL_PZ, RT_REFL_NZ };
 CCameraEntity	gWallCamera;
-
-SMatrix4x4		gViewTexProjMatrix;
 
 // post-processing fx
 CBloomPostProcess*	gPPSBloom;
@@ -105,17 +104,6 @@ CAnim*	gAnimSynch;
 
 
 // --------------------------------------------------------------------------
-
-CDemo::CDemo()
-{
-}
-
-bool CDemo::appCheckDevice( const D3DCAPS9& caps, DWORD behavior, D3DFORMAT bbFormat ) const
-{
-	if( caps.PixelShaderVersion < D3DPS_VERSION(2,0) )
-		return false;
-	return true;
-}
 
 static void gPreload()
 {
@@ -138,20 +126,7 @@ static void gPreload()
 	RGET_TEX("Line1");
 	RGET_TEX("SpotLight");
 	// fx...
-	RGET_FX("billboards");
-	RGET_FX("billboardsNoDestA");
-	RGET_FX("caster");
-	RGET_FX("compositeAdd");
-	RGET_FX("compositeAlpha");
-	RGET_FX("filterBloom");
-	RGET_FX("filterToon");
-	RGET_FX("lines");
-	RGET_FX("noshadowHi");
-	RGET_FX("overlay2");
-	RGET_FX("overlay");
-	RGET_FX("receiverHi");
-	RGET_FX("receiverLo");
-	RGET_FX("reflective");
+	effects_init();
 	// anims...
 	RGET_ANIM("Anim0"); RGET_ANIM("Anim1"); RGET_ANIM("Anim2");
 	RGET_ANIM("Anim3"); RGET_ANIM("Anim4"); RGET_ANIM("Anim5");
@@ -161,80 +136,202 @@ static void gPreload()
 	RGET_ANIM("6/TeethA"); RGET_ANIM("6/TeethB"); RGET_ANIM("6/TeethC"); RGET_ANIM("6/TeethD");
 }
 
-void CDemo::appInitialize()
+static sg_buffer s_ib_quads;
+
+static sg_sampler s_smp_linear_clamp;
+static sg_sampler s_smp_point_clamp;
+
+sokol_texture rt_main_aa, rt_main_z, rt_main_resolved;
+sokol_texture rt_fullscreen_1, rt_fullscreen_2;
+sokol_texture rt_4th_1, rt_4th_2;
+sokol_texture rt_refl_px, rt_refl_py, rt_refl_pz, rt_refl_nx, rt_refl_ny, rt_refl_nz;
+sokol_texture rt_refl_rt, rt_refl_z;
+sokol_texture rt_shadow_rt;
+sokol_texture rt_shadow_z;
+
+static void ensure_render_targets()
 {
-	CSharedTextureBundle& stb = CSharedTextureBundle::getInstance();
-	CSharedSurfaceBundle& ssb = CSharedSurfaceBundle::getInstance();
+	static int width = -1, height = -1;
+	int newWidth = sapp_width();
+	int newHeight = sapp_height();
+
+	// screen size based textures
+	if (width != newWidth || height != newHeight)
+	{
+		rt_main_aa.destroy();
+		rt_main_z.destroy();
+		rt_main_resolved.destroy();
+		rt_fullscreen_1.destroy();
+		rt_fullscreen_2.destroy();
+		rt_4th_1.destroy();
+		rt_4th_2.destroy();
+		rt_refl_px.destroy();
+		rt_refl_py.destroy();
+		rt_refl_pz.destroy();
+		rt_refl_nx.destroy();
+		rt_refl_ny.destroy();
+		rt_refl_nz.destroy();
+		rt_refl_rt.destroy();
+		rt_refl_z.destroy();
+
+		width = newWidth;
+		height = newHeight;
+	}
+
+	if (!rt_main_aa.valid())
+	{
+		sg_image_desc desc = {};
+		desc.usage.color_attachment = true;
+
+		// full size
+		desc.width = width;
+		desc.height = height;
+		desc.sample_count = kMainAA;
+		desc.pixel_format = SG_PIXELFORMAT_RGBA8;
+		rt_main_aa.create(desc);
+		desc.pixel_format = SG_PIXELFORMAT_DEPTH;
+		desc.usage.depth_stencil_attachment = true;
+		desc.usage.color_attachment = false;
+		rt_main_z.create(desc);
+		desc.pixel_format = SG_PIXELFORMAT_RGBA8;
+		desc.usage.depth_stencil_attachment = false;
+		desc.usage.color_attachment = true;
+
+		desc.sample_count = 1;
+		desc.usage.resolve_attachment = true;
+		rt_main_resolved.create(desc);
+		desc.usage.resolve_attachment = false;
+
+		rt_fullscreen_1.create(desc);
+		rt_fullscreen_2.create(desc);
+
+		// 1/4th size
+		desc.width = width / 4;
+		desc.height = height / 4;
+		rt_4th_1.create(desc);
+		rt_4th_2.create(desc);
+
+		// reflection textures
+		desc.usage.color_attachment = false;
+		desc.usage.resolve_attachment = true;
+		desc.width = width / 2;
+		desc.height = height / 2;
+		rt_refl_px.create(desc);
+		rt_refl_py.create(desc);
+		rt_refl_pz.create(desc);
+		rt_refl_nx.create(desc);
+		rt_refl_ny.create(desc);
+		rt_refl_nz.create(desc);
+		// reflections color/depth MSAA surfaces
+		desc.sample_count = kMainAA;
+		desc.usage.color_attachment = true;
+		desc.usage.resolve_attachment = false;
+		rt_refl_rt.create(desc);
+		desc.usage.color_attachment = false;
+		desc.usage.depth_stencil_attachment = true;
+		desc.pixel_format = SG_PIXELFORMAT_DEPTH;
+		rt_refl_z.create(desc);
+	}
+
+	// fixed size textures
+	if (!rt_shadow_rt.valid())
+	{
+		sg_image_desc desc = {};
+		desc.sample_count = 1;
+		desc.width = SZ_SHADOWMAP;
+		desc.height = SZ_SHADOWMAP;
+
+		desc.usage.color_attachment = true;
+		desc.pixel_format = SG_PIXELFORMAT_RGBA8;
+		rt_shadow_rt.create(desc);
+
+		desc.usage.color_attachment = false;
+		desc.usage.depth_stencil_attachment = true;
+		desc.pixel_format = SG_PIXELFORMAT_DEPTH;
+		rt_shadow_z.create(desc);
+	}
+}
+
+bool demo_init()
+{
+	// samplers
+	{
+		sg_sampler_desc desc = {};
+		desc.min_filter = desc.mag_filter = SG_FILTER_LINEAR;
+		desc.wrap_u = desc.wrap_v = SG_WRAP_CLAMP_TO_EDGE;
+		s_smp_linear_clamp = sg_make_sampler(&desc);
+		desc.min_filter = desc.mag_filter = SG_FILTER_NEAREST;
+		s_smp_point_clamp = sg_make_sampler(&desc);
+	}
+	/*
+	state.pip = sg_make_pipeline(&(sg_pipeline_desc) {
+		.shader = sg_make_shader(triangle_shader_desc(sg_query_backend())),
+			.layout = {
+				.attrs = {
+					[ATTR_triangle_position] .format = SG_VERTEXFORMAT_FLOAT3,
+					[ATTR_triangle_color0].format = SG_VERTEXFORMAT_FLOAT4
+				}
+		},
+	});
+
+	state.pass_action = (sg_pass_action){
+		.colors[0] = {.load_action = SG_LOADACTION_CLEAR, .clear_value = {0.0f, 0.0f, 0.0f, 1.0f } }
+	};
+	*/
+
+	//
+	// resources
+
+	CTextureBundle::init("data/tex/");
+	CMeshBundle::init("data/mesh/");
+	CAnimationBundle::init("data/anim/");
+
+	dynamic_vb_init(2 * 1024 * 1024);
 
 	// ------------------------------
 	//  shared index buffers, etc
+	
+	{
+		// Fills 6 indices for a quad in this way:
+		//	0----13
+		//	|   / |
+		//	| /   |
+		//	25----4
+		// Here vertex 0 is upper left, 1 is upper right, 2 is lower right, 3 is lower left (so clockwise).
+		uint16_t quadIBData[6] = { 0, 1, 3, 1, 2, 3 };
+		sg_buffer_desc desc = {};
+		desc.usage.index_buffer = true;
+		desc.data.ptr = quadIBData;
+		desc.data.size = 6 * 2;
+		desc.usage.immutable = true;
+		s_ib_quads = sg_make_buffer(&desc);
+		ASSERT_MSG(sg_query_buffer_state(s_ib_quads) == SG_RESOURCESTATE_VALID, "Failed to create Quad IB");
+	}
 
-	CIndexBufferBundle::getInstance().registerIB( RID_IB_QUADSTRIP, 6*1000, D3DFMT_INDEX16, *(new CIBFillerQuadStrip()) );
-	CIndexBufferBundle::getInstance().registerIB( RID_IB_QUADS, 6*10000, D3DFMT_INDEX16, *(new CIBFillerQuads()) );
-	gBillboardsNormal = new CRenderableOrderedBillboards( *CIndexBufferBundle::getInstance().getResourceById(RID_IB_QUADS), "tBase" );
-	gBillboardsNormal->getParams().setEffect( *RGET_FX("billboards") );
-	gBillboardsNoDestA = new CRenderableOrderedBillboards( *CIndexBufferBundle::getInstance().getResourceById(RID_IB_QUADS), "tBase" );
-	gBillboardsNoDestA->getParams().setEffect( *RGET_FX("billboardsNoDestA") );
-	gLineRenderer = new CLineRenderer( *CIndexBufferBundle::getInstance().getResourceById(RID_IB_QUADSTRIP) );
-	gLineRenderer->getRenderable().getParams().setEffect( *RGET_FX("lines") );
-	gLineRenderer->getRenderable().getParams().addTexture( "tBase", *RGET_TEX("Line1") );
-
-	// --------------------------------
-	// general use RTs
-
-	ITextureCreator* rtcreatFull = new CScreenBasedTextureCreator(
-		1.00f, 1.00f, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT );
-	ITextureCreator* rtcreat4th = new CScreenBasedTextureCreator(
-		0.25f, 0.25f, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT );
-	stb.registerTexture( RT_FULLSCREEN_1, rtcreatFull );
-	stb.registerTexture( RT_FULLSCREEN_2, rtcreatFull );
-	stb.registerTexture( RT_4thSCREEN_1, rtcreat4th );
-	stb.registerTexture( RT_4thSCREEN_2, rtcreat4th );
-	ssb.registerSurface( RT_FULLSCREEN_1, new CTextureLevelSurfaceCreator(*RGET_STEX(RT_FULLSCREEN_1),0) );
-	ssb.registerSurface( RT_FULLSCREEN_2, new CTextureLevelSurfaceCreator(*RGET_STEX(RT_FULLSCREEN_2),0) );
-	ssb.registerSurface( RT_4thSCREEN_1, new CTextureLevelSurfaceCreator(*RGET_STEX(RT_4thSCREEN_1),0) );
-	ssb.registerSurface( RT_4thSCREEN_2, new CTextureLevelSurfaceCreator(*RGET_STEX(RT_4thSCREEN_2),0) );
-
-	// --------------------------------
-	// reflection RTs
-
-	ITextureCreator* rtcreatRefl = new CScreenBasedTextureCreator(
-		SZ_REFL_REL, SZ_REFL_REL, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT );
-	ISurfaceCreator* rtcreatReflRT = new CScreenBasedSurfaceCreator(
-		SZ_REFL_REL, SZ_REFL_REL, false, D3DFMT_A8R8G8B8, true );
-	ISurfaceCreator* rtcreatReflZ = new CScreenBasedSurfaceCreator(
-		SZ_REFL_REL, SZ_REFL_REL, true, D3DFMT_D16, true );
-	stb.registerTexture( RT_REFL_PX, rtcreatRefl );
-	stb.registerTexture( RT_REFL_NX, rtcreatRefl );
-	stb.registerTexture( RT_REFL_PY, rtcreatRefl );
-	stb.registerTexture( RT_REFL_NY, rtcreatRefl );
-	stb.registerTexture( RT_REFL_PZ, rtcreatRefl );
-	stb.registerTexture( RT_REFL_NZ, rtcreatRefl );
-	ssb.registerSurface( RT_REFLRT, rtcreatReflRT );
-	ssb.registerSurface( RT_REFLZ, rtcreatReflZ );
+	gBillboardsNormal = new CRenderableOrderedBillboards(s_ib_quads, s_smp_linear_clamp);
+	//gBillboardsNormal->getParams().setEffect( *RGET_FX("billboards") ); //@TODO
+	gBillboardsNoDestA = new CRenderableOrderedBillboards(s_ib_quads, s_smp_linear_clamp);
+	//gBillboardsNoDestA->getParams().setEffect( *RGET_FX("billboardsNoDestA") );
+	gLineRenderer = new CLineRenderer();
+	//gLineRenderer->getRenderable().getParams().setEffect( *RGET_FX("lines") ); //@TODO
+	//gLineRenderer->getRenderable().getParams().addTexture( "tBase", *RGET_TEX("Line1") );
 
 	// --------------------------------
-	// shadow map RTs
+	// RTs
 
-	ITextureCreator* rtcreatShadow = new CFixedTextureCreator(
-		SZ_SHADOWMAP, SZ_SHADOWMAP, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT );
-	ISurfaceCreator* rtcreatShadowZ = new CFixedSurfaceCreator(
-		SZ_SHADOWMAP, SZ_SHADOWMAP, true, D3DFMT_D16 );
-	stb.registerTexture( RT_SHADOWRT, rtcreatShadow );
-	ssb.registerSurface( RT_SHADOWRT, new CTextureLevelSurfaceCreator(*RGET_STEX(RT_SHADOWRT),0) );
-	ssb.registerSurface( RT_SHADOWZ, rtcreatShadowZ );
+	ensure_render_targets();
+
+
 
 	// --------------------------------
 	// common params
 
-	gGlobalCullMode = D3DCULL_CW;
-	G_RCTX->getGlobalParams().addIntRef( "iCull", &gGlobalCullMode );
-	G_RCTX->getGlobalParams().addMatrix4x4Ref( "mViewTexProj", gViewTexProjMatrix );
-	G_RCTX->getGlobalParams().addMatrix4x4Ref( "mShadowProj", gLightShadowMatrix );
-	G_RCTX->getGlobalParams().addVector3Ref( "vLightPos", gLightCamera.mMatrix.getOrigin() );
-	G_RCTX->getGlobalParams().addVector3Ref( "vLightDir", gLightCamera.mMatrix.getAxisZ() );
-	G_RCTX->getGlobalParams().addTexture( "tShadow", *RGET_STEX(RT_SHADOWRT) );
-	G_RCTX->getGlobalParams().addTexture( "tCookie", *RGET_TEX("SpotLight") );
+	//gGlobalCullMode = D3DCULL_CW; //@TODO
+	//G_RCTX->getGlobalParams().addIntRef( "iCull", &gGlobalCullMode );
+	//G_RCTX->getGlobalParams().addMatrix4x4Ref( "mViewTexProj", gViewTexProjMatrix );
+	//G_RCTX->getGlobalParams().addMatrix4x4Ref( "mShadowProj", gLightShadowMatrix );
+	//G_RCTX->getGlobalParams().addVector3Ref( "vLightPos", gLightCamera.mMatrix.getOrigin() );
+	//G_RCTX->getGlobalParams().addVector3Ref( "vLightDir", gLightCamera.mMatrix.getAxisZ() );
 
 	// --------------------------------
 	// preload
@@ -247,17 +344,19 @@ void CDemo::appInitialize()
 	gPPSBloom = new CBloomPostProcess();
 	{
 		gPPSOverlayMesh = new CRenderableMesh( *RGET_MESH("billboard"), 0 );
-		CEffectParams& ep = gPPSOverlayMesh->getParams();
-		ep.setEffect( *RGET_FX("overlay") );
-		ep.addVector4Ref( "vFixUV", gScreenFixUVs );
-		ep.addVector4Ref( "vColor", gOverlayColor );
+		//@TODO
+		//CEffectParams& ep = gPPSOverlayMesh->getParams();
+		//ep.setEffect( *RGET_FX("overlay") );
+		//ep.addVector4Ref( "vFixUV", gScreenFixUVs );
+		//ep.addVector4Ref( "vColor", gOverlayColor );
 	}
 	{
 		gPPSOverlayMesh2 = new CRenderableMesh( *RGET_MESH("billboard"), 0 );
-		CEffectParams& ep = gPPSOverlayMesh2->getParams();
-		ep.setEffect( *RGET_FX("overlay2") );
-		ep.addVector4Ref( "vFixUV", gScreenFixUVs );
-		ep.addVector4Ref( "vColor", gOverlayColor2 );
+		//@TODO
+		//CEffectParams& ep = gPPSOverlayMesh2->getParams();
+		//ep.setEffect( *RGET_FX("overlay2") );
+		//ep.addVector4Ref( "vFixUV", gScreenFixUVs );
+		//ep.addVector4Ref( "vColor", gOverlayColor2 );
 	}
 	
 	// --------------------------------
@@ -310,25 +409,8 @@ void CDemo::appInitialize()
 #endif
 
 	gCut.reset();
-}
 
-void gHackyKeyboard()
-{
-#ifndef WITHMUSIC
-	float dt = 1.0f / 60.0f;
-	if( GetAsyncKeyState(VK_LEFT) )		gDebugTime -= dt * 1.0f;
-	if( GetAsyncKeyState(VK_RIGHT) )	gDebugTime += dt * 1.0f;
-	if( GetAsyncKeyState(VK_PRIOR) )	gDebugTime -= dt * 5.0f;
-	if( GetAsyncKeyState(VK_NEXT) )		gDebugTime += dt * 5.0f;
-	static bool justPressedSpace = false;
-	if( GetAsyncKeyState(VK_SPACE) ) {
-		if( !justPressedSpace ) {
-			gDebugTime += 1.0f;
-		}
-		justPressedSpace = true;
-	} else
-		justPressedSpace = false;
-#endif
+	return true;
 }
 
 void gRenderWallReflections()
@@ -345,13 +427,15 @@ void gRenderWallReflections()
 		SVector3(0,0,-1), SVector3(0,0,1),
 	};
 
-	int oldCull = gGlobalCullMode;
-	gGlobalCullMode = D3DCULL_CCW;
+	//int oldCull = gGlobalCullMode; //@TODO
+	//gGlobalCullMode = D3DCULL_CCW;
 	
-	for( int currWall = 0; currWall < CFACE_COUNT; ++currWall ) {
+	for( int currWall = 0; currWall < CFACE_COUNT; ++currWall )
+	{
 		gWallMeshes[currWall]->updateMatrices();
 		if( gWallMeshes[currWall]->frustumCull(gCameraViewProjMatrix) )
 			continue;
+
 		SPlane reflPlane( planePos[currWall] + planeNrm[currWall]*0.05f, planeNrm[currWall] );
 		SMatrix4x4 reflectMat;
 		D3DXMatrixReflect( &reflectMat, &reflPlane );
@@ -359,26 +443,36 @@ void gRenderWallReflections()
 		gWallCamera.mMatrix = gCamera.mMatrix * reflectMat;
 		gWallCamera.setProjFrom( gCamera );
 		gWallCamera.setOntoRenderContext();
-		gComputeTextureProjection( G_RCTX->getCamera().getCameraMatrix(), gLightViewProjMatrix, gLightShadowMatrix );
+		gComputeTextureProjection(gRenderCam.getCameraMatrix(), gLightViewProjMatrix, g_global_u.matShadowProj);
 
-		CD3DDevice& dx = CD3DDevice::getInstance();
-		dx.setRenderTarget( RGET_SSURF(RT_REFLRT) );
-		dx.setZStencil( RGET_SSURF(RT_REFLZ) );
-		dx.clearTargets( true, true, false, 0xFF000000, 1.0f );
-		dx.sceneBegin();
-		gScenes[gSceneIndex]->render( RM_RECV_LO );
-		G_RCTX->perform();
-		dx.sceneEnd();
+		sg_pass pass = {};
+		pass.attachments.depth_stencil = rt_refl_z.view_z;
+		sg_view resolve_views[CFACE_COUNT] = {
+			rt_refl_px.view_resolve, rt_refl_nx.view_resolve,
+			rt_refl_py.view_resolve, rt_refl_ny.view_resolve,
+			rt_refl_pz.view_resolve, rt_refl_nz.view_resolve,
+		};
+		pass.attachments.colors[0] = rt_refl_rt.view_rt;
+		pass.attachments.resolves[0] = resolve_views[currWall];
+		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+		pass.action.colors[0].clear_value = { 0, 0, 0, 1 };
+		pass.action.depth.load_action = SG_LOADACTION_CLEAR;
+		pass.action.depth.clear_value = 1.0f;
 
-		IDirect3DSurface9* surf;
-		RGET_STEX(gWallTexs[currWall])->getObject()->GetSurfaceLevel( 0, &surf );
-		D3DSURFACE_DESC dsc;
-		RGET_SSURF(RT_REFLRT)->getObject()->GetDesc( &dsc );
-		dx.getDevice().StretchRect( RGET_SSURF(RT_REFLRT)->getObject(), NULL, surf, NULL, D3DTEXF_NONE );
-		surf->Release();
+		sg_begin_pass(&pass);
+
+		sg_bindings binds = {};
+		binds.views[0] = rt_shadow_rt.view_tex;
+		binds.views[1] = RGET_TEX("SpotLight")->view_tex;
+		binds.samplers[0] = s_smp_point_clamp;
+		binds.samplers[1] = s_smp_linear_clamp;
+		gScenes[gSceneIndex]->render(RM_RECV_LO, &binds);
+
+		sg_end_pass();
 	}
 
-	gGlobalCullMode = oldCull;
+	//gGlobalCullMode = oldCull; //@TODO
 }
 
 void gRenderShadowMap()
@@ -387,22 +481,25 @@ void gRenderShadowMap()
 
 	gLightCamera.setProjectionParams( D3DX_PI/3, 1.0f, 0.2f, 35.0f );
 	gLightCamera.setOntoRenderContext();
-	gLightViewProjMatrix = G_RCTX->getCamera().getViewProjMatrix();
-	
-	CD3DDevice& dx = CD3DDevice::getInstance();
-	dx.setRenderTarget( RGET_SSURF(RT_SHADOWRT) );
-	dx.setZStencil( RGET_SSURF(RT_SHADOWZ) );
-	dx.clearTargets( true, true, false, 0x00000000, 1.0f );
+	gLightViewProjMatrix = gRenderCam.getViewProjMatrix();
 
-	D3DVIEWPORT9 vp;
-	vp.X = vp.Y = 1; vp.Height = vp.Width = SZ_SHADOWMAP-2;
-	vp.MinZ = 0.0f; vp.MaxZ = 1.0f;
-	dx.getDevice().SetViewport( &vp );
-	
-	dx.sceneBegin();
-	gScenes[gSceneIndex]->render( RM_SHADOW );
-	G_RCTX->perform();
-	dx.sceneEnd();
+	sg_pass pass = {};
+	pass.attachments.colors[0] = rt_shadow_rt.view_rt;
+	pass.attachments.depth_stencil = rt_shadow_z.view_z;
+	pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+	pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+	pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
+	pass.action.depth.load_action = SG_LOADACTION_CLEAR;
+	pass.action.depth.clear_value = 1.0f;
+
+	sg_begin_pass(&pass);
+	sg_apply_viewport(1, 1, SZ_SHADOWMAP-2, SZ_SHADOWMAP-2, true);
+
+	sg_bindings binds = {};
+	gScenes[gSceneIndex]->render(RM_SHADOW, &binds);
+
+	sg_end_pass();
+
 }
 
 static float gGetSceneDur()
@@ -432,14 +529,14 @@ static void gRenderCredits( float cutAlpha )
 	int i;
 	const bool outer = (gSceneMode==SC_OUTER);
 
-	G_RCTX->directBegin();
+	//G_RCTX->directBegin(); //@TODO
 	CRenderableOrderedBillboards& bills = *gBillboardsNoDestA;
 	bills.clear();
 
 	const float CENTER_X = outer ? -0.02f : -0.2f;
 	const float TOP_Y = outer ? 0.6f : 0.7f;
 	const float HEIGHT = outer ? (0.09f+gCut.doneCount*0.02f) : 0.15f;
-	const float ASPECT = CD3DDevice::getInstance().getBackBufferAspect();
+	const float ASPECT = sapp_widthf() / sapp_heightf();
 	const float FLY_ALPHA = 0.3f;
 	const float UV_HEIGHT = outer ? (80.0f/512.0f) : (96.0f/512.0f);
 	const float WIDTH = HEIGHT/ASPECT * (outer ? (850.0f/64.0f) : (512.0f/96.0f));
@@ -503,7 +600,7 @@ static void gRenderCredits( float cutAlpha )
 	//
 	// bills...
 
-	CD3DTexture* btex = RGET_TEX(outer?"CreditsB":"CreditsA");
+	sokol_texture* btex = RGET_TEX(outer?"CreditsB":"CreditsA");
 	const int BILLCOUNT = 16;
 	const D3DCOLOR BILLCOL = 0x18ffffff;
 	const float SECOND_BILL_LOWER = outer ? HEIGHT*0.33f : 0.0f;
@@ -522,7 +619,7 @@ static void gRenderCredits( float cutAlpha )
 			b->tu2 = 0.5f;	b->tv2 = (line+1) * UV_HEIGHT;
 		}
 
-		b->texture = btex;
+		b->texture = btex->view_tex;
 		b->color = BILLCOL;
 		// right...
 		b = &bills.addBill();
@@ -535,26 +632,24 @@ static void gRenderCredits( float cutAlpha )
 			b->tu1 = 0.5f;	b->tv1 = line * UV_HEIGHT;
 			b->tu2 = 1.0f;	b->tv2 = (line+1) * UV_HEIGHT;
 		}
-		b->texture = btex;
+		b->texture = btex->view_tex;
 		b->color = BILLCOL;
 	}
 
-	G_RCTX->directRender( bills );
-
-	G_RCTX->directEnd();
+	//G_RCTX->directRender( bills ); //@TODO
+	//G_RCTX->directEnd();
 }
 
-void CDemo::appPerform()
+bool demo_update()
 {
-	gHackyKeyboard();
+	ensure_render_targets();
 
 	double t = GET_TIME;
 	const double musicTime = t - DELAY_ACTION;
 	float st = float(t - gSceneStartTime);
 	float sceneDur = gGetSceneDur();
 
-	CD3DDevice& dx = CD3DDevice::getInstance();
-	gScreenFixUVs.set( 0.5f/dx.getBackBufferWidth(), 0.5f/dx.getBackBufferHeight(), 0.0f, 0.0f );
+	g_global_u.screenFixUVs.set( 0.5f/sapp_widthf(), 0.5f/sapp_heightf(), 0.0f, 0.0f );
 	
 	gBillboardsNormal->clear();
 	gBillboardsNoDestA->clear();
@@ -620,6 +715,8 @@ void CDemo::appPerform()
 	// evaluate scene at alpha
 
 	scene->evaluate( sceneAlpha, gLightCamera.mMatrix, gCamera.mMatrix );
+	g_global_u.lightPos = gLightCamera.mMatrix.getOrigin();
+	g_global_u.lightDir = gLightCamera.mMatrix.getAxisZ();
 
 	//
 	// adjust z-ranges in outer scene
@@ -636,7 +733,7 @@ void CDemo::appPerform()
 	//
 	// render
 
-	gCamera.setProjectionParams( camfov, dx.getBackBufferAspect(), znear, zfar );
+	gCamera.setProjectionParams( camfov, sapp_widthf() / sapp_heightf(), znear, zfar );
 
 	if( gSceneMode != SC_OUTER ) {
 		gRenderShadowMap();
@@ -644,22 +741,35 @@ void CDemo::appPerform()
 	}
 
 	gCamera.setOntoRenderContext();
-	gComputeTextureProjection( G_RCTX->getCamera().getCameraMatrix(), G_RCTX->getCamera().getViewProjMatrix(), gViewTexProjMatrix );
-	gComputeTextureProjection( G_RCTX->getCamera().getCameraMatrix(), gLightViewProjMatrix, gLightShadowMatrix );
-	gCameraViewProjMatrix = G_RCTX->getCamera().getViewProjMatrix();
+	gComputeTextureProjection(gRenderCam.getCameraMatrix(), gRenderCam.getViewProjMatrix(), g_global_u.matViewTexProj);
+	gComputeTextureProjection(gRenderCam.getCameraMatrix(), gLightViewProjMatrix, g_global_u.matShadowProj);
+	gCameraViewProjMatrix = gRenderCam.getViewProjMatrix();
 
-	dx.setDefaultRenderTarget();
-	dx.setDefaultZStencil();
-	dx.clearTargets( true, true, false, 0x00000000, 1.0f, 0L );
-	dx.sceneBegin();
-	if( gSceneMode != SC_OUTER ) {
-		gScenes[gSceneIndex]->render( RM_RECV_HI ); 
-		G_RCTX->perform();
-		gScenes[gSceneIndex]->render( RM_REFLECTIVE );
-		G_RCTX->perform();
-	} else {
-		gSceneOut->render( RM_HI );
-		G_RCTX->perform();
+	sg_pass pass = {};
+	pass.attachments.colors[0] = rt_main_aa.view_rt;
+	pass.attachments.depth_stencil = rt_main_z.view_z;
+	pass.attachments.resolves[0] = rt_main_resolved.view_resolve;
+	pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+	pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
+	pass.action.depth.load_action = SG_LOADACTION_CLEAR;
+	pass.action.depth.clear_value = 1.0f;
+	sg_begin_pass(&pass);
+
+	sg_bindings binds = {};
+	if( gSceneMode != SC_OUTER )
+	{
+		binds.views[0] = rt_shadow_rt.view_tex;
+		binds.views[1] = RGET_TEX("SpotLight")->view_tex;
+		binds.samplers[0] = s_smp_point_clamp;
+		binds.samplers[1] = s_smp_linear_clamp;
+		gScenes[gSceneIndex]->render(RM_RECV_HI, &binds);
+
+		binds.samplers[0] = s_smp_linear_clamp;
+		gScenes[gSceneIndex]->render(RM_REFLECTIVE, &binds);
+	}
+	else
+	{
+		gSceneOut->render(RM_HI, &binds);
 	}
 
 	//
@@ -685,9 +795,9 @@ void CDemo::appPerform()
 		beat = clamp( beat, 0.0f, 1.0f );
 		gOverlayColor2.set( beat, beat, beat, beat );
 		if( beat > 0.001f ) {
-			G_RCTX->directBegin();
-			G_RCTX->directRender( *gPPSOverlayMesh2 );
-			G_RCTX->directEnd();
+			//G_RCTX->directBegin();
+			//G_RCTX->directRender( *gPPSOverlayMesh2 ); //@TODO
+			//G_RCTX->directEnd();
 		}
 	}
 
@@ -711,8 +821,9 @@ void CDemo::appPerform()
 		cutTime = float(t - gCut.startTime);
 		if( gSceneIndex == SCENES-1 ) {
 			CSceneTeeth* steeth = (CSceneTeeth*)gScenes[gSceneIndex];
-			steeth->renderTeethStuff( gCut.doneCount, sceneAlpha, cutTime/gCut.duration );
-			steeth->renderTeethUI( gCut.doneCount, sceneAlpha, cutTime/gCut.duration );
+			float aspect = sapp_widthf() / sapp_heightf();
+			steeth->renderTeethStuff( gCut.doneCount, sceneAlpha, cutTime/gCut.duration, aspect);
+			steeth->renderTeethUI( gCut.doneCount, sceneAlpha, cutTime/gCut.duration, aspect);
 			teethCut = true;
 		}
 
@@ -726,20 +837,22 @@ void CDemo::appPerform()
 
 	gOverlayColor.w = clamp( gOverlayColor.w, 0.0f, 1.0f );
 	if( gOverlayColor.w > 0.001f ) {
-		G_RCTX->directBegin();
-		G_RCTX->directRender( *gPPSOverlayMesh );
-		G_RCTX->directEnd();
+		//G_RCTX->directBegin();
+		//G_RCTX->directRender( *gPPSOverlayMesh ); //@TODO
+		//G_RCTX->directEnd();
 	}
 
-	dx.sceneEnd();
+	sg_end_pass();
 
 	//
 	// bloom
 
+	//@TODO: render into pass.swapchain = sglue_swapchain()
 	gPPSBloom->renderBloom();
 
 	//
 	// manage scene transitions
+	bool continue_exec = true;
 
 	if( st >= sceneDur ) {
 		if( gSceneMode==SC_OUTER ) {
@@ -750,19 +863,41 @@ void CDemo::appPerform()
 			if( gSceneIndex >= SCENES ) {
 				//gSceneIndex = 0;
 				// end!
-				doClose();
+				continue_exec = false;
 			}
 		}
 		gSceneStartTime = float(t);
 		gCut.reset();
 	}
+
+	sg_commit();
+
+	return continue_exec;
 }
 
-void CDemo::appShutdown()
+void demo_shutdown()
 {
 #ifdef WITHMUSIC
 	delete gMusicPlayer;
 #endif
+
+	rt_main_aa.destroy();
+	rt_main_z.destroy();
+	rt_main_resolved.destroy();
+	rt_fullscreen_1.destroy();
+	rt_fullscreen_2.destroy();
+	rt_4th_1.destroy();
+	rt_4th_2.destroy();
+	rt_refl_px.destroy();
+	rt_refl_py.destroy();
+	rt_refl_pz.destroy();
+	rt_refl_nx.destroy();
+	rt_refl_ny.destroy();
+	rt_refl_nz.destroy();
+	rt_refl_rt.destroy();
+	rt_refl_z.destroy();
+	rt_shadow_rt.destroy();
+	rt_shadow_z.destroy();
 	
 	for( int i = 0; i < SCENES; ++i )
 		delete gScenes[i];
@@ -774,4 +909,38 @@ void CDemo::appShutdown()
 	delete gBillboardsNormal;
 	delete gBillboardsNoDestA;
 	delete gAnimSynch;
+
+	dynamic_vb_shutdown();
+	sg_destroy_buffer(s_ib_quads);
+
+	CTextureBundle::finalize();
+	CMeshBundle::finalize();
+	effects_shutdown();
+	CAnimationBundle::finalize();
+}
+
+void demo_event(const sapp_event* evt)
+{
+	if (evt->type == SAPP_EVENTTYPE_KEY_DOWN)
+	{
+#ifndef WITHMUSIC
+		float dt = 1.0f / 300.0f;
+		if (evt->key_code == SAPP_KEYCODE_LEFT)		gDebugTime -= dt * 1.0f;
+		if (evt->key_code == SAPP_KEYCODE_RIGHT)	gDebugTime += dt * 1.0f;
+		if (evt->key_code == SAPP_KEYCODE_PAGE_UP)	gDebugTime -= dt * 5.0f;
+		if (evt->key_code == SAPP_KEYCODE_PAGE_DOWN)		gDebugTime += dt * 5.0f;
+		static bool justPressedSpace = false;
+		if (evt->key_code == SAPP_KEYCODE_SPACE) {
+			if (!justPressedSpace) {
+				gDebugTime += 1.0f;
+			}
+			justPressedSpace = true;
+		}
+		else
+			justPressedSpace = false;
+#endif
+		if (evt->key_code == SAPP_KEYCODE_ESCAPE) {
+			sapp_quit();
+		}
+	}
 }

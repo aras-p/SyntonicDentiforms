@@ -3,24 +3,22 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#ifndef __RENDER_MESH_H
-#define __RENDER_MESH_H
+#pragma once
 
-#include "Renderable.h"
 #include "../gfx/Mesh.h"
 
 
 namespace dingus {
 
 
-class CRenderableMesh : public CRenderable {
+class CRenderableMesh {
 public:
-	CRenderableMesh( CMesh& mesh, int group, const SVector3* origin = 0, int priority = 0 );
+	CRenderableMesh(CMesh& mesh, int group);
 
 	const CMesh& getMesh() const { return *mMesh; }
 	int getGroup() const { return mGroup; }
 
-	virtual void render( const CRenderContext& ctx );
+	void render();
 	
 private:
 	CMesh*	mMesh;
@@ -29,6 +27,3 @@ private:
 
 
 }; // namespace
-
-
-#endif

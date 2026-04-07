@@ -1,2 +1,3 @@
 ﻿.vs
 /build
+*.glsl.h

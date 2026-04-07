@@ -22,36 +22,20 @@ add_library(dingus STATIC
     dingus/dingus/dxutils/DXUtils.rc
 
     dingus/dingus/gfx/geometry/DynamicVBManager.cpp
-    dingus/dingus/gfx/geometry/VBChunk.cpp
-    dingus/dingus/gfx/geometry/VBChunkHelper.cpp
     dingus/dingus/gfx/Mesh.cpp
     dingus/dingus/gfx/RenderableOrderedBillboards.cpp
+    dingus/dingus/gfx/Texture.cpp
     dingus/dingus/gfx/VertexFormat.cpp
-
-    dingus/dingus/kernel/D3DDevice.cpp
-    dingus/dingus/kernel/ProxyEffect.cpp
 
     dingus/dingus/math/Vector3.cpp
 
-    dingus/dingus/renderer/EffectParams.cpp
-    dingus/dingus/renderer/EffectParamsNotifier.cpp
-    dingus/dingus/renderer/Renderable.cpp
-    dingus/dingus/renderer/RenderableBuffer.cpp
     dingus/dingus/renderer/RenderableMesh.cpp
-    dingus/dingus/renderer/RenderCamera.cpp
-    dingus/dingus/renderer/RenderContext.cpp
 
     dingus/dingus/resource/AnimationBundle.cpp
-    dingus/dingus/resource/EffectBundle.cpp
-    dingus/dingus/resource/IndexBufferBundle.cpp
     dingus/dingus/resource/MeshBundle.cpp
     dingus/dingus/resource/MeshSerializer.cpp
-    dingus/dingus/resource/SharedSurfaceBundle.cpp
-    dingus/dingus/resource/SharedTextureBundle.cpp
-    dingus/dingus/resource/SurfaceCreator.cpp
     dingus/dingus/resource/TextureBundle.cpp
-    dingus/dingus/resource/TextureCreator.cpp
-    dingus/dingus/resource/VertexDeclBundle.cpp
+    dingus/dingus/resource/dds_loader.cpp
 
     dingus/dingus/utils/Errors.cpp
     dingus/dingus/utils/StringHelper.cpp
@@ -84,17 +68,18 @@ add_executable(Demo WIN32
 
     tw/src/demo/Anim.cpp
     tw/src/demo/Demo.cpp
+    tw/src/demo/Effect.cpp
     tw/src/demo/Entity.cpp
     tw/src/demo/Glare.cpp
     tw/src/demo/MeshEntity.cpp
+    tw/src/demo/RenderCamera.cpp
+    tw/src/demo/RenderContext.cpp
     tw/src/demo/Scene.cpp
     tw/src/demo/SceneOut.cpp
     tw/src/demo/SceneTeeth.cpp
 
-    tw/src/system/Globals.cpp
     tw/src/system/main.cpp
     tw/src/system/MusicPlayer.cpp
-    tw/src/system/System.cpp
 
     tw/src/util/LineRenderer.cpp
     tw/src/util/TextureProjector.cpp
@@ -148,3 +133,30 @@ set_target_properties(Demo PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}"
     VS_DEBUGGER_WORKING_DIRECTORY    "${CMAKE_SOURCE_DIR}"
 )
+
+function(add_sokol_shader target_name shader_file)
+    set(SOKOL_SHDC "${CMAKE_SOURCE_DIR}/tools/sokol-shdc")
+    set(SHADER_OUTPUT "${CMAKE_SOURCE_DIR}/${shader_file}.h")
+    add_custom_command(
+        OUTPUT ${SHADER_OUTPUT}
+        COMMAND ${SOKOL_SHDC}
+            --input ${CMAKE_SOURCE_DIR}/${shader_file}
+            --output ${SHADER_OUTPUT}
+            --slang glsl430:hlsl5:metal_macos
+        DEPENDS ${CMAKE_SOURCE_DIR}/${shader_file}
+        COMMENT "Compiling shader ${shader_file} with sokol-shdc"
+        VERBATIM
+    )
+    target_sources(${target_name} PRIVATE ${SHADER_OUTPUT})
+endfunction()
+
+set(SHADER_FILES
+    tw/src/fx/caster.glsl
+    tw/src/fx/receiverHi.glsl
+    tw/src/fx/receiverLo.glsl
+    tw/src/fx/reflective.glsl
+)
+foreach(shader ${SHADER_FILES})
+    add_sokol_shader(Demo ${shader})
+endforeach()
+

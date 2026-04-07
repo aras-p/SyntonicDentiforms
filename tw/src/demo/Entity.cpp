@@ -44,8 +44,8 @@ void CCameraEntity::setProjFrom( const CCameraEntity& c )
 void CCameraEntity::setOntoRenderContext() const
 {
 	// set camera params
-	G_RCTX->getCamera().setCameraMatrix( mMatrix );
-	G_RCTX->getCamera().setProjectionMatrix( mProjectionMatrix );
+	gRenderCam.setCameraMatrix( mMatrix );
+	gRenderCam.setProjectionMatrix( mProjectionMatrix );
 }
 
 dingus::SVector3 CCameraEntity::getWorldRay( float x, float y ) const

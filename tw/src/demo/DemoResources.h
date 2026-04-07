@@ -1,14 +1,12 @@
-#ifndef __MYDEMO_RES_H
-#define __MYDEMO_RES_H
+#pragma once
 
 #include <dingus/math/Vector4.h>
+#include <dingus/math/Matrix4x4.h>
 #include <dingus/gfx/RenderableOrderedBillboards.h>
+#include <dingus/gfx/Texture.h>
 
 // --------------------------------------------------------------------------
 // misc
-
-#define RID_IB_QUADSTRIP "ibqstrip"
-#define RID_IB_QUADS "ibquads"
 
 class CLineRenderer;
 extern CLineRenderer*	gLineRenderer;
@@ -24,38 +22,45 @@ extern SVector4			gScreenFixUVs;
 // --------------------------------------------------------------------------
 // main rendertargets
 
+constexpr int kMainAA = 4;
+
+extern sokol_texture rt_main_aa, rt_main_z, rt_main_resolved;
+
 // full screen
-#define RT_FULLSCREEN_1 "mainRT1"
-#define RT_FULLSCREEN_2 "mainRT2"
+extern sokol_texture rt_fullscreen_1, rt_fullscreen_2;
 
 // 1/4 of the screen
-#define RT_4thSCREEN_1 "4thRT1"
-#define RT_4thSCREEN_2 "4thRT2"
+extern sokol_texture rt_4th_1, rt_4th_2;
 
 
 // --------------------------------------------------------------------------
 // cube reflections
 
-const float SZ_REFL_REL = 0.5f;
-
 // textures
-#define RT_REFL_PX "reflpx"
-#define RT_REFL_NX "reflnx"
-#define RT_REFL_PY "reflpy"
-#define RT_REFL_NY "reflny"
-#define RT_REFL_PZ "reflpz"
-#define RT_REFL_NZ "reflnz"
+extern sokol_texture rt_refl_px, rt_refl_py, rt_refl_pz, rt_refl_nx, rt_refl_ny, rt_refl_nz;
 // rendertarget and z/stencil
-#define RT_REFLRT "reflRT"
-#define RT_REFLZ "reflZ"
+extern sokol_texture rt_refl_rt, rt_refl_z;
 
 // --------------------------------------------------------------------------
 // shadow maps
 
 const int SZ_SHADOWMAP = 1024;
 
-#define RT_SHADOWRT "shadowRT"
-#define RT_SHADOWZ "shadowZ"
+extern sokol_texture rt_shadow_rt;
+extern sokol_texture rt_shadow_z;
 
+// match global_uniforms in shaders
+struct GlobalUniforms
+{
+	SMatrix4x4 matView;
+	SMatrix4x4 matProjection;
+	SMatrix4x4 matViewProj;
+	SMatrix4x4 matViewTexProj;
+	SMatrix4x4 matShadowProj;
+	SVector4 eyePos;
+	SVector4 screenFixUVs; //@TODO: perhaps not needed post-DX9
+	SVector4 lightPos;
+	SVector4 lightDir;
+};
 
-#endif
+extern GlobalUniforms g_global_u;

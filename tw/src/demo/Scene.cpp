@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "Scene.h"
+#include "Effect.h"
+
+#include "DemoResources.h"
 
 CScene::CScene( int number )
 :	mNumber(number)
@@ -159,11 +162,39 @@ void CScene::evaluateMeshes( float t )
 }
 
 
-void CScene::render( int renderMode )
+void CScene::render(eRenderMode renderMode, sg_bindings* binds)
 {
 	int n = mMeshes.size();
+	if (n == 0)
+		return;
+
+	bool ubo0 = true;
+	switch (renderMode) {
+	case RM_RECV_HI:
+		effect_apply(fx_receiverHi);
+		break;
+	case RM_RECV_LO:
+		effect_apply(fx_receiverLo);
+		break;
+	case RM_SHADOW:
+		effect_apply(fx_caster);
+		ubo0 = false;
+		break;
+	case RM_REFLECTIVE:
+		effect_apply(fx_reflective);
+		break;
+	case RM_HI:
+		effect_apply(fx_noshadowHi);
+		break;
+	default:
+		ASSERT_MSG(false, "Unknown render mode");
+	}
+
+	if (ubo0)
+		sg_apply_uniforms(0, { &g_global_u, sizeof(g_global_u) });
+
 	for( int i = 0; i < n; ++i )
-		mMeshes[i].mesh->render( renderMode );
+		mMeshes[i].mesh->render(renderMode, binds);
 }
 
 void CScene::addCut( float frame )

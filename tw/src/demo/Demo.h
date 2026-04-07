@@ -1,19 +1,8 @@
-#ifndef __DEMO_H
-#define __DEMO_H
+#pragma once
 
-#include "../system/System.h"
+struct sapp_event;
 
-
-class CDemo : public CSystem {
-public:
-	CDemo();
-	
-protected:
-	virtual bool appCheckDevice( const D3DCAPS9& caps, DWORD behavior, D3DFORMAT bbFormat ) const;
-	virtual void appInitialize();
-	virtual void appPerform();
-	virtual void appShutdown();
-};
-
-
-#endif
+bool demo_init();
+bool demo_update();
+void demo_shutdown();
+void demo_event(const sapp_event* evt);

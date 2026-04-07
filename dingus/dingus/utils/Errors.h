@@ -3,8 +3,7 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#ifndef __ERRORS_H
-#define __ERRORS_H
+#pragma once
 
 #include <stdexcept>
 
@@ -14,13 +13,6 @@ namespace dingus {
 	assert(false); \
 	throw EBaseError( msg, __FILE__, __LINE__ ); \
 }
-#define THROW_DXERROR(hr,msg) { \
-	assert(false); \
-	char buf[100]; \
-	sprintf( buf, "%X ", hr ); \
-	throw EBaseError( std::string(buf) + msg, __FILE__, __LINE__ ); \
-}
-
 
 class EBaseError : public std::runtime_error {
 public:
@@ -39,5 +31,3 @@ protected:
 };
 
 }; // namespace
-
-#endif

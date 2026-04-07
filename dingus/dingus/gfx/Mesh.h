@@ -3,15 +3,15 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#ifndef __GFX_MESH_H
-#define __GFX_MESH_H
+#pragma once
 
 #include "dingus/utils/noncopyable.h"
 
 #include "VertexFormat.h"
 #include "../math/Vector3.h"
 #include "../math/AABox.h"
-#include "../kernel/Proxies.h"
+
+#include "../tw/src/external/sokol_gfx.h"
 
 
 namespace dingus {
@@ -47,13 +47,8 @@ public:
 	typedef std::vector<CGroup>	TGroupVector;
 
 public:
-	CMesh();
+	CMesh(int vertCount, int idxCount, const CVertexFormat& vertFormat, int indexStride, const void* vbData, const void* ibData, int groupCount, const CGroup *groups);
 	~CMesh();
-
-	void	createResource( int vertCount, int idxCount,
-		const CVertexFormat& vertFormat, int indexStride, CD3DVertexDecl& vertDecl );
-	void	deleteResource();
-	bool	isCreated() const { return !mVB.isNull() && !mIB.isNull(); }
 
 	int		getVertexCount() const { return mVertexCount; }
 	int		getIndexCount() const { return mIndexCount; }
@@ -61,45 +56,31 @@ public:
 	const CVertexFormat& getVertexFormat() const { return mVertexFormat; }
 	int		getVertexStride() const { return mVertexStride; }
 	int		getIndexStride() const { return mIndexStride; }
-	CD3DVertexDecl& getVertexDecl() const { return *mVertexDecl; }
 
-	CD3DVertexBuffer&	getVB() { return mVB; }
-	CD3DIndexBuffer&	getIB() { return mIB; }
-	void*	lockVB( bool readOnly );
-	void	unlockVB();
-	void*	lockIB( bool readOnly );
-	void	unlockIB();
+	sg_buffer getVB() { return mVB; }
+	sg_buffer getIB() { return mIB; }
 	
-	void	computeAABBs();
 	const CAABox& getTotalAABB() const { return mTotalAABB; }
-	CAABox& getTotalAABB() { return mTotalAABB; }
 
 	int		getGroupCount() const { return mGroups.size(); }
 	const CGroup& getGroup( int i ) const { assert(i>=0&&i<getGroupCount()); return mGroups[i]; }
-	CGroup& getGroup( int i ) { assert(i>=0&&i<getGroupCount()); return mGroups[i]; }
-	void	reserveGroups( int count ) { mGroups.reserve(count); }
-	void	addGroup( const CGroup& g ) { mGroups.push_back(g); }
 
 private:
 	// vertex/index count
-	int				mVertexCount;
-	int				mIndexCount;
+	int				mVertexCount = 0;
+	int				mIndexCount = 0;
 	// formats/strides
-	CVertexFormat	mVertexFormat;
-	int				mVertexStride; // in bytes, depends on format
-	int				mIndexStride;
-	CD3DVertexDecl*	mVertexDecl;
+	CVertexFormat	mVertexFormat = 0;
+	int				mVertexStride = 0; // in bytes, depends on format
+	int				mIndexStride = 0;
 	// VB/IB
-	CD3DVertexBuffer	mVB;
-	CD3DIndexBuffer		mIB;
+	sg_buffer		mVB = {};
+	sg_buffer		mIB = {};
 	// groups
 	TGroupVector	mGroups;
 	// total AABB
-	CAABox			mTotalAABB;
+	CAABox			mTotalAABB = {};
 };
 
 
 }; // namespace
-
-
-#endif

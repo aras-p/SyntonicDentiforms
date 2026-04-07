@@ -3,101 +3,35 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#include "../../stdafx.h"
-#pragma hdrstop
-
 #include "DynamicVBManager.h"
-#include "../../kernel/D3DDevice.h"
-#include "../../utils/Errors.h"
 
-using namespace dingus;
+static sg_buffer s_dynamic_buffer;
 
-
-
-const DWORD CDynamicVBManager::VB_USAGE = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
-const D3DPOOL CDynamicVBManager::VB_POOL = D3DPOOL_DEFAULT;
-
-CDynamicVBManager::CDynamicVBManager( int capacityBytes )
-:	CManagedBuffer<CVBChunk,CD3DVertexBuffer>(capacityBytes)
+void dynamic_vb_init(size_t capacityBytes)
 {
-	mBuffer = new CD3DVertexBuffer( NULL );
+	sg_buffer_desc desc = {};
+	desc.usage.vertex_buffer = true;
+	desc.size = capacityBytes;
+	desc.usage.immutable = false;
+	desc.usage.dynamic_update = true;
+	s_dynamic_buffer = sg_make_buffer(&desc);
+	ASSERT_MSG(sg_query_buffer_state(s_dynamic_buffer) == SG_RESOURCESTATE_VALID, "Failed to create Dynamic VB");
 }
 
-CDynamicVBManager::~CDynamicVBManager()
+void dynamic_vb_shutdown()
 {
-	delete mBuffer;
+	sg_destroy_buffer(s_dynamic_buffer);
+	s_dynamic_buffer = {};
 }
 
-CD3DVertexBuffer* CDynamicVBManager::allocateBuffer( int capacityBytes )
+int dynamic_vb_append(const void* data, size_t size)
 {
-	return new CD3DVertexBuffer( createBuffer( capacityBytes ) );
+	int offset = sg_append_buffer(s_dynamic_buffer, {data, size});
+	ASSERT_MSG(!sg_query_buffer_overflow(s_dynamic_buffer), "Dynamic VB overflow");
+	return offset;
 }
 
-IDirect3DVertexBuffer9* CDynamicVBManager::createBuffer( int capacityBytes )
+sg_buffer dynamic_vb_get()
 {
-	IDirect3DVertexBuffer9* vb = NULL;
-	HRESULT hres = CD3DDevice::getInstance().getDevice().CreateVertexBuffer(
-		capacityBytes,
-		VB_USAGE,
-		0,
-		VB_POOL,
-		&vb, NULL );
-	if( FAILED( hres ) ) {
-		THROW_DXERROR( hres, "failed to create vertex buffer" );
-	}
-	return vb;
-}
-
-byte* CDynamicVBManager::lockBuffer( int byteStart, int byteCount )
-{
-	if( byteCount == 0 )
-		return NULL;
-
-	// append data
-	DWORD lockFlag = D3DLOCK_NOOVERWRITE;
-	
-	// vb must be discarded at first
-	if( byteStart == 0 )
-		lockFlag = D3DLOCK_DISCARD;
-
-	byte* data = NULL;
-	HRESULT hres = mBuffer->getObject()->Lock(
-		byteStart, 
-		byteCount,
-		reinterpret_cast<void**>( &data ),
-		lockFlag );
-	if( FAILED( hres ) ) {
-		THROW_DXERROR( hres, "failed to lock vertex buffer" );
-	}
-
-	return data;
-}
-
-
-void CDynamicVBManager::createResource()
-{
-}
-
-void CDynamicVBManager::activateResource()
-{
-	// first creation can happen only here
-	//if( !mBuffer )
-	//	mBuffer = new CD3DVertexBuffer( NULL );
-
-	if( !mBuffer->isNull() )
-		return;
-	mBuffer->setObject( createBuffer( getCapacityBytes() ) );
-	assert( !mBuffer->isNull() );
-}
-
-void CDynamicVBManager::passivateResource()
-{
-	assert( !mBuffer->isNull() );
-	discard();
-	mBuffer->getObject()->Release();
-	mBuffer->setObject( NULL );
-}
-
-void CDynamicVBManager::deleteResource()
-{
+	return s_dynamic_buffer;
 }

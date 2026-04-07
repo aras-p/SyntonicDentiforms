@@ -3,36 +3,26 @@
 // Developed by nesnausk! team: www.nesnausk.org
 // --------------------------------------------------------------------------
 
-#include "../stdafx.h"
-#pragma hdrstop
-
 #include "RenderableMesh.h"
-#include "RenderContext.h"
-#include "../utils/Errors.h"
-#include "../kernel/D3DDevice.h"
 
 
 using namespace dingus;
 
-CRenderableMesh::CRenderableMesh( CMesh& mesh, int group, const SVector3* origin, int priority )
-:	CRenderable( origin, priority ),
-	mMesh( &mesh ),
+CRenderableMesh::CRenderableMesh(CMesh& mesh, int group)
+:	mMesh( &mesh ),
 	mGroup( group )
 {
 	assert( group >= 0 && group < mesh.getGroupCount() );
-	assert( mesh.isCreated() );
 }
 
 
-void CRenderableMesh::render( CRenderContext const& ctx )
+void CRenderableMesh::render()
 {
 	assert( mMesh );
 
+	//@TODO
+	/*
 	HRESULT hres;
-	//IDirect3DIndexBuffer9* ib = &mMesh->getIB();
-	//IDirect3DVertexBuffer9* vb = &mMesh->getVB();
-	//assert( ib && vb );
-
 	CD3DDevice& device = CD3DDevice::getInstance();
 	IDirect3DDevice9& dx = device.getDevice();
 
@@ -51,4 +41,5 @@ void CRenderableMesh::render( CRenderContext const& ctx )
 	if( FAILED( hres ) ) {
 		THROW_DXERROR( hres, "failed to DIP" );
 	}
+	*/
 }
