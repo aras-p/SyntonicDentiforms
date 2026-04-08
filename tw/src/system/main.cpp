@@ -54,7 +54,7 @@ sapp_desc sokol_main(int argc, char* argv[])
 	app_desc.frame_cb = frame;
 	app_desc.cleanup_cb = cleanup;
 	app_desc.width = 640;
-	app_desc.height = 480;
+	app_desc.height = 500;
 	app_desc.sample_count = 1;
 	app_desc.window_title = "Syntonic Dentiforms";
     app_desc.icon.sokol_default = true;
@@ -71,20 +71,3 @@ sapp_desc sokol_main(int argc, char* argv[])
 
     return app_desc;
 }
-
-/*
-INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR, INT )
-{
-	try {
-		CDemo* system = new CDemo();
-		if( SUCCEEDED( system->create( hInst ) ) )
-			system->run();
-		delete system;
-	} catch( std::exception& e ) {
-		std::string willExit = "\n\nThe application will now exit.";
-		MessageBox( 0, (e.what()+willExit).c_str(), "Fatal error", MB_OK );
-		return 0;
-	}
-	return 0;
-}
-*/
