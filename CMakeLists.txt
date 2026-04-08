@@ -69,8 +69,6 @@ add_executable(Demo WIN32
 
     tw/src/util/LineRenderer.cpp
     tw/src/util/TextureProjector.cpp
-
-    tw/src/Demo.rc
 )
 
 target_include_directories(Demo PRIVATE
