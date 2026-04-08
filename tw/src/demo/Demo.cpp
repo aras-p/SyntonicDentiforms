@@ -93,7 +93,6 @@ const char*		gWallNames[CFACE_COUNT] = { "CubePX", "CubeNX", "CubePY", "CubeNY",
 CCameraEntity	gWallCamera;
 
 // post-processing fx
-CBloomPostProcess*	gPPSBloom;
 CRenderableMesh*	gPPSOverlayMesh;
 CRenderableMesh*	gPPSOverlayMesh2;
 SVector4			gOverlayColor;
@@ -138,8 +137,8 @@ static void gPreload()
 
 static sg_buffer s_ib_quads;
 
-static sg_sampler s_smp_linear_clamp;
-static sg_sampler s_smp_point_clamp;
+sg_sampler s_smp_linear_clamp;
+sg_sampler s_smp_point_clamp;
 
 sokol_texture rt_main_aa, rt_main_z, rt_main_resolved;
 sokol_texture rt_fullscreen_1, rt_fullscreen_2;
@@ -341,7 +340,6 @@ bool demo_init()
 	// --------------------------------
 	// post process fx
 
-	gPPSBloom = new CBloomPostProcess();
 	{
 		gPPSOverlayMesh = new CRenderableMesh( *RGET_MESH("billboard"), 0 );
 		//@TODO
@@ -866,8 +864,7 @@ bool demo_update()
 	//
 	// bloom
 
-	//@TODO: render into pass.swapchain = sglue_swapchain()
-	gPPSBloom->renderBloom();
+	renderBloom();
 
 	//
 	// manage scene transitions
@@ -921,7 +918,6 @@ void demo_shutdown()
 	for( int i = 0; i < SCENES; ++i )
 		delete gScenes[i];
 	delete gSceneOut;
-	delete gPPSBloom;
 	delete gPPSOverlayMesh;
 	delete gPPSOverlayMesh2;
 	delete gLineRenderer;

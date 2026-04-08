@@ -1,99 +1,92 @@
-#include "stdafx.h"
 #include "Glare.h"
+#include "Effect.h"
 #include "DemoResources.h"
+
+#include "../external/sokol_app.h"
+#include "../external/sokol_glue.h"
 
 const int BLOOM_PASSES = 4;
 
-
-CBloomPostProcess::CBloomPostProcess()
+static void pingPongBlur(int passes)
 {
-	/* @TODO
-	const char* fx = "filterBloom";
-	for( int i = 0; i < 2; ++i ) {
-		mBloomPingPongs[i] = new CRenderableMesh( *RGET_MESH("billboard"), 0 );
-		CEffectParams& ep = mBloomPingPongs[i]->getParams();
-		ep.setEffect( *RGET_FX(fx) );
-		ep.addVector4Ref( "vFixUV", mFixUVs4th );
-		ep.addVector4Ref( "vTexelsX", mTexelOffsetsX );
-		ep.addVector4Ref( "vTexelsY", mTexelOffsetsY );
-	}
-	mBloomPingPongs[0]->getParams().addTexture( "tBase", *RGET_STEX(RT_4thSCREEN_1) );
-	mBloomPingPongs[1]->getParams().addTexture( "tBase", *RGET_STEX(RT_4thSCREEN_2) );
+	sokol_texture* pingPong[2] = {&rt_4th_2, &rt_4th_1};
 
-	mComposite = new CRenderableMesh( *RGET_MESH("billboard"), 0 );
-	CEffectParams& cep = mComposite->getParams();
-	cep.setEffect( *RGET_FX("compositeAdd") );
-	cep.addVector4Ref( "vFixUV", mFixUVs4th );
-	cep.addTexture( "tBase", *RGET_STEX( !(BLOOM_PASSES&1) ? RT_4thSCREEN_1 : RT_4thSCREEN_2 ) );
-	*/
-}
-
-CBloomPostProcess::~CBloomPostProcess()
-{
-	/* @TODO
-	delete mBloomPingPongs[0];
-	delete mBloomPingPongs[1];
-	delete mComposite;
-	*/
-}
-
-void CBloomPostProcess::pingPongBlur( int passes )
-{
-	/* @TODO
-	CD3DDevice& dx = CD3DDevice::getInstance();
-
-	CD3DSurface* pingPongS[2];
-	pingPongS[0] = RGET_SSURF(RT_4thSCREEN_2);
-	pingPongS[1] = RGET_SSURF(RT_4thSCREEN_1);
-
-	// fullscreen quad UV fixes
-	int swidth = sapp_widthf();
-	int sheight = sapp_heightf();
-	mFixUVs4th.set( 2.0f/swidth, 2.0f/sheight, 1.0f-4.0f/swidth, 1.0f-4.0f/sheight );
-
-	// ping-pong blur passes
-	dx.setZStencil( NULL );
+	int swidth = sapp_width() / 4;
+	int sheight = sapp_height() / 4;
 
 	const SVector4 offsetX( 1, 1,-1,-1);
 	const SVector4 offsetY( 1,-1,-1, 1);
 	for( int i = 0; i < passes; ++i ) {
-		const float pixDist = i+0.5f;
-		mTexelOffsetsX = offsetX * (mFixUVs4th.x*2 * pixDist);
-		mTexelOffsetsY = offsetY * (mFixUVs4th.y*2 * pixDist);
-		dx.setRenderTarget( pingPongS[i&1] );
-		dx.sceneBegin();
-		G_RCTX->directBegin();
-		G_RCTX->directRender( *mBloomPingPongs[i&1] );
-		G_RCTX->directEnd();
-		dx.sceneEnd();
+		const float pixDist = i + 0.5f;
+		SVector4 offset(pixDist / swidth, pixDist / sheight, 0, 0);
+
+		sg_pass pass = {};
+		pass.attachments.colors[0] = pingPong[i&1]->view_rt;
+		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+		pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
+		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
+		sg_begin_pass(&pass);
+
+		sg_bindings binds = {};
+		binds.views[0] = pingPong[(i+1) & 1]->view_tex;
+		binds.samplers[0] = s_smp_linear_clamp;
+
+		effect_apply(fx_filterBloom);
+
+		sg_apply_uniforms(0, { &offset, sizeof(offset) });
+
+		sg_apply_bindings(binds);
+		sg_draw(0, 4, 1);
+
+		sg_end_pass();
 	}
-	*/
 }
 
-void CBloomPostProcess::renderBloom()
+void renderBloom()
 {
-	/* @TODO
-	CD3DDevice& dx = CD3DDevice::getInstance();
+	// downsample main into smaller RT
+	{
+		sg_pass pass = {};
+		pass.attachments.colors[0] = rt_4th_1.view_rt;
+		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+		pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
+		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
+		sg_begin_pass(&pass);
 
-	// downsample backbuffer into smaller RT
-	dx.getDevice().StretchRect(
-		dx.getBackBuffer(), NULL,
-		RGET_SSURF(RT_4thSCREEN_1)->getObject(), NULL,
-		D3DTEXF_NONE
-	);
+		sg_bindings binds = {};
+		binds.views[0] = rt_main_resolved.view_tex;
+		binds.samplers[0] = s_smp_linear_clamp;
+
+		effect_apply(fx_blit);
+		sg_apply_bindings(binds);
+		sg_draw(0, 4, 1);
+
+		sg_end_pass();
+	}
 
 	// blur
 	pingPongBlur( BLOOM_PASSES );
 
-	// composite
-	dx.setDefaultRenderTarget();
-	dx.setDefaultZStencil();
-	dx.sceneBegin();
-	G_RCTX->directBegin();
-	G_RCTX->directRender( *mComposite );
-	G_RCTX->directEnd();
-	dx.sceneEnd();
-	*/
+	// composite into backbuffer
+	{
+		sg_pass pass = {};
+		pass.swapchain = sglue_swapchain();
+		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+		pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
+		sg_begin_pass(&pass);
 
+		sg_bindings binds = {};
+		binds.views[0] = rt_main_resolved.view_tex;
+		binds.views[1] = !(BLOOM_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex;
+		binds.samplers[0] = s_smp_linear_clamp;		
+
+		effect_apply(fx_compositeAdd);
+		sg_apply_bindings(binds);
+		sg_draw(0, 4, 1);
+
+		sg_end_pass();
+	}
 }
-

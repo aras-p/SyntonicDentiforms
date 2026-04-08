@@ -133,7 +133,10 @@ function(add_sokol_shader target_name shader_file)
 endfunction()
 
 set(SHADER_FILES
+    tw/src/fx/blit.glsl
     tw/src/fx/caster.glsl
+    tw/src/fx/compositeAdd.glsl
+    tw/src/fx/filterBloom.glsl
     tw/src/fx/receiverHi.glsl
     tw/src/fx/receiverLo.glsl
     tw/src/fx/reflective.glsl

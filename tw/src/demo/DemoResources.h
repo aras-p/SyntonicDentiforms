@@ -14,12 +14,12 @@
 class CLineRenderer;
 extern CLineRenderer*	gLineRenderer;
 
-class CBloomPostProcess;
-extern CBloomPostProcess*	gPPSBloom;
-
 extern CRenderableOrderedBillboards*	gBillboardsNormal;
 extern CRenderableOrderedBillboards*	gBillboardsNoDestA;
 extern SVector4			gScreenFixUVs;
+
+extern sg_sampler s_smp_linear_clamp;
+extern sg_sampler s_smp_point_clamp;
 
 
 // --------------------------------------------------------------------------

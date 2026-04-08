@@ -1,7 +1,10 @@
 #include "Effect.h"
 #include "DemoResources.h"
 
+#include "../fx/blit.glsl.h"
 #include "../fx/caster.glsl.h"
+#include "../fx/compositeAdd.glsl.h"
+#include "../fx/filterBloom.glsl.h"
 #include "../fx/receiverLo.glsl.h"
 #include "../fx/receiverHi.glsl.h"
 #include "../fx/reflective.glsl.h"
@@ -13,6 +16,37 @@ static sg_pipeline s_fx_pipes[fxCount] = {};
 void effects_init()
 {
 	sg_backend backend = sg_query_backend();
+	// blit
+	{
+		sg_pipeline_desc desc = {};
+		desc.shader = sg_make_shader(blit_prog_shader_desc(backend));
+		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		s_fx_pipes[fx_blit] = sg_make_pipeline(desc);
+	}
+	// compositeAdd
+	{
+		sg_pipeline_desc desc = {};
+		desc.shader = sg_make_shader(compositeAdd_prog_shader_desc(backend));
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		// Z off
+		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
+		desc.depth.write_enabled = false;
+		s_fx_pipes[fx_compositeAdd] = sg_make_pipeline(desc);
+	}
+	// filterBloom
+	{
+		sg_pipeline_desc desc = {};
+		desc.shader = sg_make_shader(filterBloom_prog_shader_desc(backend));
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
+		// Z off
+		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
+		desc.depth.write_enabled = false;
+		s_fx_pipes[fx_filterBloom] = sg_make_pipeline(desc);
+	}
 	// caster
 	{
 		sg_pipeline_desc desc = {};

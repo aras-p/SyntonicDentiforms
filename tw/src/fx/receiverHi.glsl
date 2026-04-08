@@ -34,7 +34,7 @@ layout(binding=1) uniform texture2D texCookie;
 layout(binding=0) uniform sampler smpShadow;
 layout(binding=1) uniform sampler smpCookie;
 
-in vec4 uvShadow;
+in vec3 uvShadow;
 in vec3 hlf;
 in vec3 normal;
 in vec3 tolight;

@@ -1,6 +1,7 @@
 #pragma once
 
 enum Effect {
+	fx_blit,
 	fx_billboards,
 	fx_billboardsNoDestA,
 	fx_caster,
