@@ -38,8 +38,6 @@
 
 GlobalUniforms g_global_u;
 
-//int			gGlobalCullMode; //@TODO
-
 enum eSceneMode { SC_OUTER = 0, SC_SCENE };
 
 const int SCENES = 6;
@@ -310,27 +308,13 @@ bool demo_init()
 	}
 
 	gBillboardsNormal = new CRenderableOrderedBillboards(s_ib_quads, s_smp_linear_clamp);
-	//gBillboardsNormal->getParams().setEffect( *RGET_FX("billboards") ); //@TODO
 	gBillboardsNoDestA = new CRenderableOrderedBillboards(s_ib_quads, s_smp_linear_clamp);
-	//gBillboardsNoDestA->getParams().setEffect( *RGET_FX("billboardsNoDestA") );
 	gLineRenderer = new CLineRenderer();
 
 	// --------------------------------
 	// RTs
 
 	ensure_render_targets();
-
-
-
-	// --------------------------------
-	// common params
-
-	//gGlobalCullMode = D3DCULL_CW; //@TODO
-	//G_RCTX->getGlobalParams().addIntRef( "iCull", &gGlobalCullMode );
-	//G_RCTX->getGlobalParams().addMatrix4x4Ref( "mViewTexProj", gViewTexProjMatrix );
-	//G_RCTX->getGlobalParams().addMatrix4x4Ref( "mShadowProj", gLightShadowMatrix );
-	//G_RCTX->getGlobalParams().addVector3Ref( "vLightPos", gLightCamera.mMatrix.getOrigin() );
-	//G_RCTX->getGlobalParams().addVector3Ref( "vLightDir", gLightCamera.mMatrix.getAxisZ() );
 
 	// --------------------------------
 	// preload
@@ -381,9 +365,9 @@ bool demo_init()
 	gMusicPlayer->play( "data/music.ogg" );
 	gSceneStartTime = float(GET_TIME - DELAY_ACTION);
 #else
-	gSceneMode = SC_SCENE;
-	gSceneIndex = 5;
-	gSceneStartTime = -15.0f;
+	//gSceneMode = SC_SCENE;
+	//gSceneIndex = 5;
+	//gSceneStartTime = -15.0f;
 #endif
 
 	gCut.reset();
@@ -424,9 +408,6 @@ void gRenderWallReflections()
 		SVector3(0,0,-1), SVector3(0,0,1),
 	};
 
-	//int oldCull = gGlobalCullMode; //@TODO
-	//gGlobalCullMode = D3DCULL_CCW;
-	
 	for( int currWall = 0; currWall < CFACE_COUNT; ++currWall )
 	{
 		gWallMeshes[currWall]->updateMatrices();
@@ -468,8 +449,6 @@ void gRenderWallReflections()
 
 		sg_end_pass();
 	}
-
-	//gGlobalCullMode = oldCull; //@TODO
 }
 
 void gRenderShadowMap()
@@ -526,7 +505,6 @@ static void gRenderCredits( float cutAlpha )
 	int i;
 	const bool outer = (gSceneMode==SC_OUTER);
 
-	//G_RCTX->directBegin(); //@TODO
 	CRenderableOrderedBillboards& bills = *gBillboardsNoDestA;
 	bills.clear();
 
@@ -633,8 +611,8 @@ static void gRenderCredits( float cutAlpha )
 		b->color = BILLCOL;
 	}
 
-	//G_RCTX->directRender( bills ); //@TODO
-	//G_RCTX->directEnd();
+	effect_apply(fx_billboards);
+	bills.render();
 }
 
 bool demo_update()
@@ -860,6 +838,7 @@ bool demo_update()
 			if( gSceneIndex >= SCENES ) {
 				//gSceneIndex = 0;
 				// end!
+				gSceneIndex = SCENES - 1;
 				continue_exec = false;
 			}
 		}

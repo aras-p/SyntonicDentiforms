@@ -13,9 +13,7 @@ namespace dingus {
 
 #pragma pack(1)
 
-/// Vertex format: position, color, UV.
-//const DWORD FVF_XYZ_DIFFUSE_TEX1 = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1; //@TODO
-/// Vertex: position, color, UV.
+// Vertex: position, color, UV.
 struct SVertexXyzDiffuseTex1 {
 	SVector3	p;
 	uint32_t	diffuse;

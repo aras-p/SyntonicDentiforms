@@ -135,11 +135,13 @@ function(add_sokol_shader target_name shader_file)
 endfunction()
 
 set(SHADER_FILES
+    tw/src/fx/billboards.glsl
     tw/src/fx/blit.glsl
     tw/src/fx/caster.glsl
     tw/src/fx/compositeAdd.glsl
     tw/src/fx/filterBloom.glsl
     tw/src/fx/lines.glsl
+    tw/src/fx/noshadowHi.glsl
     tw/src/fx/overlay.glsl
     tw/src/fx/receiverHi.glsl
     tw/src/fx/receiverLo.glsl

@@ -3,6 +3,7 @@
 #include "SceneTeeth.h"
 #include "DemoResources.h"
 #include "Glare.h"
+#include "Effect.h"
 #include "../util/LineRenderer.h"
 #include <dingus/math/MathUtils.h>
 #include <dingus/utils/StringHelper.h>
@@ -377,7 +378,9 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 		bill->texture = RGET_TEX("BondigoDuo")->view_tex;
 		bill->setWholeTexture();
 	}
-	//G_RCTX->directRender( bills ); //@TODO
+
+	effect_apply(fx_billboards);
+	bills.render();
 }
 
 

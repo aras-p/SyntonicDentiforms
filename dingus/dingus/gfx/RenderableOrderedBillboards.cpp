@@ -56,9 +56,6 @@ void CRenderableOrderedBillboards::render()
 
 	int vbOffset = dynamic_vb_append(vbData.data(), vbData.size() * sizeof(vbData[0]));
 
-	//@TODO: layout in pipeline
-	//device.setDeclarationFVF(FVF_XYZ_DIFFUSE_TEX1);
-
 	// set IB/VB
 	sg_bindings bind = {};
 	bind.vertex_buffers[0] = dynamic_vb_get();

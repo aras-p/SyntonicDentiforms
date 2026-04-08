@@ -88,7 +88,7 @@ void CMeshEntity::render(eRenderMode renderMode, sg_bindings* binds)
 	uboVS.matWVP = mWVPMatrix;
 	sg_apply_uniforms(1, {&uboVS, sizeof(uboVS)});
 
-	if (renderMode != RM_REFLECTIVE)
+	if (renderMode != RM_REFLECTIVE && renderMode != RM_HI)
 	{
 		EntityUniformsFS uboFS = {};
 		uboFS.shadowID.set(mShadowVal, mShadowVal, mShadowVal, mShadowVal);
