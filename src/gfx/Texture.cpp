@@ -2,6 +2,10 @@
 
 #include "src/utils/AssertHelper.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_PNG
+#include "external/stb_image.h"
+
 void sokol_texture::create(const sg_image_desc& desc)
 {
 	assert(image.id == 0);
@@ -48,4 +52,24 @@ void sokol_texture::destroy()
 	if (view_z.id) sg_destroy_view(view_z); view_z = {};
 	if (view_resolve.id) sg_destroy_view(view_resolve); view_resolve = {};
 	if (view_tex.id) sg_destroy_view(view_tex); view_tex = {};
+}
+
+sokol_texture* load_texture(const char *path)
+{
+	int width, height, channels;
+	unsigned char* data = stbi_load(path, &width, &height, &channels, 4);
+	if (data != nullptr)
+	{
+		sg_image_desc desc = {};
+		desc.width = width;
+		desc.height = height;
+		desc.data.mip_levels[0].ptr = data;
+		desc.data.mip_levels[0].size = width * height * 4;
+		sokol_texture* res = new sokol_texture();
+		res->create(desc);
+		stbi_image_free(data);
+		return res;
+	}
+
+	return nullptr;
 }

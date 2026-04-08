@@ -21,3 +21,5 @@ struct sokol_texture
 	sg_view view_resolve = {};
 	sg_view view_tex = {};
 };
+
+sokol_texture* load_texture(const char* path);

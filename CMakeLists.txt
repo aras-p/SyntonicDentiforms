@@ -17,10 +17,10 @@ add_executable(Demo WIN32
     src/resource/AnimationBundle.cpp
     src/resource/MeshBundle.cpp
     src/resource/MeshSerializer.cpp
-    src/resource/TextureBundle.cpp
     src/utils/StringHelper.cpp
 
     src/demo/Anim.cpp
+    src/demo/DataFiles.cpp
     src/demo/Demo.cpp
     src/demo/Effect.cpp
     src/demo/Entity.cpp

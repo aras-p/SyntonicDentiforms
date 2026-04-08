@@ -11,6 +11,7 @@
 #include "SceneTeeth.h"
 #include "SceneOut.h"
 #include "Glare.h"
+#include "DataFiles.h"
 
 #include "TextureProjector.h"
 #include "LineRenderer.h"
@@ -100,27 +101,10 @@ CAnim*	gAnimSynch;
 
 // --------------------------------------------------------------------------
 
-static void gPreload()
+static bool gPreload()
 {
-	// tex...
-	RGET_TEX("AlphaEdge");
-	RGET_TEX("BondigoDuo");
-	RGET_TEX("ColorLuts");
-	RGET_TEX("CreditsA");
-	RGET_TEX("CreditsB");
-	RGET_TEX("DentATrepasa");
-	RGET_TEX("DentBPokero");
-	RGET_TEX("DentCCorenjo");
-	RGET_TEX("DentDSmogenias");
-	RGET_TEX("DentEChanChan");
-	RGET_TEX("DentFPerto");
-	RGET_TEX("DentGZetal");
-	RGET_TEX("DentHLaVina");
-	RGET_TEX("DentICarina");
-	RGET_TEX("Greetings");
-	RGET_TEX("Line1");
-	RGET_TEX("SpotLight");
-	// fx...
+	if (!load_data_files())
+		return false;
 	effects_init();
 	// anims...
 	RGET_ANIM("Anim0"); RGET_ANIM("Anim1"); RGET_ANIM("Anim2");
@@ -129,6 +113,7 @@ static void gPreload()
 	RGET_ANIM("Synch");
 	RGET_ANIM("6/Axes");
 	RGET_ANIM("6/TeethA"); RGET_ANIM("6/TeethB"); RGET_ANIM("6/TeethC"); RGET_ANIM("6/TeethD");
+	return true;
 }
 
 static sg_buffer s_ib_quads;
@@ -279,7 +264,6 @@ bool demo_init()
 	//
 	// resources
 
-	CTextureBundle::init("data/tex/");
 	CMeshBundle::init("data/mesh/");
 	CAnimationBundle::init("data/anim/");
 
@@ -440,7 +424,7 @@ void gRenderWallReflections()
 
 		sg_bindings binds = {};
 		binds.views[0] = rt_shadow_rt.view_tex;
-		binds.views[1] = RGET_TEX("SpotLight")->view_tex;
+		binds.views[1] = g_data_tex[DataTexSpotLight]->view_tex;
 		binds.samplers[0] = s_smp_point_clamp;
 		binds.samplers[1] = s_smp_linear_clamp;
 		gScenes[gSceneIndex]->render(RM_RECV_LO, &binds);
@@ -574,7 +558,7 @@ static void gRenderCredits( float cutAlpha )
 	//
 	// bills...
 
-	sokol_texture* btex = RGET_TEX(outer?"CreditsB":"CreditsA");
+	sokol_texture* btex = g_data_tex[outer?DataTexCreditsB:DataTexCreditsA];
 	const int BILLCOUNT = 16;
 	const uint32_t BILLCOL = 0x18ffffff;
 	const float SECOND_BILL_LOWER = outer ? HEIGHT*0.33f : 0.0f;
@@ -734,7 +718,7 @@ bool demo_update()
 	if( gSceneMode != SC_OUTER )
 	{
 		binds.views[0] = rt_shadow_rt.view_tex;
-		binds.views[1] = RGET_TEX("SpotLight")->view_tex;
+		binds.views[1] = g_data_tex[DataTexSpotLight]->view_tex;
 		binds.samplers[0] = s_smp_point_clamp;
 		binds.samplers[1] = s_smp_linear_clamp;
 		gScenes[gSceneIndex]->render(RM_RECV_HI, &binds);
@@ -902,7 +886,6 @@ void demo_shutdown()
 	dynamic_vb_shutdown();
 	sg_destroy_buffer(s_ib_quads);
 
-	CTextureBundle::finalize();
 	CMeshBundle::finalize();
 	CAnimationBundle::finalize();
 }

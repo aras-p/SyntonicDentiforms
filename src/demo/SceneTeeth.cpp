@@ -3,6 +3,7 @@
 #include "Glare.h"
 #include "Effect.h"
 #include "LineRenderer.h"
+#include "DataFiles.h"
 #include <src/math/MathUtils.h>
 #include <src/utils/StringHelper.h>
 
@@ -232,11 +233,11 @@ void CSceneTeeth::evaluateMeshes( float t )
 void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlpha, bool masks, float aspect)
 {
 	const int BILLSPERPACK = 3;
-	static const char* names[TEETHPACKS][BILLSPERPACK] = {
-		{ "DentATrepasa", "DentBPokero", "DentCCorenjo" },
-		{ "DentDSmogenias", "DentEChanChan", "DentFPerto" },
-		{ "DentGZetal", "DentHLaVina", "DentICarina" },
-		{ "DentATrepasa", "DentATrepasa", "DentATrepasa" },
+	static DataTexture texnames[TEETHPACKS][BILLSPERPACK] = {
+		{ DataTexDentATrepasa, DataTexDentBPokero, DataTexDentCCorenjo },
+		{ DataTexDentDSmogenias, DataTexDentEChanChan, DataTexDentFPerto },
+		{ DataTexDentGZetal, DataTexDentHLaVina, DataTexDentICarina },
+		{ DataTexDentATrepasa, DataTexDentATrepasa, DataTexDentATrepasa },
 	};
 	static const float ratios[TEETHPACKS][BILLSPERPACK] = {
 		{ 576.0f/576.0f, 544.0f/431.0f, 436.0f/394.0f },
@@ -285,7 +286,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 			bill->y1 = -1.0f + BEDGE*aspect;
 			bill->x2 = bill->x1 + BSIZE;
 			const float toothY = bill->y2 = bill->y1 + BSIZE*aspect / (ratios[pack][i]);
-			bill->texture = RGET_TEX(names[pack][i])->view_tex;
+			bill->texture = g_data_tex[texnames[pack][i]]->view_tex;
 			uint32_t c = SVector4(1, 1, 1, billAlpha).toRGBA();
 			if( masks ) {
 				bill->x1 -= MEDGE;
@@ -309,7 +310,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 			bill->x2 = 1.0f - BEDGE;
 			bill->y2 = bill->y1 + (uvs[3]-uvs[1]) * texelScale*aspect;*/
 			bill->color = c;
-			bill->texture = RGET_TEX("Greetings")->view_tex;
+			bill->texture = g_data_tex[DataTexGreetings]->view_tex;
 			bill->tu1 = uvs[0] / 1024.0f;	bill->tv1 = uvs[1] / 512.0f;
 			bill->tu2 = uvs[2] / 1024.0f;	bill->tv2 = uvs[3] / 512.0f;
 			if( masks ) {
@@ -343,7 +344,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 			c.w = (relT-2);
 		}
 		bill->color = c.toRGBA();
-		bill->texture = RGET_TEX("BondigoDuo")->view_tex;
+		bill->texture = g_data_tex[DataTexBondigoDuo]->view_tex;
 		bill->setWholeTexture();
 	}
 
@@ -402,7 +403,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 
 		sg_bindings binds = {};
 		binds.views[0] = rt_main_resolved.view_tex;
-		binds.views[1] = RGET_TEX("ColorLuts")->view_tex;
+		binds.views[1] = g_data_tex[DataTexColorLuts]->view_tex;
 		binds.samplers[0] = s_smp_linear_clamp;
 
 		effect_apply(fx_filterToon);
@@ -501,7 +502,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 		sg_bindings binds = {};
 		binds.views[0] = rt_full_toon.view_tex;
 		binds.views[1] = !(BLOB_BLUR_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex;
-		binds.views[2] = RGET_TEX("AlphaEdge")->view_tex;
+		binds.views[2] = g_data_tex[DataTexAlphaEdge]->view_tex;
 		binds.samplers[0] = s_smp_linear_clamp;
 
 		effect_apply(fx_compositeAlpha);

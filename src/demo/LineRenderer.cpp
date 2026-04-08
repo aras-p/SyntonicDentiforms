@@ -2,6 +2,7 @@
 #include "DemoResources.h"
 #include "Effect.h"
 #include "Globals.h"
+#include "DataFiles.h"
 #include <src/gfx/DynamicVBManager.h>
 #include <src/utils/AssertHelper.h>
 
@@ -104,7 +105,7 @@ void CLineRenderer::renderStrip( int npoints, const SLinePoint* points, float ha
 	binds.vertex_buffers[0] = dynamic_vb_get();
 	binds.vertex_buffer_offsets[0] = offset;
 	binds.index_buffer = mIB;
-	binds.views[0] = RGET_TEX("Line1")->view_tex;
+	binds.views[0] = g_data_tex[DataTexLine1]->view_tex;
 	binds.samplers[0] = s_smp_linear_repeat;
 	sg_apply_bindings(binds);
 	sg_draw(0, ntris * 3, 1);
