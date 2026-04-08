@@ -19,7 +19,6 @@ add_executable(Demo WIN32
     src/resource/MeshBundle.cpp
     src/resource/MeshSerializer.cpp
     src/resource/TextureBundle.cpp
-    src/resource/dds_loader.cpp
     src/utils/Errors.cpp
     src/utils/StringHelper.cpp
 
