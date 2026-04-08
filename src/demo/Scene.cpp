@@ -43,8 +43,6 @@ void CScene::initialize()
 	//
 	// read meshes
 
-	sprintf( buf, "scene%i/", mNumber );
-	std::string meshPrefix = buf;
 	for( i = 0; i < n; ++i ) {
 		fscanf( f, "name=%s parent=%s\n", meshname, parentname );
 		fscanf( f, "pos=%f,%f,%f\n", &pos.x, &pos.y, &pos.z );
@@ -57,7 +55,7 @@ void CScene::initialize()
 		mesh.pos = pos;
 		mesh.rot = rot0 * (M_PI/180.0f);
 		mesh.rotVel = (rot1-rot0) * (mLength* M_PI /180.0f);
-		mesh.mesh = new CMeshEntity( meshPrefix + mesh.name );
+		mesh.mesh = new CMeshEntity(find_mesh_by_name(mNumber, mesh.name.c_str()));
 		mMeshes.push_back( mesh );
 
 		toMatrix( mesh.pos, mesh.rot, mesh.mesh->mMatrix );
@@ -90,12 +88,12 @@ void CScene::recurseAdd( int idx )
 	}
 }
 
-CMeshEntity* CScene::addStaticMesh( const std::string& name )
+CMeshEntity* CScene::addStaticMesh(const std::string& name, DataMesh data)
 {
 	SMesh mesh;
 	mesh.name = name;
 	mesh.parent = "NONE";
-	mesh.mesh = new CMeshEntity( name );
+	mesh.mesh = new CMeshEntity(data);
 	mesh.pos.set(0,0,0);
 	mesh.rot.set(0,0,0);
 	mesh.rotVel.set(0,0,0);

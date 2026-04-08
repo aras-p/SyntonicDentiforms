@@ -99,8 +99,6 @@ CSceneTeeth::CSceneTeeth( int number )
 	mAnimTeeth[3] = new CTeethAnim( "6/TeethD", 860, 965 );
 	mAnimAxes[0] = new CAnim( "6/Axes", "Axis1", CAnim::POSITION | CAnim::ROTATION );
 	mAnimAxes[1] = new CAnim( "6/Axes", "Axis2", CAnim::POSITION | CAnim::ROTATION );
-
-	mToothMaskMesh = RGET_MESH("scene6/Tooth1");
 }
 
 CSceneTeeth::~CSceneTeeth()
@@ -133,15 +131,13 @@ void CSceneTeeth::initialize()
 	// create axes
 
 	mAxesIdx[0] = mMeshes.size();
-	addStaticMesh( "scene6/Axis1" );
+	addStaticMesh("scene6/Axis1", DataMesh6Axis1);
 	mAxesIdx[1] = mMeshes.size();
-	addStaticMesh( "scene6/Axis2" );
+	addStaticMesh("scene6/Axis2", DataMesh6Axis2);
 
 	//
 	// read meshes
 
-	sprintf( buf, "scene%i/", mNumber );
-	std::string meshPrefix = buf;
 	for( i = 0; i < n; ++i ) {
 		fscanf( f, "name=%s parent=%s\n", meshname, parentname );
 		fscanf( f, "pos=%f,%f,%f\n", &pos.x, &pos.y, &pos.z );
@@ -179,7 +175,7 @@ void CSceneTeeth::initialize()
 			mGearsIdx[1] = mMeshes.size();
 		}
 
-		mesh.mesh = new CMeshEntity( meshPrefix + mesh.name );
+		mesh.mesh = new CMeshEntity(find_mesh_by_name(mNumber, mesh.name.c_str()));
 		mMeshes.push_back( mesh );
 		toMatrix( mesh.pos, mesh.rot, mesh.mesh->mMatrix );
 	}
@@ -447,8 +443,11 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 	uboVS.matWV.identify(); // not really used
 
 	sg_bindings binds = {};
-	binds.vertex_buffers[0] = mToothMaskMesh->getVB();
-	binds.index_buffer = mToothMaskMesh->getIB();
+
+	CMesh* toothMaskMesh = g_data_mesh[DataMesh6Tooth1];
+
+	binds.vertex_buffers[0] = toothMaskMesh->getVB();
+	binds.index_buffer = toothMaskMesh->getIB();
 
 	if( toothMaskScale > 0.001f ) {
 		if( pack != TEETHPACKS-1 ) {
@@ -463,7 +462,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 				uboVS.matWVP = mMaskMeshWVP;
 				sg_apply_uniforms(1, { &uboVS, sizeof(uboVS) });
 				sg_apply_bindings(binds);
-				sg_draw(0, mToothMaskMesh->getIndexCount(), 1);
+				sg_draw(0, toothMaskMesh->getIndexCount(), 1);
 			}
 		} else {
 			for( int pk = 0; pk < TEETHPACKS; ++pk ) {
@@ -479,7 +478,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 					uboVS.matWVP = mMaskMeshWVP;
 					sg_apply_uniforms(1, { &uboVS, sizeof(uboVS) });
 					sg_apply_bindings(binds);
-					sg_draw(0, mToothMaskMesh->getIndexCount(), 1);
+					sg_draw(0, toothMaskMesh->getIndexCount(), 1);
 				}
 			}
 		}

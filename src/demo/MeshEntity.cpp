@@ -1,35 +1,32 @@
 #include "MeshEntity.h"
 #include "DemoResources.h"
 
-#include <src/utils/StringHelper.h>
-
 int CMeshEntity::mShadowIDGenerator = 0;
 
-
-// --------------------------------------------------------------------------
-
-CMeshEntity::CMeshEntity( const std::string& clazz )
+CMeshEntity::CMeshEntity(DataMesh type)
 :	mMesh(nullptr),
 	mCubeFace(CFACE_PX)
 {
-	assert( !clazz.empty() );
-
+	ASSERT_MSG(type < DataMeshCOUNT, "Invalid mesh type");
 	int shadowID = 0;
-	if( clazz == "Box" ) {
+	if (type == DataMeshBox)
+	{
 		mRenderModesMask = 1 << RM_HI;
 		shadowID = 0;
-	} else if( CStringHelper::startsWith( clazz, "Cube" ) ) {
+	}
+	else if (type >= DataMeshCube && type <= DataMeshCubePZ)
+	{
 		mRenderModesMask = (1<<RM_RECV_HI) | (1<<RM_RECV_LO);
 		shadowID = 0;
-		if( clazz != "Cube" ) {
+		if (type != DataMeshCube)
+		{
 			mRenderModesMask |= 1<<RM_REFLECTIVE;
-			if( CStringHelper::endsWith(clazz,"PX") ) mCubeFace = CFACE_PX;
-			else if( CStringHelper::endsWith(clazz,"NX") ) mCubeFace = CFACE_NX;
-			else if( CStringHelper::endsWith(clazz,"PY") ) mCubeFace = CFACE_PY;
-			else if( CStringHelper::endsWith(clazz,"NY") ) mCubeFace = CFACE_NY;
-			else if( CStringHelper::endsWith(clazz,"PZ") ) mCubeFace = CFACE_PZ;
-			else if( CStringHelper::endsWith(clazz,"NZ") ) mCubeFace = CFACE_NZ;
-			else ASSERT_FAIL_MSG( "bad Cube* mesh" );
+			if     (type == DataMeshCubePX) mCubeFace = CFACE_PX;
+			else if(type == DataMeshCubeNX) mCubeFace = CFACE_NX;
+			else if(type == DataMeshCubePY) mCubeFace = CFACE_PY;
+			else if(type == DataMeshCubeNY) mCubeFace = CFACE_NY;
+			else if(type == DataMeshCubePZ) mCubeFace = CFACE_PZ;
+			else if(type == DataMeshCubeNZ) mCubeFace = CFACE_NZ;
 		}
 	} else {
 		mRenderModesMask = (1<<RM_RECV_HI) | (1<<RM_RECV_LO) | (1<<RM_SHADOW);
@@ -39,7 +36,7 @@ CMeshEntity::CMeshEntity( const std::string& clazz )
 		shadowID = mShadowIDGenerator;
 	}
 
-	mMesh = RGET_MESH(clazz);
+	mMesh = g_data_mesh[type];
 
 	mShadowVal = (shadowID * 16) / 255.0f;
 }

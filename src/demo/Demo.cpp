@@ -89,6 +89,7 @@ CCameraEntity	gLightCamera;
 // reflective wals
 CMeshEntity*	gWallMeshes[CFACE_COUNT];
 const char*		gWallNames[CFACE_COUNT] = { "CubePX", "CubeNX", "CubePY", "CubeNY", "CubePZ", "CubeNZ" };
+DataMesh        gWallData[CFACE_COUNT] = { DataMeshCubePX, DataMeshCubeNX, DataMeshCubePY, DataMeshCubeNY, DataMeshCubePZ, DataMeshCubeNZ, };
 CCameraEntity	gWallCamera;
 
 // post-processing fx
@@ -264,7 +265,6 @@ bool demo_init()
 	//
 	// resources
 
-	CMeshBundle::init("data/mesh/");
 	CAnimationBundle::init("data/anim/");
 
 	dynamic_vb_init(2 * 1024 * 1024);
@@ -319,9 +319,9 @@ bool demo_init()
 		else
 			gScenes[s] = new CScene(s+1);
 		gScenes[s]->initialize();
-		gScenes[s]->addStaticMesh( "Cube" );
+		gScenes[s]->addStaticMesh("Cube", DataMeshCube);
 		for( int i = 0; i < CFACE_COUNT; ++i )
-			gWallMeshes[i] = gScenes[s]->addStaticMesh( gWallNames[i] );
+			gWallMeshes[i] = gScenes[s]->addStaticMesh(gWallNames[i], gWallData[i]);
 	}
 
 	gSceneOut->addCut( 110 );
@@ -886,7 +886,6 @@ void demo_shutdown()
 	dynamic_vb_shutdown();
 	sg_destroy_buffer(s_ib_quads);
 
-	CMeshBundle::finalize();
 	CAnimationBundle::finalize();
 }
 

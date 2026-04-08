@@ -15,8 +15,6 @@ add_executable(Demo WIN32
     src/math/Vector3.cpp
     src/math/Vector4.cpp
     src/resource/AnimationBundle.cpp
-    src/resource/MeshBundle.cpp
-    src/resource/MeshSerializer.cpp
     src/utils/StringHelper.cpp
 
     src/demo/Anim.cpp

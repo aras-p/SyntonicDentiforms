@@ -59,7 +59,6 @@ private:
 	int		mGearsIdx[GEARS];
 	CTeethAnim*	mAnimTeeth[TEETHPACKS];
 
-	CMesh*				mToothMaskMesh;
 	SMatrix4x4			mMaskMeshWVP;
 };
 

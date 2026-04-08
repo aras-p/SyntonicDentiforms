@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Entity.h"
-#include <src/gfx/Mesh.h>
+#include "DataFiles.h"
 
 // --------------------------------------------------------------------------
 
@@ -18,7 +18,7 @@ enum eCubeFaces {
 
 class CMeshEntity : public CAbstractEntity {
 public:
-	CMeshEntity( const std::string& clazz );
+	CMeshEntity(DataMesh type);
 	virtual ~CMeshEntity();
 
 	/// Culls with current W matrix and given VP matrix. Returns true if outside frustum.

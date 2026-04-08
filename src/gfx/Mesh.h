@@ -79,3 +79,4 @@ private:
 };
 
 
+CMesh* load_mesh(const char* fileName);
