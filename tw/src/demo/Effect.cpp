@@ -106,7 +106,7 @@ void effects_init()
 		desc.sample_count = kMainAA;
 		desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
 		desc.depth.write_enabled = true;
-		desc.cull_mode = SG_CULLMODE_FRONT;
+		desc.cull_mode = SG_CULLMODE_BACK; // reflection; inverted culling
 		s_fx_pipes[fx_receiverLo] = sg_make_pipeline(desc);
 	}
 	// receiver Hi

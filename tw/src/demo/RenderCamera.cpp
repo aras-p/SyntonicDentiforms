@@ -33,6 +33,7 @@ void CRenderCamera::setCameraMatrix( SMatrix4x4 const& matrix )
 	g_global_u.matProjection = mProjectionMatrix;
 	g_global_u.matView = mViewMatrix;
 	g_global_u.matViewProj = mViewProjMatrix;
+	g_global_u.eyePos = mCameraMatrix.getOrigin();
 }
 
 void CRenderCamera::setProjectionMatrix( SMatrix4x4 const& matrix )
@@ -41,6 +42,5 @@ void CRenderCamera::setProjectionMatrix( SMatrix4x4 const& matrix )
 	mViewProjMatrix = mViewMatrix * mProjectionMatrix;
 
 	g_global_u.matProjection = mProjectionMatrix;
-	g_global_u.matView = mViewMatrix;
 	g_global_u.matViewProj = mViewProjMatrix;
 }
