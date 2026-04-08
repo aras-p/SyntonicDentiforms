@@ -6,6 +6,7 @@
 #include "../fx/compositeAdd.glsl.h"
 #include "../fx/filterBloom.glsl.h"
 #include "../fx/lines.glsl.h"
+#include "../fx/overlay.glsl.h"
 #include "../fx/receiverLo.glsl.h"
 #include "../fx/receiverHi.glsl.h"
 #include "../fx/reflective.glsl.h"
@@ -47,6 +48,31 @@ void effects_init()
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
 		s_fx_pipes[fx_filterBloom] = sg_make_pipeline(desc);
+	}
+	// overlay /2
+	{
+		sg_pipeline_desc desc = {};
+		desc.shader = sg_make_shader(overlay_prog_shader_desc(backend));
+		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
+		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		desc.sample_count = kMainAA;
+		// additive blend, no depth, no cull
+		desc.colors[0].blend.enabled = true;
+		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_ONE;
+		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_ONE;
+		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE;
+		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE;
+		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
+		desc.depth.write_enabled = false;
+		desc.cull_mode = SG_CULLMODE_NONE;
+		s_fx_pipes[fx_overlay] = sg_make_pipeline(desc);
+
+		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_DST_COLOR;
+		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_DST_ALPHA;
+		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE;
+		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE;
+		s_fx_pipes[fx_overlay2] = sg_make_pipeline(desc);
 	}
 	// caster
 	{

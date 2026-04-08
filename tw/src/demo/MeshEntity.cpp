@@ -44,44 +44,6 @@ CMeshEntity::CMeshEntity( const std::string& clazz )
 	mMesh = RGET_MESH(clazz);
 
 	mShadowVal = (shadowID * 16) / 255.0f;
-	
-	/* //@TODO
-	SVector4 vshadowID;
-	vshadowID.x = vshadowID.y = vshadowID.z = vshadowID.w = 
-		(mShadowID*16) / 255.0f;
-
-	const char* fxRHi = mShadowID ? "receiverHi" : "recvallHi";
-	const char* fxRLo = mShadowID ? "receiverLo" : "recvallLo";
-	const char* fxShadow = "caster";
-	const char* fxRefl = "reflective";
-	const char* fxHi = "noshadowHi";
-	
-	mMeshRecvHi = new CRenderableMesh(*RGET_MESH(clazz), 0);
-	mMeshRecvHi->getParams().setEffect( *RGET_FX(fxRHi) );
-	mMeshRecvHi->getParams().addVector4( "vShadowID", vshadowID );
-	addMatricesToParams( mMeshRecvHi->getParams() );
-
-	mMeshRecvLo = new CRenderableMesh(*RGET_MESH(clazz), 0);
-	mMeshRecvLo->getParams().setEffect( *RGET_FX(fxRLo) );
-	mMeshRecvLo->getParams().addVector4( "vShadowID", vshadowID );
-	addMatricesToParams( mMeshRecvLo->getParams() );
-	
-	mMeshShadow = new CRenderableMesh(*RGET_MESH(clazz), 0);
-	mMeshShadow->getParams().setEffect( *RGET_FX(fxShadow) );
-	mMeshShadow->getParams().addVector4( "vShadowID", vshadowID );
-	addMatricesToParams( mMeshShadow->getParams() );
-	
-	mMeshReflection = new CRenderableMesh(*RGET_MESH(clazz), 0);
-	mMeshReflection->getParams().setEffect( *RGET_FX(fxRefl) );
-	static const char* texs[CFACE_COUNT] = {
-		RT_REFL_PX, RT_REFL_NX, RT_REFL_PY, RT_REFL_NY, RT_REFL_PZ, RT_REFL_NZ };
-	mMeshReflection->getParams().addTexture( "tRefl", *RGET_STEX(texs[mCubeFace]) );
-	addMatricesToParams( mMeshReflection->getParams() );
-
-	mMeshHi = new CRenderableMesh(*RGET_MESH(clazz), 0);
-	mMeshHi->getParams().setEffect( *RGET_FX(fxHi) );
-	addMatricesToParams( mMeshHi->getParams() );
-	*/
 }
 
 CMeshEntity::~CMeshEntity()

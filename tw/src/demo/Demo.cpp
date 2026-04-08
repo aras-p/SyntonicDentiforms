@@ -93,8 +93,6 @@ const char*		gWallNames[CFACE_COUNT] = { "CubePX", "CubeNX", "CubePY", "CubeNY",
 CCameraEntity	gWallCamera;
 
 // post-processing fx
-CRenderableMesh*	gPPSOverlayMesh;
-CRenderableMesh*	gPPSOverlayMesh2;
 SVector4			gOverlayColor;
 SVector4			gOverlayColor2;
 
@@ -339,26 +337,6 @@ bool demo_init()
 
 	gPreload();
 
-	// --------------------------------
-	// post process fx
-
-	{
-		gPPSOverlayMesh = new CRenderableMesh( *RGET_MESH("billboard"), 0 );
-		//@TODO
-		//CEffectParams& ep = gPPSOverlayMesh->getParams();
-		//ep.setEffect( *RGET_FX("overlay") );
-		//ep.addVector4Ref( "vFixUV", gScreenFixUVs );
-		//ep.addVector4Ref( "vColor", gOverlayColor );
-	}
-	{
-		gPPSOverlayMesh2 = new CRenderableMesh( *RGET_MESH("billboard"), 0 );
-		//@TODO
-		//CEffectParams& ep = gPPSOverlayMesh2->getParams();
-		//ep.setEffect( *RGET_FX("overlay2") );
-		//ep.addVector4Ref( "vFixUV", gScreenFixUVs );
-		//ep.addVector4Ref( "vColor", gOverlayColor2 );
-	}
-	
 	// --------------------------------
 	// synch
 
@@ -813,10 +791,11 @@ bool demo_update()
 		float beat = (beatPos0.y + beatPos1.y + beatPos2.y) * 0.08f;
 		beat = clamp( beat, 0.0f, 1.0f );
 		gOverlayColor2.set( beat, beat, beat, beat );
-		if( beat > 0.001f ) {
-			//G_RCTX->directBegin();
-			//G_RCTX->directRender( *gPPSOverlayMesh2 ); //@TODO
-			//G_RCTX->directEnd();
+		if( beat > 0.001f )
+		{
+			effect_apply(fx_overlay2);
+			sg_apply_uniforms(0, { &gOverlayColor2, sizeof(gOverlayColor2) });
+			sg_draw(0, 4, 1);
 		}
 	}
 
@@ -856,9 +835,9 @@ bool demo_update()
 
 	gOverlayColor.w = clamp( gOverlayColor.w, 0.0f, 1.0f );
 	if( gOverlayColor.w > 0.001f ) {
-		//G_RCTX->directBegin();
-		//G_RCTX->directRender( *gPPSOverlayMesh ); //@TODO
-		//G_RCTX->directEnd();
+		effect_apply(fx_overlay);
+		sg_apply_uniforms(0, { &gOverlayColor, sizeof(gOverlayColor) });
+		sg_draw(0, 4, 1);
 	}
 
 	sg_end_pass();
@@ -920,8 +899,6 @@ void demo_shutdown()
 	for( int i = 0; i < SCENES; ++i )
 		delete gScenes[i];
 	delete gSceneOut;
-	delete gPPSOverlayMesh;
-	delete gPPSOverlayMesh2;
 	delete gLineRenderer;
 	delete gBillboardsNormal;
 	delete gBillboardsNoDestA;
