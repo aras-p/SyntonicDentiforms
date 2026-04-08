@@ -2,8 +2,6 @@
 
 #include "Vector3.h"
 
-	
-	
 class SLine3 {
 public:
 	SLine3() { };

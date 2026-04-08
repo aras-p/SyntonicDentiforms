@@ -18,7 +18,6 @@ add_executable(Demo WIN32
     src/resource/MeshBundle.cpp
     src/resource/MeshSerializer.cpp
     src/resource/TextureBundle.cpp
-    src/utils/Errors.cpp
     src/utils/StringHelper.cpp
 
     src/demo/Anim.cpp
@@ -47,20 +46,10 @@ set_property(TARGET Demo PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:
 target_compile_definitions(Demo PRIVATE
     WIN32
     _WINDOWS
-    _MBCS
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
     _CRT_SECURE_NO_WARNINGS
     NOMINMAX
-)
-
-target_link_libraries(Demo PRIVATE
-    winmm
-    kernel32
-    user32
-    gdi32
-    comdlg32
-    advapi32
 )
 
 set_target_properties(Demo PROPERTIES

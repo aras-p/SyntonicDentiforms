@@ -36,9 +36,10 @@ CAnimationBunch* CAnimationBundle::loadResourceById( const CResourceId& id, cons
 	// read magic
 	char magic[4];
 	fread( &magic, 1, 4, f );
-	if( magic[0]!='D' || magic[1]!='A' || magic[2]!='N' || magic[3]!='I' ) {
-		std::string msg = "file isn't valid anim file! '" + fullName.getUniqueName() + "'";
-		THROW_ERROR( msg );
+	if( magic[0]!='D' || magic[1]!='A' || magic[2]!='N' || magic[3]!='I' )
+	{
+		ASSERT_FAIL_MSG("File is not a valid animation file");
+		return nullptr;
 	}
 	// read anim type
 	int animType;
@@ -69,8 +70,7 @@ CAnimationBunch* CAnimationBundle::loadResourceById( const CResourceId& id, cons
 		break;
 	default:
 		{
-			std::string msg = "file contains unknown animation type! '" + fullName.getUniqueName() + "'";
-			assert( false );
+		ASSERT_FAIL_MSG("Animation file contains unknown anim type");
 		}
 	}
 

@@ -2,7 +2,6 @@
 
 #include "ResourceBundle.h"
 #include "ResourceId.h"
-#include "../utils/Errors.h"
 #include <map>
 #include <vector>
 #include <assert.h>
@@ -33,8 +32,8 @@ public:
 			return resource;
 		}
 		// error
-		std::string msg = "Can't find resource '" + id.getUniqueName() + "'";
-		THROW_ERROR( msg );
+		ASSERT_FAIL_MSG("Can't load data file");
+		return nullptr;
 	}
 
 	// NOTE: deletes the resource, so make sure no one references it!
@@ -87,7 +86,7 @@ protected:
 	 *  Performs actual loading of resource.
 	 *  On failure to find resource, should silently return NULL - storage
 	 *  bundle will attempt another extension. On other failure
-	 *  (eg. format mismatch) can assert/throw etc.
+	 *  (eg. format mismatch) returns null.
 	 *
 	 *  @param id Resource ID.
 	 *  @param fullName Resource ID with predir, name and extension applied.
