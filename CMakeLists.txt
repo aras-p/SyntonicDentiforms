@@ -144,7 +144,6 @@ set(SHADER_FILES
     tw/src/fx/noshadowHi.glsl
     tw/src/fx/overlay.glsl
     tw/src/fx/receiverHi.glsl
-    tw/src/fx/receiverLo.glsl
     tw/src/fx/reflective.glsl
 )
 foreach(shader ${SHADER_FILES})

@@ -28,10 +28,10 @@ void main()
 	vec4 clut = texture(sampler2D(texLUT,smp), c.ar);
 	clut.a = 0;
 
-	float cU = textureOffset(sampler2D(tex, smp), uv, ivec2(0,-2)).r;
-	float cD = textureOffset(sampler2D(tex, smp), uv, ivec2(0,+2)).r;
-	float cL = textureOffset(sampler2D(tex, smp), uv, ivec2(-2,0)).r;
-	float cR = textureOffset(sampler2D(tex, smp), uv, ivec2(+2,0)).r;
+	float cU = textureOffset(sampler2D(tex, smp), uv, ivec2(0,-1)).r;
+	float cD = textureOffset(sampler2D(tex, smp), uv, ivec2(0,+1)).r;
+	float cL = textureOffset(sampler2D(tex, smp), uv, ivec2(-1,0)).r;
+	float cR = textureOffset(sampler2D(tex, smp), uv, ivec2(+1,0)).r;
 	float dUD = (cU - cD)*4;
 	float dLR = (cL - cR)*4;
 	dUD = dUD * dUD;

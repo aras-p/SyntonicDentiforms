@@ -1,5 +1,3 @@
-// 4 sample robust objectid shadows
-
 #pragma sokol @module receiverHi
 
 #pragma sokol @block commonlib
@@ -41,22 +39,21 @@ in vec3 tolight;
 out vec4 frag_color;
 void main()
 {
-	float offset = 1.0 / 1024.0;
-	//@TODO: gather4
 	vec2 uv = uvShadow.xy / uvShadow.z;
 
-	// Robust ObjectID shadows (ShaderX^2)
-	vec2 uv00 = uv + vec2(      0,      0 );
-	vec2 uv01 = uv + vec2(      0, offset );
-	vec2 uv10 = uv + vec2( offset,      0 );
-	vec2 uv11 = uv + vec2( offset, offset );
-	vec4 ids = vec4(
-		texture(sampler2D(texShadow, smpShadow), uv00).r,
-		texture(sampler2D(texShadow, smpShadow), uv01).r,
-		texture(sampler2D(texShadow, smpShadow), uv10).r,
-		texture(sampler2D(texShadow, smpShadow), uv11).r);
-	bvec4 compare = equal(ids, vShadowID.rrrr);	
-	float shadow = any(compare) ? 1.0 : 0.0;
+	// Robust ObjectID shadows (ShaderX^2): use gather4, compare with our own
+	// object ID. 3x3 filter footprint.
+	float shadow = 0.0;
+	for (int y = -1; y <= 1; y++)
+	{
+		for (int x = -1; x <= 1; x++)
+		{
+			vec4 ids = textureGatherOffset(sampler2D(texShadow, smpShadow), uv, ivec2(x,y));
+			bvec4 compare = equal(ids, vShadowID.rrrr);	
+			shadow += any(compare) ? 1.0 : 0.0;
+		}
+	}
+	shadow /= 9.0;
 	
 	float cookie = texture(sampler2D(texCookie, smpCookie), uv).r;
 	shadow *= cookie;

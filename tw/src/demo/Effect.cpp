@@ -11,7 +11,6 @@
 #include "../fx/lines.glsl.h"
 #include "../fx/noshadowHi.glsl.h"
 #include "../fx/overlay.glsl.h"
-#include "../fx/receiverLo.glsl.h"
 #include "../fx/receiverHi.glsl.h"
 #include "../fx/reflective.glsl.h"
 
@@ -190,26 +189,7 @@ void effects_init()
 		desc.sample_count = 1;
 		s_fx_pipes[fx_linesNoAa] = sg_make_pipeline(desc);
 	}
-	// receiver Lo
-	{
-		sg_pipeline_desc desc = {};
-		desc.shader = sg_make_shader(receiverLo_prog_shader_desc(backend));
-		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
-		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
-		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
-		desc.index_type = SG_INDEXTYPE_UINT16;
-		desc.layout.buffers[0].stride = 24;
-		desc.layout.attrs[0].format = SG_VERTEXFORMAT_FLOAT3;
-		desc.layout.attrs[0].offset = 0;
-		desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT3;
-		desc.layout.attrs[1].offset = 12;
-		desc.sample_count = kMainAA;
-		desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
-		desc.depth.write_enabled = true;
-		desc.cull_mode = SG_CULLMODE_BACK; // reflection; inverted culling
-		s_fx_pipes[fx_receiverLo] = sg_make_pipeline(desc);
-	}
-	// receiver Hi
+	// receiver Hi/Lo
 	{
 		sg_pipeline_desc desc = {};
 		desc.shader = sg_make_shader(receiverHi_prog_shader_desc(backend));
@@ -227,6 +207,9 @@ void effects_init()
 		desc.depth.write_enabled = true;
 		desc.cull_mode = SG_CULLMODE_FRONT;
 		s_fx_pipes[fx_receiverHi] = sg_make_pipeline(desc);
+
+		desc.cull_mode = SG_CULLMODE_BACK; // reflection; inverted culling
+		s_fx_pipes[fx_receiverLo] = sg_make_pipeline(desc);
 	}
 	// noshadow Hi
 	{
