@@ -18,7 +18,9 @@
 #include "external/sokol_app.h"
 #include "external/sokol_glue.h"
 
-//#define WITHMUSIC
+#ifndef _DEBUG
+#define WITHMUSIC
+#endif
 
 #ifdef WITHMUSIC
 	CMusicPlayer*	gMusicPlayer;
