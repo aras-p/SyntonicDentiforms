@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(SyntonicDentiforms CXX)
+project(SyntonicDentiforms)
 
 if(NOT WIN32)
     message(FATAL_ERROR "Windows only for now")
@@ -72,6 +72,17 @@ set_target_properties(Demo PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}"
     VS_DEBUGGER_WORKING_DIRECTORY    "${CMAKE_SOURCE_DIR}"
 )
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+	if (MSVC)
+		target_compile_options(Demo PRIVATE /Zi)
+		target_link_options(Demo PRIVATE /DEBUG /OPT:ICF /OPT:REF)
+	endif()
+	if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+		target_compile_options(Demo PRIVATE -g)
+		target_link_options(Demo PRIVATE -g)
+	endif()
+endif ()
 
 function(add_sokol_shader target_name shader_file)
     set(SOKOL_SHDC "${CMAKE_SOURCE_DIR}/tools/sokol-shdc")

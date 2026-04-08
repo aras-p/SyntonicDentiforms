@@ -2,25 +2,30 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "windows-x86",
-      "displayName": "Windows x86 (MSVC)",
-      "generator": "Visual Studio 17 2022",
-      "architecture": "Win32",
+      "name": "win-x64",
+      "hidden": true,
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/build"
-    }
-  ],
-  "buildPresets": [
-    {
-      "name": "debug",
-      "displayName": "Debug",
-      "configurePreset": "windows-x86",
-      "configuration": "Debug"
     },
     {
-      "name": "release",
-      "displayName": "Release",
-      "configurePreset": "windows-x86",
-      "configuration": "Release"
+      "name": "win-x64-debug",
+      "displayName": "x64 Debug",
+      "inherits": "win-x64",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "win-x64-release",
+      "displayName": "x64 Release",
+      "inherits": "win-x64-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     }
   ]
 }
