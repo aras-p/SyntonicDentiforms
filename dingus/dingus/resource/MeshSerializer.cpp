@@ -80,6 +80,17 @@ CMesh* CMeshSerializer::loadMeshFromFile( const char* fileName )
 
 	// close file
 	fclose( f );
+	// HACK: some of demo meshes have position + normal + UV but we don't need the UVs.
+	// Discard them to simplify pipeline management.
+	if (vstride == 32 && vformat == 4099)
+	{
+		for (int i = 0; i < nverts; ++i)
+		{
+			memmove(vbData.data() + i * 24, vbData.data() + i * 32, 24);
+		}
+		vstride = 24;
+		vformat = 3;
+	}
 
 	// init mesh
 	CVertexFormat format(vformat);
