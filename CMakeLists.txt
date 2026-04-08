@@ -115,12 +115,18 @@ set_target_properties(Demo PROPERTIES
 function(add_sokol_shader target_name shader_file)
     set(SOKOL_SHDC "${CMAKE_SOURCE_DIR}/tools/sokol-shdc")
     set(SHADER_OUTPUT "${CMAKE_SOURCE_DIR}/${shader_file}.h")
+    if(WIN32)
+        set(SHADER_BACKENDS "hlsl5")
+    else()
+        set(SHADER_BACKENDS "glsl430:metal_macos")
+    endif()
+
     add_custom_command(
         OUTPUT ${SHADER_OUTPUT}
         COMMAND ${SOKOL_SHDC}
             --input ${CMAKE_SOURCE_DIR}/${shader_file}
             --output ${SHADER_OUTPUT}
-            --slang glsl430:hlsl5:metal_macos
+            --slang ${SHADER_BACKENDS}
         DEPENDS ${CMAKE_SOURCE_DIR}/${shader_file}
         COMMENT "Compiling shader ${shader_file} with sokol-shdc"
         VERBATIM
