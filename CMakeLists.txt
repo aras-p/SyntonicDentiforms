@@ -5,77 +5,44 @@ if(NOT WIN32)
     message(FATAL_ERROR "Windows only for now")
 endif()
 
-add_library(dingus STATIC
-    dingus/dingus/stdafx.cpp
-
-    dingus/dingus/animator/AnimationBunch.cpp
-    dingus/dingus/animator/AnimType.cpp
-
-    dingus/dingus/gfx/geometry/DynamicVBManager.cpp
-    dingus/dingus/gfx/Mesh.cpp
-    dingus/dingus/gfx/RenderableOrderedBillboards.cpp
-    dingus/dingus/gfx/Texture.cpp
-    dingus/dingus/gfx/VertexFormat.cpp
-
-    dingus/dingus/math/Vector3.cpp
-    dingus/dingus/math/Vector4.cpp
-
-    dingus/dingus/resource/AnimationBundle.cpp
-    dingus/dingus/resource/MeshBundle.cpp
-    dingus/dingus/resource/MeshSerializer.cpp
-    dingus/dingus/resource/TextureBundle.cpp
-    dingus/dingus/resource/dds_loader.cpp
-
-    dingus/dingus/utils/Errors.cpp
-    dingus/dingus/utils/StringHelper.cpp
-)
-
-target_include_directories(dingus PUBLIC
-    ${CMAKE_SOURCE_DIR}/dingus
-)
-target_link_directories(dingus PUBLIC
-)
-
-target_compile_definitions(dingus PRIVATE
-    WIN32
-    _LIB
-    _MBCS
-    $<$<CONFIG:Debug>:_DEBUG>
-    $<$<CONFIG:Release>:NDEBUG>
-    _CRT_SECURE_NO_WARNINGS
-    NOMINMAX
-)
-
-target_precompile_headers(dingus PRIVATE dingus/dingus/stdafx.h)
-
 add_executable(Demo WIN32
-    tw/src/stdafx.cpp
+    src/animator/AnimationBunch.cpp
+    src/animator/AnimType.cpp
+    src/gfx/geometry/DynamicVBManager.cpp
+    src/gfx/Mesh.cpp
+    src/gfx/RenderableOrderedBillboards.cpp
+    src/gfx/Texture.cpp
+    src/gfx/VertexFormat.cpp
+    src/math/Vector3.cpp
+    src/math/Vector4.cpp
+    src/resource/AnimationBundle.cpp
+    src/resource/MeshBundle.cpp
+    src/resource/MeshSerializer.cpp
+    src/resource/TextureBundle.cpp
+    src/resource/dds_loader.cpp
+    src/utils/Errors.cpp
+    src/utils/StringHelper.cpp
 
-    tw/src/demo/Anim.cpp
-    tw/src/demo/Demo.cpp
-    tw/src/demo/Effect.cpp
-    tw/src/demo/Entity.cpp
-    tw/src/demo/Glare.cpp
-    tw/src/demo/MeshEntity.cpp
-    tw/src/demo/RenderCamera.cpp
-    tw/src/demo/Scene.cpp
-    tw/src/demo/SceneOut.cpp
-    tw/src/demo/SceneTeeth.cpp
-
-    tw/src/system/main.cpp
-    tw/src/system/MusicPlayer.cpp
-
-    tw/src/util/LineRenderer.cpp
-    tw/src/util/TextureProjector.cpp
+    src/demo/Anim.cpp
+    src/demo/Demo.cpp
+    src/demo/Effect.cpp
+    src/demo/Entity.cpp
+    src/demo/Glare.cpp
+    src/demo/MeshEntity.cpp
+    src/demo/RenderCamera.cpp
+    src/demo/Scene.cpp
+    src/demo/SceneOut.cpp
+    src/demo/SceneTeeth.cpp
+    src/system/main.cpp
+    src/system/MusicPlayer.cpp
+    src/util/LineRenderer.cpp
+    src/util/TextureProjector.cpp
 )
 
 target_include_directories(Demo PRIVATE
-    ${CMAKE_SOURCE_DIR}/dingus
-    ${CMAKE_SOURCE_DIR}/tw/src
+    ${CMAKE_SOURCE_DIR}
 )
 
-set_property(TARGET dingus PROPERTY CXX_STANDARD 17)
-set_property(TARGET dingus PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 set_property(TARGET Demo PROPERTY CXX_STANDARD 17)
 set_property(TARGET Demo PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
@@ -89,10 +56,7 @@ target_compile_definitions(Demo PRIVATE
     NOMINMAX
 )
 
-target_precompile_headers(Demo PRIVATE tw/src/stdafx.h)
-
 target_link_libraries(Demo PRIVATE
-    dingus
     winmm
     kernel32
     user32
@@ -133,18 +97,18 @@ function(add_sokol_shader target_name shader_file)
 endfunction()
 
 set(SHADER_FILES
-    tw/src/fx/billboards.glsl
-    tw/src/fx/blit.glsl
-    tw/src/fx/caster.glsl
-    tw/src/fx/compositeAdd.glsl
-    tw/src/fx/compositeAlpha.glsl
-    tw/src/fx/filterBloom.glsl
-    tw/src/fx/filterToon.glsl
-    tw/src/fx/lines.glsl
-    tw/src/fx/noshadowHi.glsl
-    tw/src/fx/overlay.glsl
-    tw/src/fx/receiverHi.glsl
-    tw/src/fx/reflective.glsl
+    src/fx/billboards.glsl
+    src/fx/blit.glsl
+    src/fx/caster.glsl
+    src/fx/compositeAdd.glsl
+    src/fx/compositeAlpha.glsl
+    src/fx/filterBloom.glsl
+    src/fx/filterToon.glsl
+    src/fx/lines.glsl
+    src/fx/noshadowHi.glsl
+    src/fx/overlay.glsl
+    src/fx/receiverHi.glsl
+    src/fx/reflective.glsl
 )
 foreach(shader ${SHADER_FILES})
     add_sokol_shader(Demo ${shader})

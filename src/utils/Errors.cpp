@@ -1,0 +1,16 @@
+// --------------------------------------------------------------------------
+// Dingus project - a collection of subsystems for game/graphics applications
+// Developed by nesnausk! team: www.nesnausk.org
+// --------------------------------------------------------------------------
+
+#include "Errors.h"
+
+using namespace dingus;
+
+EBaseError::EBaseError( const std::string& msg, const char* fileName, int lineNumber )
+:	std::runtime_error( msg ), mFileName( fileName ), mLineNumber( lineNumber )
+{
+	char buf[100];
+	_itoa( lineNumber, buf, 10 );
+	mWhereMsg = msg + ' ' + fileName + ':' + buf;
+};

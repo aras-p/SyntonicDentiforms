@@ -1,0 +1,24 @@
+#pragma once
+
+#include <src/gfx/Vertices.h>
+#include <stdint.h>
+#include "external/sokol_gfx.h"
+
+using namespace dingus;
+
+struct SLinePoint {
+	SVector3	pos;
+	uint32_t    color;
+};
+
+class CLineRenderer {
+public:
+	CLineRenderer();
+	~CLineRenderer();
+
+	void	renderStrip(int npoints, const SLinePoint* points, float halfWidth);
+
+private:
+	typedef SVertexXyzDiffuseTex1	TVertex;
+	sg_buffer mIB;
+};
