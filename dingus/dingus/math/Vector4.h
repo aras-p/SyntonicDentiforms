@@ -32,7 +32,7 @@ public:
 		uint32_t dwB = z >= 1.0f ? 0xff : z <= 0.0f ? 0x00 : (uint32_t)(z * 255.0f + 0.5f);
 		uint32_t dwA = w >= 1.0f ? 0xff : w <= 0.0f ? 0x00 : (uint32_t)(w * 255.0f + 0.5f);
 
-		return (dwA << 24) | (dwR << 16) | (dwG << 8) | dwB;
+		return (dwA << 24) | (dwB << 16) | (dwG << 8) | dwR;
 	}
 
 	float x, y, z, w;

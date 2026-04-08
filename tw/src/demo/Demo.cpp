@@ -137,6 +137,7 @@ static void gPreload()
 
 static sg_buffer s_ib_quads;
 
+sg_sampler s_smp_linear_repeat;
 sg_sampler s_smp_linear_clamp;
 sg_sampler s_smp_point_clamp;
 
@@ -257,6 +258,9 @@ bool demo_init()
 	{
 		sg_sampler_desc desc = {};
 		desc.min_filter = desc.mag_filter = SG_FILTER_LINEAR;
+		desc.wrap_u = desc.wrap_v = SG_WRAP_REPEAT;
+		s_smp_linear_repeat = sg_make_sampler(&desc);
+		desc.min_filter = desc.mag_filter = SG_FILTER_LINEAR;
 		desc.wrap_u = desc.wrap_v = SG_WRAP_CLAMP_TO_EDGE;
 		s_smp_linear_clamp = sg_make_sampler(&desc);
 		desc.min_filter = desc.mag_filter = SG_FILTER_NEAREST;
@@ -312,8 +316,6 @@ bool demo_init()
 	gBillboardsNoDestA = new CRenderableOrderedBillboards(s_ib_quads, s_smp_linear_clamp);
 	//gBillboardsNoDestA->getParams().setEffect( *RGET_FX("billboardsNoDestA") );
 	gLineRenderer = new CLineRenderer();
-	//gLineRenderer->getRenderable().getParams().setEffect( *RGET_FX("lines") ); //@TODO
-	//gLineRenderer->getRenderable().getParams().addTexture( "tBase", *RGET_TEX("Line1") );
 
 	// --------------------------------
 	// RTs
@@ -936,26 +938,29 @@ void demo_shutdown()
 
 void demo_event(const sapp_event* evt)
 {
+	static bool spaceDown = false;
 	if (evt->type == SAPP_EVENTTYPE_KEY_DOWN)
 	{
 #ifndef WITHMUSIC
-		float dt = 1.0f / 300.0f;
+		float dt = 1.0f / 60.0f;
 		if (evt->key_code == SAPP_KEYCODE_LEFT)		gDebugTime -= dt * 1.0f;
 		if (evt->key_code == SAPP_KEYCODE_RIGHT)	gDebugTime += dt * 1.0f;
 		if (evt->key_code == SAPP_KEYCODE_PAGE_UP)	gDebugTime -= dt * 5.0f;
 		if (evt->key_code == SAPP_KEYCODE_PAGE_DOWN)		gDebugTime += dt * 5.0f;
-		static bool justPressedSpace = false;
-		if (evt->key_code == SAPP_KEYCODE_SPACE) {
-			if (!justPressedSpace) {
-				gDebugTime += 1.0f;
-			}
-			justPressedSpace = true;
+		if (evt->key_code == SAPP_KEYCODE_SPACE && !spaceDown) {
+			gDebugTime += 1.0f;
+			spaceDown = true;
 		}
-		else
-			justPressedSpace = false;
 #endif
 		if (evt->key_code == SAPP_KEYCODE_ESCAPE) {
 			sapp_quit();
 		}
+	}
+	if (evt->type == SAPP_EVENTTYPE_KEY_UP)
+	{
+#ifndef WITHMUSIC
+		if (evt->key_code == SAPP_KEYCODE_SPACE)
+			spaceDown = false;
+#endif
 	}
 }

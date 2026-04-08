@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include "LineRenderer.h"
+#include "../demo/DemoResources.h"
+#include "../demo/Effect.h"
 #include <dingus/gfx/geometry/DynamicVBManager.h>
 
 CLineRenderer::CLineRenderer()
@@ -96,18 +98,15 @@ void CLineRenderer::renderStrip( int npoints, const SLinePoint* points, float ha
 	delete[] chunk;
 
 	// render
-	//@TODO
-	/*
-	mRenderable->setVB( chunk->getVB(), 0 );
-	mRenderable->setStride( chunk->getStride(), 0 );
+	effect_apply(fx_lines);
+	sg_apply_uniforms(0, { &g_global_u, sizeof(g_global_u) });
 
-	mRenderable->setBaseVertex( chunk->getOffset() );
-	mRenderable->setMinVertex( 0 );
-	mRenderable->setNumVertices( chunk->getSize() );
-	mRenderable->setStartIndex( 0 );
-	mRenderable->setPrimCount( ntris );
-	mRenderable->setPrimType( D3DPT_TRIANGLELIST );
-
-	G_RCTX->directRender( *mRenderable );
-	*/
+	sg_bindings binds = {};
+	binds.vertex_buffers[0] = dynamic_vb_get();
+	binds.vertex_buffer_offsets[0] = offset;
+	binds.index_buffer = mIB;
+	binds.views[0] = RGET_TEX("Line1")->view_tex;
+	binds.samplers[0] = s_smp_linear_repeat;
+	sg_apply_bindings(binds);
+	sg_draw(0, ntris * 3, 1);
 }

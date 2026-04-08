@@ -133,6 +133,7 @@ set(SHADER_FILES
     tw/src/fx/caster.glsl
     tw/src/fx/compositeAdd.glsl
     tw/src/fx/filterBloom.glsl
+    tw/src/fx/lines.glsl
     tw/src/fx/receiverHi.glsl
     tw/src/fx/receiverLo.glsl
     tw/src/fx/reflective.glsl

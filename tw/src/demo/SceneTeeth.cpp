@@ -383,7 +383,6 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 
 void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float aspect )
 {
-#if 0 //@TODO
 	assert( pack >= 0 && pack < TEETHPACKS );
 	CTeethAnim& ta = *mAnimTeeth[pack];
 	int nteeth = ta.getCount();
@@ -391,7 +390,6 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float asp
 
 	float relT = ta.getRelTime( t );
 
-	G_RCTX->directBegin();
 	const int PATH_SIZE = PATH_FRAMES;
 	SLinePoint path[PATH_SIZE];
 	for( i = 0; i < nteeth; ++i ) {
@@ -399,22 +397,22 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float asp
 		float da = 1.0f / PATH_SIZE;
 		for( int j = 0; j < PATH_SIZE; ++j, a += da ) {
 			path[j].pos = ta.mPaths[i][j];
-			D3DXCOLOR c;
-			c.r = 1.0f; c.g = 0.0f; c.b = 0.0f;
+			SVector4 c;
+			c.x = 1.0f; c.y = 0.0f; c.z = 0.0f;
 			float delta = a-relT;
 			if( delta < 0.0f )
 				delta *= 4;
-			c.a = 0.75f - fabsf( delta ) * 4;
+			c.w = 0.75f - fabsf( delta ) * 4;
 			//if( delta>=0 )
 			//	c.a = 0.0f;
-			path[j].color = c;
+			path[j].color = c.toRGBA();
 		}
 		gLineRenderer->renderStrip( PATH_SIZE, path, 0.05f );
 	}
-	G_RCTX->directEnd();
 
 	// end scene, copy backbuffer to texture, begin scene again
 	// toon-process all into texture
+#if 0 //@TODO
 	CD3DDevice& dx = CD3DDevice::getInstance();
 	dx.sceneEnd();
 	dx.getDevice().StretchRect( dx.getBackBuffer(), NULL, RGET_SSURF(RT_FULLSCREEN_1)->getObject(), NULL, D3DTEXF_NONE );

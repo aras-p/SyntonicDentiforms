@@ -4,6 +4,7 @@
 // --------------------------------------------------------------------------
 
 #include "RenderCamera.h"
+#include "DemoResources.h"
 
 using namespace dingus;
 
@@ -28,10 +29,18 @@ void CRenderCamera::setCameraMatrix( SMatrix4x4 const& matrix )
 	mViewMatrix = mCameraMatrix;
 	mViewMatrix.invert();
 	mViewProjMatrix = mViewMatrix * mProjectionMatrix;
+
+	g_global_u.matProjection = mProjectionMatrix;
+	g_global_u.matView = mViewMatrix;
+	g_global_u.matViewProj = mViewProjMatrix;
 }
 
 void CRenderCamera::setProjectionMatrix( SMatrix4x4 const& matrix )
 {
 	mProjectionMatrix = matrix;
 	mViewProjMatrix = mViewMatrix * mProjectionMatrix;
+
+	g_global_u.matProjection = mProjectionMatrix;
+	g_global_u.matView = mViewMatrix;
+	g_global_u.matViewProj = mViewProjMatrix;
 }

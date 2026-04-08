@@ -5,6 +5,7 @@
 #include "../fx/caster.glsl.h"
 #include "../fx/compositeAdd.glsl.h"
 #include "../fx/filterBloom.glsl.h"
+#include "../fx/lines.glsl.h"
 #include "../fx/receiverLo.glsl.h"
 #include "../fx/receiverHi.glsl.h"
 #include "../fx/reflective.glsl.h"
@@ -58,6 +59,31 @@ void effects_init()
 		desc.layout.attrs[0].format = SG_VERTEXFORMAT_FLOAT3;
 		desc.layout.attrs[0].offset = 0;
 		s_fx_pipes[fx_caster] = sg_make_pipeline(desc);
+	}
+	// lines
+	{
+		sg_pipeline_desc desc = {};
+		desc.shader = sg_make_shader(lines_prog_shader_desc(backend));
+		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
+		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
+		desc.index_type = SG_INDEXTYPE_UINT16;
+		desc.layout.attrs[0].format = SG_VERTEXFORMAT_FLOAT3;
+		desc.layout.attrs[0].offset = 0;
+		desc.layout.attrs[1].format = SG_VERTEXFORMAT_UBYTE4N;
+		desc.layout.attrs[1].offset = 12;
+		desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
+		desc.layout.attrs[2].offset = 16;
+		desc.sample_count = kMainAA;
+		// blend, no depth write, no cull
+		desc.colors[0].blend.enabled = true;
+		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA;
+		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_SRC_ALPHA;
+		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+		desc.depth.write_enabled = false;
+		desc.cull_mode = SG_CULLMODE_NONE;
+		s_fx_pipes[fx_lines] = sg_make_pipeline(desc);
 	}
 	// receiver Lo
 	{

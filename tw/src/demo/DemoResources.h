@@ -18,6 +18,7 @@ extern CRenderableOrderedBillboards*	gBillboardsNormal;
 extern CRenderableOrderedBillboards*	gBillboardsNoDestA;
 extern SVector4			gScreenFixUVs;
 
+extern sg_sampler s_smp_linear_repeat;
 extern sg_sampler s_smp_linear_clamp;
 extern sg_sampler s_smp_point_clamp;
 
