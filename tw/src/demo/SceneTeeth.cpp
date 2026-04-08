@@ -349,7 +349,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 		bill->setWholeTexture();
 	}
 
-	effect_apply(fx_billboards);
+	effect_apply(masks ? fx_billboards : fx_billboardsNoDestAlpha);
 	bills.render();
 }
 

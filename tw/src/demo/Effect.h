@@ -3,6 +3,7 @@
 enum Effect {
 	fx_blit,
 	fx_billboards,
+	fx_billboardsNoDestAlpha,
 	fx_caster,
 	fx_casterNoZ,
 	fx_compositeAdd,

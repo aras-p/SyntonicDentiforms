@@ -28,7 +28,7 @@ void main()
     vec4 alp = texture(sampler2D(texAlpha, smp), uv);
 	vec4 edge = texture(sampler2D(texEdgeLUT, smp), vec2(alp.ar));
 	rgb.rgb *= edge.rgb;
-	rgb.a = 1.0 - edge.a;
+	rgb.a = edge.a;
     frag_color = rgb;
 }
 #pragma sokol @end

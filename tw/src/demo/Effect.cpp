@@ -50,10 +50,10 @@ void effects_init()
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		// blend, no depth, no cull
 		desc.colors[0].blend.enabled = true;
-		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA;
-		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_SRC_ALPHA;
-		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
-		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA;
+		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_SRC_ALPHA;
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
 		desc.cull_mode = SG_CULLMODE_NONE;
@@ -107,6 +107,12 @@ void effects_init()
 		desc.depth.write_enabled = false;
 		desc.cull_mode = SG_CULLMODE_NONE;
 		s_fx_pipes[fx_billboards] = sg_make_pipeline(desc);
+
+		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA;
+		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_SRC_ALPHA;
+		s_fx_pipes[fx_billboardsNoDestAlpha] = sg_make_pipeline(desc);
 	}
 	// overlay /2
 	{

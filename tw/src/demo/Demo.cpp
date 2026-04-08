@@ -609,7 +609,7 @@ static void gRenderCredits( float cutAlpha )
 		b->color = BILLCOL;
 	}
 
-	effect_apply(fx_billboards);
+	effect_apply(fx_billboardsNoDestAlpha);
 	bills.render();
 }
 
