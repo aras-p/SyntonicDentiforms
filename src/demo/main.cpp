@@ -13,7 +13,7 @@
 #include "external/sokol_log.h"
 #include "external/sokol_glue.h"
 
-#include "../demo/Demo.h"
+#include "Demo.h"
 
 static void init(void)
 {

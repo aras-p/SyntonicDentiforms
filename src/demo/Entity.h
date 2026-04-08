@@ -1,7 +1,7 @@
 #pragma once
 
 #include <src/math/Matrix4x4.h>
-#include "../system/Globals.h"
+#include "Globals.h"
 
 // --------------------------------------------------------------------------
 

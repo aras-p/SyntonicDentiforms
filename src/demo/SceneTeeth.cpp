@@ -2,7 +2,7 @@
 #include "DemoResources.h"
 #include "Glare.h"
 #include "Effect.h"
-#include "../util/LineRenderer.h"
+#include "LineRenderer.h"
 #include <src/math/MathUtils.h>
 #include <src/utils/StringHelper.h>
 

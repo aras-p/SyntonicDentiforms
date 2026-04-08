@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../demo/RenderCamera.h"
+#include "RenderCamera.h"
 
 #include <src/resource/TextureBundle.h>
 #include <src/resource/MeshBundle.h>

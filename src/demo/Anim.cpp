@@ -1,5 +1,5 @@
 #include "Anim.h"
-#include "../system/Globals.h"
+#include "Globals.h"
 
 CAnim::CAnim( const std::string& animation, const std::string& curve, int anims )
 :	mDefaultPos(0,0,0),

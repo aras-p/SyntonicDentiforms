@@ -27,15 +27,15 @@ add_executable(Demo WIN32
     src/demo/Effect.cpp
     src/demo/Entity.cpp
     src/demo/Glare.cpp
+    src/demo/LineRenderer.cpp
+    src/demo/main.cpp
     src/demo/MeshEntity.cpp
+    src/demo/MusicPlayer.cpp
     src/demo/RenderCamera.cpp
     src/demo/Scene.cpp
     src/demo/SceneOut.cpp
     src/demo/SceneTeeth.cpp
-    src/system/main.cpp
-    src/system/MusicPlayer.cpp
-    src/util/LineRenderer.cpp
-    src/util/TextureProjector.cpp
+    src/demo/TextureProjector.cpp
 )
 
 target_include_directories(Demo PRIVATE

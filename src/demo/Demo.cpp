@@ -12,9 +12,10 @@
 #include "SceneOut.h"
 #include "Glare.h"
 
-#include "../util/TextureProjector.h"
-#include "../util/LineRenderer.h"
-#include "../system/MusicPlayer.h"
+#include "TextureProjector.h"
+#include "LineRenderer.h"
+#include "MusicPlayer.h"
+
 #include "external/sokol_app.h"
 #include "external/sokol_glue.h"
 

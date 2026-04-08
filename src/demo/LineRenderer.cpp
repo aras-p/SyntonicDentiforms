@@ -1,7 +1,7 @@
 #include "LineRenderer.h"
-#include "../demo/DemoResources.h"
-#include "../demo/Effect.h"
-#include "../system/Globals.h"
+#include "DemoResources.h"
+#include "Effect.h"
+#include "Globals.h"
 #include <src/gfx/geometry/DynamicVBManager.h>
 #include <src/utils/AssertHelper.h>
 
