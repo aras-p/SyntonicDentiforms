@@ -1,8 +1,3 @@
-// --------------------------------------------------------------------------
-// Dingus project - a collection of subsystems for game/graphics applications
-// Developed by nesnausk! team: www.nesnausk.org
-// --------------------------------------------------------------------------
-
 // Pretty much taken from OPCODE (www.codercorner.com) or nVidia's fastmath.cpp
 
 #ifndef __FPU_CODE_H

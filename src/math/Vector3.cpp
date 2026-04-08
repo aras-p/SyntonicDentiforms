@@ -1,8 +1,3 @@
-// --------------------------------------------------------------------------
-// Dingus project - a collection of subsystems for game/graphics applications
-// Developed by nesnausk! team: www.nesnausk.org
-// --------------------------------------------------------------------------
-
 #include "Vector3.h"
 #include "Matrix4x4.h"
 

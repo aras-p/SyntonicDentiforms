@@ -1,8 +1,3 @@
-// --------------------------------------------------------------------------
-// Dingus project - a collection of subsystems for game/graphics applications
-// Developed by nesnausk! team: www.nesnausk.org
-// --------------------------------------------------------------------------
-
 #ifndef __RESOURCE_ID_H
 #define __RESOURCE_ID_H
 

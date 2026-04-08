@@ -1,8 +1,3 @@
-// --------------------------------------------------------------------------
-// Dingus project - a collection of subsystems for game/graphics applications
-// Developed by nesnausk! team: www.nesnausk.org
-// --------------------------------------------------------------------------
-
 #ifndef __SAMPLED_ANIMATION_H
 #define __SAMPLED_ANIMATION_H
 

@@ -1,8 +1,3 @@
-// --------------------------------------------------------------------------
-// Dingus project - a collection of subsystems for game/graphics applications
-// Developed by nesnausk! team: www.nesnausk.org
-// --------------------------------------------------------------------------
-
 #include "AnimationBundle.h"
 #include "../animator/AnimType.h"
 #include "../animator/SampledAnimation.h"
