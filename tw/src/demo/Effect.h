@@ -4,6 +4,7 @@ enum Effect {
 	fx_blit,
 	fx_billboards,
 	fx_caster,
+	fx_casterNoZ,
 	fx_compositeAdd,
 	fx_compositeAlpha,
 	fx_filterBloom,

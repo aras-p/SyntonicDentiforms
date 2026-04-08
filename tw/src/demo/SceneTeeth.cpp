@@ -101,25 +101,6 @@ CSceneTeeth::CSceneTeeth( int number )
 	mAnimAxes[0] = new CAnim( "6/Axes", "Axis1", CAnim::POSITION | CAnim::ROTATION );
 	mAnimAxes[1] = new CAnim( "6/Axes", "Axis2", CAnim::POSITION | CAnim::ROTATION );
 
-	/* //@TODO
-	{
-		mToonQuad = new CRenderableMesh( *RGET_MESH("billboard"), 0 );
-		CEffectParams& ep = mToonQuad->getParams();
-		ep.setEffect( *RGET_FX("filterToon") );
-		ep.addVector4Ref( "vFixUV", gScreenFixUVs );
-		ep.addTexture( "tBase", *RGET_STEX(RT_FULLSCREEN_1) );
-		ep.addTexture( "tLUT", *RGET_TEX("ColorLuts") );
-	}
-	{
-		mCompositeQuad = new CRenderableMesh( *RGET_MESH("billboard"), 0 );
-		CEffectParams& ep = mCompositeQuad->getParams();
-		ep.setEffect( *RGET_FX("compositeAlpha") );
-		ep.addVector4Ref( "vFixUV", gScreenFixUVs );
-		ep.addTexture( "tBase", *RGET_STEX(RT_FULLSCREEN_2) );
-		ep.addTexture( "tAlpha", *RGET_STEX( !(BLOB_BLUR_PASSES&1) ? RT_4thSCREEN_1 : RT_4thSCREEN_2 ) );
-		ep.addTexture( "tEdgeLUT", *RGET_TEX("AlphaEdge") );
-	}
-	*/
 	mToothMaskMesh = RGET_MESH("scene6/Tooth1");
 }
 
@@ -402,51 +383,76 @@ void CSceneTeeth::renderTeethLines(int pack, float t)
 	}
 }
 
-void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float aspect )
+void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspect)
 {
-	assert( pack >= 0 && pack < TEETHPACKS );
+	assert(pack >= 0 && pack < TEETHPACKS);
 	CTeethAnim& ta = *mAnimTeeth[pack];
 	int nteeth = ta.getCount();
 	int i;
 
-	float relT = ta.getRelTime( t );
+	float relT = ta.getRelTime(t);
 
-	// end scene, copy backbuffer to texture, begin scene again
-	// toon-process all into texture
-#if 0 //@TODO
-	CD3DDevice& dx = CD3DDevice::getInstance();
-	dx.sceneEnd();
-	dx.getDevice().StretchRect( dx.getBackBuffer(), NULL, RGET_SSURF(RT_FULLSCREEN_1)->getObject(), NULL, D3DTEXF_NONE );
-	dx.setRenderTarget( RGET_SSURF(RT_FULLSCREEN_2), 0 );
-	dx.clearTargets( true, false, false, 0x00ff0000 ); // REMOVE
-	dx.setZStencil( NULL );
-	dx.sceneBegin();
-	G_RCTX->directBegin();
-	G_RCTX->directRender( *mToonQuad );
-	G_RCTX->directEnd();
-	dx.sceneEnd();
+	//@TODO ?
+	//dx.getDevice().StretchRect( dx.getBackBuffer(), NULL, RGET_SSURF(RT_FULLSCREEN_1)->getObject(), NULL, D3DTEXF_NONE );
 
-	// render teeth masks into mask RT
-	dx.setRenderTarget( RGET_SSURF(RT_4thSCREEN_1), 0 );
-	dx.clearTargets( true, false, false, 0x00000000, 1.0f, 0 );
-	dx.sceneBegin();
-	G_RCTX->directBegin();
+	// end previous pass, apply toon post-processing into full2
+	sg_end_pass();
+	{
+		sg_pass pass = {};
+		pass.attachments.colors[0] = rt_fullscreen_2.view_rt;
+		pass.attachments.depth_stencil = {};
+		pass.action.colors[0].load_action = SG_LOADACTION_DONTCARE;
+		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
+		sg_begin_pass(&pass);
+
+		sg_bindings binds = {};
+		binds.views[0] = rt_main_resolved.view_tex;
+		binds.views[1] = RGET_TEX("ColorLuts")->view_tex;
+		binds.samplers[0] = s_smp_linear_clamp;
+
+		effect_apply(fx_filterToon);
+		sg_apply_bindings(binds);
+		sg_draw(0, 4, 1);
+
+		sg_end_pass();
+	}
+
+	// render teeth masks into 1/4th mask RT, to be blurred
+	{
+		sg_pass pass = {};
+		pass.attachments.colors[0] = rt_4th_1.view_rt;
+		pass.attachments.depth_stencil = {};
+		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+		pass.action.colors[0].clear_value = { 0,0,0,0 };
+		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
+		sg_begin_pass(&pass);
+	}
+
 	float toothMaskScale = 6.0f;
 	const float SCALEUP_ALPHA = 0.03f;
-	if( cutAlpha < SCALEUP_ALPHA ) {
+	if (cutAlpha < SCALEUP_ALPHA) {
 		toothMaskScale *= cutAlpha / SCALEUP_ALPHA;
 	}
 	/*if( pack==TEETHPACKS-1 && cutAlpha > 1-SCALEUP_ALPHA*3 ) {
 		toothMaskScale *= (1 - cutAlpha)/(SCALEUP_ALPHA*3);
-	} else*/ if( pack!=TEETHPACKS-1 && cutAlpha > 1-SCALEUP_ALPHA ) {
-		toothMaskScale *= (1 - cutAlpha)/SCALEUP_ALPHA;
+	} else*/ if (pack != TEETHPACKS - 1 && cutAlpha > 1 - SCALEUP_ALPHA) {
+		toothMaskScale *= (1 - cutAlpha) / SCALEUP_ALPHA;
 	}
-	//@TODO
-	mToothMaskMesh = new CRenderableMesh(*RGET_MESH("scene6/Tooth1"), 0);
-	CEffectParams& ep = mToothMaskMesh->getParams();
-	ep.setEffect(*RGET_FX("caster"));
-	ep.addVector4("vShadowID", SVector4(1.0f, 1.0f, 1.0f, 1.0f));
-	ep.addMatrix4x4Ref("mWVP", mMaskMeshWVP);
+
+	// Render by mis-using shadow caster shader with all-1.0 shadow ID
+	// color.
+	effect_apply(fx_casterNoZ);
+	EntityUniformsFS uboFS = {};
+	uboFS.shadowID.set(1, 1, 1, 1);
+	sg_apply_uniforms(2, { &uboFS, sizeof(uboFS) });
+
+	EntityUniformsVS uboVS = {};
+	uboVS.mat.identify(); // not really used
+	uboVS.matWV.identify(); // not really used
+
+	sg_bindings binds = {};
+	binds.vertex_buffers[0] = mToothMaskMesh->getVB();
+	binds.index_buffer = mToothMaskMesh->getIB();
 
 	if( toothMaskScale > 0.001f ) {
 		if( pack != TEETHPACKS-1 ) {
@@ -456,8 +462,12 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float asp
 				mMaskMeshWVP.getAxisX() *= toothMaskScale;
 				mMaskMeshWVP.getAxisY() *= toothMaskScale * toothMaskScale*0.5f;
 				mMaskMeshWVP.getAxisZ() *= toothMaskScale;
-				mMaskMeshWVP *= gRenderCam.getViewProjMatrix();
-				G_RCTX->directRender( *mToothMaskMesh );
+				mMaskMeshWVP = mMaskMeshWVP * gRenderCam.getViewProjMatrix();
+
+				uboVS.matWVP = mMaskMeshWVP;
+				sg_apply_uniforms(1, { &uboVS, sizeof(uboVS) });
+				sg_apply_bindings(binds);
+				sg_draw(0, mToothMaskMesh->getIndexCount(), 1);
 			}
 		} else {
 			for( int pk = 0; pk < TEETHPACKS; ++pk ) {
@@ -468,28 +478,44 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float asp
 					mMaskMeshWVP.getAxisX() *= toothMaskScale;
 					mMaskMeshWVP.getAxisY() *= toothMaskScale * toothMaskScale*0.5f;
 					mMaskMeshWVP.getAxisZ() *= toothMaskScale;
-					mMaskMeshWVP *= gRenderCam.getViewProjMatrix();
-					G_RCTX->directRender( *mToothMaskMesh );
+					mMaskMeshWVP = mMaskMeshWVP * gRenderCam.getViewProjMatrix();
+
+					uboVS.matWVP = mMaskMeshWVP;
+					sg_apply_uniforms(1, { &uboVS, sizeof(uboVS) });
+					sg_apply_bindings(binds);
+					sg_draw(0, mToothMaskMesh->getIndexCount(), 1);
 				}
 			}
 		}
 	}
-	renderTeethBills( pack, t, relT, cutAlpha, true );
+	renderTeethBills( pack, t, relT, cutAlpha, true, aspect );
 
-	G_RCTX->directEnd();
-	dx.sceneEnd();
+	sg_end_pass();
 
-	gPPSBloom->pingPongBlur( BLOB_BLUR_PASSES );
+	pingPongBlur( BLOB_BLUR_PASSES );
 
-	// composite, render paths
-	dx.setDefaultRenderTarget();
-	dx.setDefaultZStencil();
-	dx.sceneBegin();
+	// composite
+	{
+		sg_pass pass = {};
+		pass.attachments.colors[0] = rt_main_resolved.view_rt;
+		pass.attachments.depth_stencil = {};
+		pass.action.colors[0].load_action = SG_LOADACTION_LOAD;
+		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
+		sg_begin_pass(&pass);
 
-	G_RCTX->directBegin();
-	G_RCTX->directRender( *mCompositeQuad );
+		sg_bindings binds = {};
+		binds.views[0] = rt_fullscreen_2.view_tex;
+		binds.views[1] = !(BLOB_BLUR_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex;
+		binds.views[2] = RGET_TEX("AlphaEdge")->view_tex;
+		binds.samplers[0] = s_smp_linear_clamp;
+
+		effect_apply(fx_compositeAlpha);
+		sg_apply_bindings(binds);
+		sg_draw(0, 4, 1);
+	}
 
 	/*
+	// render paths
 	const int PATH_SIZE = PATH_FRAMES;
 	SLinePoint path[PATH_SIZE];
 	for( i = 0; i < nteeth; ++i ) {
@@ -509,9 +535,6 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float asp
 		gLineRenderer->renderStrip( PATH_SIZE, path, 0.05f );
 	}
 	*/
-
-	G_RCTX->directEnd();
-#endif
 }
 
 void CSceneTeeth::renderTeethUI( int pack, float t, float cutAlpha, float aspect)
@@ -521,7 +544,7 @@ void CSceneTeeth::renderTeethUI( int pack, float t, float cutAlpha, float aspect
 	float relT = ta.getRelTime( t );
 	int nteeth = ta.getCount();
 
-	//CD3DDevice& dx = CD3DDevice::getInstance();
+	//CD3DDevice& dx = CD3DDevice::getInstance(); //@TODO
 	//G_RCTX->directBegin();
 	renderTeethBills( pack, t, relT, cutAlpha, false, aspect);
 	//G_RCTX->directEnd();

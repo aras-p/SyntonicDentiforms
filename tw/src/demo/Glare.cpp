@@ -7,7 +7,7 @@
 
 const int BLOOM_PASSES = 4;
 
-static void pingPongBlur(int passes)
+void pingPongBlur(int passes)
 {
 	sokol_texture* pingPong[2] = {&rt_4th_2, &rt_4th_1};
 

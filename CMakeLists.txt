@@ -139,7 +139,9 @@ set(SHADER_FILES
     tw/src/fx/blit.glsl
     tw/src/fx/caster.glsl
     tw/src/fx/compositeAdd.glsl
+    tw/src/fx/compositeAlpha.glsl
     tw/src/fx/filterBloom.glsl
+    tw/src/fx/filterToon.glsl
     tw/src/fx/lines.glsl
     tw/src/fx/noshadowHi.glsl
     tw/src/fx/overlay.glsl

@@ -68,3 +68,16 @@ struct GlobalUniforms
 };
 
 extern GlobalUniforms g_global_u;
+
+// match entity_uniforms in shaders
+struct EntityUniformsVS
+{
+	SMatrix4x4	mat;
+	SMatrix4x4	matWV;
+	SMatrix4x4	matWVP;
+};
+struct EntityUniformsFS
+{
+	SVector4 shadowID; // zero shadow ID: receive all shadows
+};
+

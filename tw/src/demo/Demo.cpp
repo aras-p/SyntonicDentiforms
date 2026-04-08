@@ -138,7 +138,7 @@ sg_sampler s_smp_linear_clamp;
 sg_sampler s_smp_point_clamp;
 
 sokol_texture rt_main_aa, rt_main_z, rt_main_resolved;
-sokol_texture rt_fullscreen_1, rt_fullscreen_2;
+sokol_texture rt_fullscreen_1 /*@TODO: might be unused ? */, rt_fullscreen_2;
 sokol_texture rt_4th_1, rt_4th_2;
 sokol_texture rt_refl_px, rt_refl_py, rt_refl_pz, rt_refl_nx, rt_refl_ny, rt_refl_nz;
 sokol_texture rt_refl_rt, rt_refl_z;

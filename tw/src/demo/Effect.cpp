@@ -5,7 +5,9 @@
 #include "../fx/blit.glsl.h"
 #include "../fx/caster.glsl.h"
 #include "../fx/compositeAdd.glsl.h"
+#include "../fx/compositeAlpha.glsl.h"
 #include "../fx/filterBloom.glsl.h"
+#include "../fx/filterToon.glsl.h"
 #include "../fx/lines.glsl.h"
 #include "../fx/noshadowHi.glsl.h"
 #include "../fx/overlay.glsl.h"
@@ -39,6 +41,24 @@ void effects_init()
 		desc.depth.write_enabled = false;
 		s_fx_pipes[fx_compositeAdd] = sg_make_pipeline(desc);
 	}
+	// compositeAlpha
+	{
+		sg_pipeline_desc desc = {};
+		desc.shader = sg_make_shader(compositeAlpha_prog_shader_desc(backend));
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
+		// blend, no depth, no cull
+		desc.colors[0].blend.enabled = true;
+		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA;
+		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_SRC_ALPHA;
+		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
+		desc.depth.write_enabled = false;
+		desc.cull_mode = SG_CULLMODE_NONE;
+		s_fx_pipes[fx_compositeAlpha] = sg_make_pipeline(desc);
+	}
 	// filterBloom
 	{
 		sg_pipeline_desc desc = {};
@@ -50,6 +70,18 @@ void effects_init()
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
 		s_fx_pipes[fx_filterBloom] = sg_make_pipeline(desc);
+	}
+	// filterToon
+	{
+		sg_pipeline_desc desc = {};
+		desc.shader = sg_make_shader(filterToon_prog_shader_desc(backend));
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
+		// Z off
+		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
+		desc.depth.write_enabled = false;
+		s_fx_pipes[fx_filterToon] = sg_make_pipeline(desc);
 	}
 	// billboards
 	{
@@ -115,6 +147,11 @@ void effects_init()
 		desc.depth.write_enabled = true;
 		desc.cull_mode = SG_CULLMODE_FRONT;
 		s_fx_pipes[fx_caster] = sg_make_pipeline(desc);
+
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
+		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
+		desc.depth.write_enabled = false;
+		s_fx_pipes[fx_casterNoZ] = sg_make_pipeline(desc);
 	}
 	// lines
 	{
