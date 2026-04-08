@@ -1,7 +1,6 @@
 #include "RenderCamera.h"
 #include "DemoResources.h"
 
-using namespace dingus;
 
 CRenderCamera gRenderCam;
 

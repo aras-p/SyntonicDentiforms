@@ -2,8 +2,6 @@
 
 #include "../gfx/Mesh.h"
 
-namespace dingus {
-
 
 class CMeshSerializer {
 public:
@@ -12,4 +10,3 @@ public:
 };
 
 
-}; // namespace

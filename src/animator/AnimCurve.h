@@ -1,7 +1,5 @@
 #pragma once
 
-namespace dingus {
-
 
 /**
  *  Animation curve information.
@@ -30,9 +28,6 @@ private:
 	value_type	mCollapsedValue;
 	int			mFirstSampleIndex;
 	eIpol		mIpol;
-};
-
-
 };
 
 

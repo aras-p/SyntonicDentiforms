@@ -46,16 +46,16 @@ void CCameraEntity::setOntoRenderContext() const
 	gRenderCam.setProjectionMatrix( mProjectionMatrix );
 }
 
-dingus::SVector3 CCameraEntity::getWorldRay( float x, float y ) const
+SVector3 CCameraEntity::getWorldRay( float x, float y ) const
 {
-	dingus::SMatrix4x4 m = mMatrix;
+	SMatrix4x4 m = mMatrix;
 	m.getOrigin().set(0,0,0);
-	dingus::SVector3 r = getCameraRay( x, y );
+	SVector3 r = getCameraRay( x, y );
 	r = r.transformCoord(m);
 	return r;
 }
 
-dingus::SVector3 CCameraEntity::getCameraRay( float x, float y ) const
+SVector3 CCameraEntity::getCameraRay( float x, float y ) const
 {
-	return dingus::SVector3( x*mViewHalfWidth, -y*mViewHalfHeight, 1.0f );
+	return SVector3( x*mViewHalfWidth, -y*mViewHalfHeight, 1.0f );
 }

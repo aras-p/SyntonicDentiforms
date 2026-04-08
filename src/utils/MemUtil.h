@@ -1,7 +1,5 @@
 #pragma once
 
-namespace dingus {
-
 /// If o, delete o. Assign to NULL.
 template< typename T > void safeDelete( T& o ) {
 	if( o ) delete o;
@@ -18,6 +16,4 @@ template< typename T > void safeRelease( T& o ) {
 	o = 0;
 };
 
-
-}; // namespace dingus
 

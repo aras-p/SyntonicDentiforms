@@ -2,8 +2,6 @@
 
 #include "src/utils/noncopyable.h"
 
-namespace dingus {
-
 
 /**
  *  An animation sampling interface.
@@ -30,6 +28,4 @@ public:
 	virtual void sample( float time, int firstCurve, int numCurves, value_type* dest, int destStride = sizeof(value_type) ) const = 0;
 };
 
-
-}; // namespace
 

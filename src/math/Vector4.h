@@ -3,8 +3,6 @@
 #include "Vector3.h"
 #include <stdint.h>
 
-namespace dingus {
-
 struct SMatrix4x4;
 
 // --------------------------------------------------------------------------
@@ -39,4 +37,3 @@ inline void SVector4::set( float vx, float vy, float vz, float vw ) { x=vx; y=vy
 
 void SVector4TransformArray(SVector4* out, const SVector4* in, const SMatrix4x4* matrix, int elements);
 
-}; // namespace

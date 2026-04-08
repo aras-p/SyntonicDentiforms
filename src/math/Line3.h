@@ -2,7 +2,6 @@
 
 #include "Vector3.h"
 
-namespace dingus {
 	
 	
 class SLine3 {
@@ -52,6 +51,3 @@ public:
 	SVector3	vec;
 };
 
-}; // namespace
-	
-	

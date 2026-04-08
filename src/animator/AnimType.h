@@ -1,7 +1,5 @@
 #pragma once
 
-namespace dingus {
-
 // NOTE: change array in anim_type_string if eAnimType changed!
 // NOTE: implement corresponding traits if new types added!
 
@@ -17,6 +15,4 @@ enum eAnimType {
 };
 
 const char* anim_type_string( eAnimType type );
-
-};
 

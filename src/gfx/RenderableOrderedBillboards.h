@@ -3,8 +3,6 @@
 #include "external/sokol_gfx.h"
 #include <vector>
 
-namespace dingus {
-
 struct SVertexXyzDiffuseTex1;
 struct SMatrix4x4;
 
@@ -48,4 +46,3 @@ private:
 };
 
 
-}; // namespace

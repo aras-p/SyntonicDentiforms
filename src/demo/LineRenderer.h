@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include "external/sokol_gfx.h"
 
-using namespace dingus;
 
 struct SLinePoint {
 	SVector3	pos;

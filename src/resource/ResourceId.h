@@ -2,8 +2,6 @@
 
 #include <string>
 
-namespace dingus {
-
 /**
  *  Resource identifier.
  *
@@ -72,6 +70,4 @@ inline bool CResourceId::operator< ( const CResourceId& rhs ) const
 }
 
 
-
-}; // namespace
 

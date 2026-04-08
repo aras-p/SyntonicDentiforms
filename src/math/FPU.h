@@ -28,8 +28,6 @@
 #define DINGUS_FPU_IS_NEGATIVE(x)	(DINGUS_FPU_UIR(x)&0x80000000)
 
 
-namespace dingus {
-
 /**
  *  Fast fabs for floating-point values.
  *  It just clears the sign bit.
@@ -77,6 +75,4 @@ inline int round( float a )
 }
 
 
-
-}; // namespace
 

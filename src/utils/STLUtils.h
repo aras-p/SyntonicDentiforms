@@ -1,7 +1,5 @@
 #pragma once
 
-namespace dingus {
-
 namespace stl_utils {
 
 /** Deletes items in pointer container. */
@@ -40,6 +38,4 @@ void for_all( _T const& cont, _O& op )
 
 }; // namespace stl_utils
 
-
-}; // namespace
 

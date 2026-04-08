@@ -3,7 +3,6 @@
 #include "../utils/Errors.h"
 #include "../utils/StringHelper.h"
 
-using namespace dingus;
 
 CMeshBundle::CMeshBundle( const std::string& predir )
 :	CStorageResourceBundle<CMesh>(predir)

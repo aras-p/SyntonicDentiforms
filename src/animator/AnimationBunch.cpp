@@ -1,7 +1,6 @@
 #include "AnimationBunch.h"
 #include "src/utils/STLUtils.h"
 
-using namespace dingus;
 
 CAnimationBunch::~CAnimationBunch()
 {

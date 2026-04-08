@@ -1,8 +1,6 @@
 #include "Vector4.h"
 #include "Matrix4x4.h"
 
-namespace dingus {
-
 inline SVector4 SVector4Transform(const SVector4* pv, const SMatrix4x4* pm)
 {
     SVector4 out;
@@ -21,4 +19,3 @@ void SVector4TransformArray(SVector4* out, const SVector4* in, const SMatrix4x4*
     }
 }
 
-}; // namespace

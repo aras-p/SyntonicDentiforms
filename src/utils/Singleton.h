@@ -1,7 +1,5 @@
 #pragma once
 
-namespace dingus {
-
 template<typename T>
 class CSingleton {
 public:
@@ -35,8 +33,6 @@ T* CSingleton<T>::mSingleInstance = 0;
 #define IMPLEMENT_SIMPLE_SINGLETON(clazz) \
 	static clazz* createInstance() { return new clazz(); } \
 	static void deleteInstance( clazz& o ) { delete &o; } \
-	friend class dingus::CSingleton<clazz>
+	friend class CSingleton<clazz>
 
-
-}; // namespace
 

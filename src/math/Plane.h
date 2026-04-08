@@ -2,8 +2,6 @@
 
 #include "Vector3.h"
 
-namespace dingus {
-
 class SPlane {
 public:
 	SPlane(float aa, float bb, float cc, float dd)
@@ -35,4 +33,3 @@ public:
 	float a = 0, b = 0, c = 0, d = 1;
 };
 
-}; // namespace

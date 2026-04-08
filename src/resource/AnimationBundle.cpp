@@ -2,7 +2,6 @@
 #include "../animator/AnimType.h"
 #include "../animator/SampledAnimation.h"
 
-using namespace dingus;
 
 CAnimationBundle::CAnimationBundle( const std::string& predir )
 :	CStorageResourceBundle<CAnimationBunch>(predir)
@@ -98,7 +97,7 @@ void CAnimationBundle::readSampledData( CAnimationBunch& bunch, FILE* f, int loo
 		// group name
 		std::string name = gReadString( f );
 		switch( groupType ) {
-		case dingus::TYPE_VECTOR3:
+		case TYPE_VECTOR3:
 			{
 				typedef SVector3 TData;
 				typedef CSampledAnimation<TData> TAnim;
@@ -125,7 +124,7 @@ void CAnimationBundle::readSampledData( CAnimationBunch& bunch, FILE* f, int loo
 				bunch.addVector3Anim( name, *anim );
 			}
 			break;
-		case dingus::TYPE_QUATERNION:
+		case TYPE_QUATERNION:
 			{
 				typedef SQuaternion TData;
 				typedef CSampledAnimation<TData> TAnim;
@@ -151,7 +150,7 @@ void CAnimationBundle::readSampledData( CAnimationBunch& bunch, FILE* f, int loo
 				bunch.addQuatAnim( name, *anim );
 			}
 			break;
-		case dingus::TYPE_FLOAT:
+		case TYPE_FLOAT:
 			{
 				typedef float TData;
 				typedef CSampledAnimation<TData> TAnim;

@@ -5,7 +5,6 @@
 #include <src/math/Vector3.h>
 #include <src/math/Quaternion.h>
 
-using namespace dingus;
 
 class CAnim {
 public:

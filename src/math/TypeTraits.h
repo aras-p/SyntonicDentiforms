@@ -5,8 +5,6 @@
 #include "Matrix4x4.h"
 #include "Interpolation.h"
 
-namespace dingus {
-
 /*
 	Math type traits. Each traits class, math_type_traits<T>, has methods:
 	static T identity(); - returns identity.
@@ -116,6 +114,4 @@ struct math_type_traits<SQuaternion> : public math_type_traits_base<SQuaternion>
 	};
 };
 
-
-}; // namespace
 

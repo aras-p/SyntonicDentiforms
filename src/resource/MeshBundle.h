@@ -4,8 +4,6 @@
 #include "StorageResourceBundle.h"
 #include "../gfx/Mesh.h"
 
-namespace dingus {
-
 
 class CMeshBundle :	public CStorageResourceBundle<CMesh>,
 					public CBundleSingleton<CMeshBundle>
@@ -27,6 +25,4 @@ private:
 	friend CBundleSingleton<CMeshBundle>;
 };
 
-
-}; // namespace
 

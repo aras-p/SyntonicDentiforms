@@ -1,6 +1,6 @@
 #include "AnimType.h"
 
-const char* dingus::anim_type_string( dingus::eAnimType type )
+const char* anim_type_string( eAnimType type )
 {
 	// NOTE: change array if eAnimType changed!
 	static const char* types[] = {

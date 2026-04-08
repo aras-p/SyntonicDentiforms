@@ -3,8 +3,6 @@
 #include <float.h>
 
 
-namespace dingus {
-
 
 /** PI constant. */
 const float PY = 3.1415926535897932384626433832795029f;
@@ -21,8 +19,5 @@ const float DINGUS_MIN_FLOAT = FLT_MIN;
 const float DINGUS_BIG_FLOAT = 1.0e30f;
 /** Very small float value. */
 const float DINGUS_SMALL_FLOAT = FLT_EPSILON;
-
-
-};
 
 

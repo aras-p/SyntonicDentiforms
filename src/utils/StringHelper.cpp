@@ -1,6 +1,5 @@
 #include "StringHelper.h"
 
-using namespace dingus;
 
 
 void CStringHelper::replaceTabs( std::string& s ) {

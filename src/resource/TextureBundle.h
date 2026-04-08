@@ -6,8 +6,6 @@
 #include "external/sokol_gfx.h"
 #include <assert.h>
 
-namespace dingus {
-
 
 class CTextureBundle :	public CStorageResourceBundle<sokol_texture>,
 						public CBundleSingleton<CTextureBundle>
@@ -30,4 +28,3 @@ private:
 };
 
 
-}; // namespace

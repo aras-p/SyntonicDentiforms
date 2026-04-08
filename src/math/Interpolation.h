@@ -1,7 +1,5 @@
 #pragma once
 
-namespace dingus {
-
 
 /**
  *  Linear interpolates between 2 values.
@@ -34,6 +32,4 @@ _R const math_catmull_rom( _A const& a0, _A const& a1, _A const& a2, _A const& a
 };
 
 
-
-}; // namespace
 

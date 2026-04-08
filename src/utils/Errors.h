@@ -2,8 +2,6 @@
 
 #include <stdexcept>
 
-namespace dingus {
-
 #define THROW_ERROR(msg) { \
 	assert(false); \
 	throw EBaseError( msg, __FILE__, __LINE__ ); \
@@ -25,4 +23,3 @@ protected:
 	int			mLineNumber;
 };
 
-}; // namespace

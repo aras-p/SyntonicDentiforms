@@ -1,7 +1,6 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 
-using namespace dingus;
 
 SVector3 SVector3::transformCoord(const SMatrix4x4& pm) const
 {

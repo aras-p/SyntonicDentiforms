@@ -1,7 +1,6 @@
 #include "VertexFormat.h"
 #include <assert.h>
 
-using namespace dingus;
 
 int CVertexFormat::calcFloat3Size( eFloat3Mode flt3 )
 {

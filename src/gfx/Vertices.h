@@ -3,8 +3,6 @@
 #include "../math/Vector3.h"
 #include <stdint.h>
 
-namespace dingus {
-
 #pragma pack(1)
 
 // Vertex: position, color, UV.
@@ -15,8 +13,5 @@ struct SVertexXyzDiffuseTex1 {
 };
 
 #pragma pack()
-
-
-}; // namespace
 
 

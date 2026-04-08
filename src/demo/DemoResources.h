@@ -8,7 +8,6 @@
 #include <src/gfx/RenderableOrderedBillboards.h>
 #include <src/gfx/Texture.h>
 
-using namespace dingus;
 
 // --------------------------------------------------------------------------
 // misc

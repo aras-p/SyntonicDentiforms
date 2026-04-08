@@ -2,8 +2,6 @@
 
 #include <src/math/Matrix4x4.h>
 
-namespace dingus {
-
 
 class CRenderCamera {
 public:
@@ -31,4 +29,3 @@ private:
 };
 
 
-}; // namespace

@@ -5,7 +5,6 @@
 #define STBI_ONLY_PNG
 #include "external/stb_image.h"
 
-using namespace dingus;
 
 CTextureBundle::CTextureBundle( const std::string& predir )
 :	CStorageResourceBundle<sokol_texture>(predir)

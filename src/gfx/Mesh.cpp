@@ -1,7 +1,6 @@
 #include "Mesh.h"
 #include "src/utils/AssertHelper.h"
 
-using namespace dingus;
 
 CMesh::CMesh(int vertCount, int idxCount, const CVertexFormat& vertFormat, int indexStride, const void* vbData, const void* ibData, int groupCount, const CGroup* groups)
 	: mGroups(groups, groups + groupCount)

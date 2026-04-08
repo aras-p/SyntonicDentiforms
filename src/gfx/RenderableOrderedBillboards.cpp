@@ -5,7 +5,6 @@
 
 #include "src/utils/AssertHelper.h"
 
-using namespace dingus;
 
 
 

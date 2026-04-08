@@ -3,8 +3,6 @@
 #include "../utils/AssertHelper.h"
 #include "../utils/Singleton.h"
 
-namespace dingus {
-
 template< typename T >
 class CBundleSingleton : public CSingleton<T> {
 private:
@@ -17,6 +15,4 @@ private:
 	}
 	friend CSingleton<T>;
 };
-
-}; // namespace
 

@@ -5,8 +5,6 @@
 #include "../math/TypeTraits.h"
 
 
-namespace dingus {
-
 
 /**
  *  A sampled animation.
@@ -146,6 +144,4 @@ void CSampledAnimation<_V>::sample( float time, int firstCurve, int numCurves, _
 	};
 };
 
-
-}; // namespace
 

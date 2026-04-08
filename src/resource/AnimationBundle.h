@@ -5,8 +5,6 @@
 #include "StorageResourceBundle.h"
 
 
-namespace dingus {
-
 
 class CAnimationBundle : public CStorageResourceBundle<CAnimationBunch>, public CBundleSingleton<CAnimationBundle>
 {
@@ -28,6 +26,4 @@ private:
 
 	void readSampledData( CAnimationBunch& bunch, FILE* f, int loop, int curves, int groups ) const;
 };
-
-}; // namespace
 

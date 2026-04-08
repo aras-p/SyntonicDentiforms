@@ -1,7 +1,5 @@
 #pragma once
 
-namespace dingus {
-
 struct SQuaternion {
 public:
 	SQuaternion() { }
@@ -55,4 +53,3 @@ public:
 	float x, y, z, w;
 };
 
-}; // namespace

@@ -12,8 +12,6 @@
 #include <vector>
 
 
-namespace dingus {
-
 
 class CMesh : public noncopyable {
 public:
@@ -81,4 +79,3 @@ private:
 };
 
 
-}; // namespace

@@ -42,14 +42,14 @@ public:
 	 *  @param y Y coordinate (-1 at top, 1 at bottom).
 	 *  @return Ray in world space (NOT unit length).
 	 */
-	dingus::SVector3 getWorldRay( float x, float y ) const;
+	SVector3 getWorldRay( float x, float y ) const;
 	/**
 	 *  Gets camera space ray from camera's viewing plane coordinates.
 	 *  @param x X coordinate (-1 at left, 1 at right).
 	 *  @param y Y coordinate (-1 at top, 1 at bottom).
 	 *  @return Ray in camera space (NOT unit length).
 	 */
-	dingus::SVector3 getCameraRay( float x, float y ) const;
+	SVector3 getCameraRay( float x, float y ) const;
 
 	/**
 	 *  Set current camera parameters onto rendering context's camera.

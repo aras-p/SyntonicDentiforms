@@ -2,8 +2,6 @@
 
 #include <stdint.h>
 
-namespace dingus {
-
 
 /**
  *  Vertex format descriptor. It's like FVF, but supports more than that.
@@ -98,8 +96,5 @@ public:
 private:
 	uint32_t	mFormatBits;
 };
-
-
-}; // namespace
 
 

@@ -3,8 +3,6 @@
 #include <ctype.h>
 #include <string>
 
-namespace dingus {
-
 class CStringHelper {
 public:
 	/** Replaces tabs with single spaces. */
@@ -45,6 +43,4 @@ public:
 	static std::string floatValue( float f );
 	static std::string intValue( int i );
 };
-
-}; // namespace
 

@@ -2,8 +2,6 @@
 
 #include <assert.h>
 
-namespace dingus {
-
 
 /**
  *  Clamps value to the given range.
@@ -30,6 +28,4 @@ inline float fuzzySwitch( float value, float vZero, float scale ) {
 	return clamp( (value-vZero)*scale, 0.0f, 1.0f );
 };
 
-
-}; // namespace
 

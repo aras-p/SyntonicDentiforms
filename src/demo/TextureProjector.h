@@ -9,8 +9,8 @@
  *  @param dest Destination matrix.
  */
 void gComputeTextureProjection(
-		const dingus::SMatrix4x4& renderCameraMatrix,
-		const dingus::SMatrix4x4& projectorMatrix,
-		dingus::SMatrix4x4& dest );
+		const SMatrix4x4& renderCameraMatrix,
+		const SMatrix4x4& projectorMatrix,
+		SMatrix4x4& dest );
 
 

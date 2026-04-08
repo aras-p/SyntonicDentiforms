@@ -8,8 +8,6 @@
 #include <assert.h>
 
 
-namespace dingus {
-
 template<class T>
 class CStorageResourceBundle : public IResourceBundle {
 private:
@@ -109,7 +107,4 @@ private:
 	const std::string	mPreDir;
 	TStringVector		mExtensions;
 };
-
-}; // namespace
-
 

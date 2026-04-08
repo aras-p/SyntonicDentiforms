@@ -6,8 +6,6 @@
 #include "../math/Quaternion.h"
 #include "../math/Matrix4x4.h"
 
-namespace dingus {
-
 namespace traits {
 	template<typename _T> struct anim_type { enum { value = TYPE_CUSTOM }; };
 	struct anim_type<float> { enum { value = TYPE_FLOAT }; };
@@ -17,7 +15,5 @@ namespace traits {
 	struct anim_type<CResourceId> { enum { value = TYPE_RESOURCEID }; };
 	//struct anim_type<CKeyframe> { enum { value = TYPE_KEYFRAME }; };
 	struct anim_type<SQuaternion> { enum { value = TYPE_QUATERNION }; };
-};
-
 };
 

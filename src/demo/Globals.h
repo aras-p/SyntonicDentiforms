@@ -6,10 +6,9 @@
 #include <src/resource/MeshBundle.h>
 #include <src/resource/AnimationBundle.h>
 
-using namespace dingus;
 
 extern CRenderCamera gRenderCam;
 
-#define RGET_TEX(id) dingus::CTextureBundle::getInstance().getResourceById(id)
-#define RGET_MESH(id) dingus::CMeshBundle::getInstance().getResourceById(id)
-#define RGET_ANIM(id) dingus::CAnimationBundle::getInstance().getResourceById(id)
+#define RGET_TEX(id) CTextureBundle::getInstance().getResourceById(id)
+#define RGET_MESH(id) CMeshBundle::getInstance().getResourceById(id)
+#define RGET_ANIM(id) CAnimationBundle::getInstance().getResourceById(id)

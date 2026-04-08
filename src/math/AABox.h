@@ -4,8 +4,6 @@
 #include "Constants.h"
 #include "Matrix4x4.h"
 
-namespace dingus {
-
 
 /**
  *  Axis aligned box.
@@ -26,13 +24,13 @@ public:
 	}
 
 	/// Gets minimum vector.
-	const dingus::SVector3& getMin() const { return mMin; }
+	const SVector3& getMin() const { return mMin; }
 	/// Gets minimum vector.
-	dingus::SVector3& getMin() { return mMin; }
+	SVector3& getMin() { return mMin; }
 	/// Gets maximum vector.
-	const dingus::SVector3& getMax() const { return mMax; }
+	const SVector3& getMax() const { return mMax; }
 	/// Gets maximum vector.
-	dingus::SVector3& getMax() { return mMax; }
+	SVector3& getMax() { return mMax; }
 
 	/// Extends a box to include point
 	void	extend( const SVector3& p ) {
@@ -163,11 +161,8 @@ public:
 	}
 
 private:
-	dingus::SVector3	mMin;
-	dingus::SVector3	mMax;
+	SVector3	mMin;
+	SVector3	mMax;
 };
-
-
-}; // namespace
 
 

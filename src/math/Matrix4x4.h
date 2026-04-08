@@ -5,8 +5,6 @@
 #include "Quaternion.h"
 #include <memory.h>
 
-namespace dingus {
-
 
 // --------------------------------------------------------------------------
 
@@ -230,6 +228,4 @@ inline void SMatrix4x4::invert()
 		for (int j = 0; j < 4; j++)
 			m[i][j] = v[4 * i + j] * det;
 }
-
-}; // namespace
 

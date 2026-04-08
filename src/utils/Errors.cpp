@@ -1,6 +1,5 @@
 #include "Errors.h"
 
-using namespace dingus;
 
 EBaseError::EBaseError( const std::string& msg, const char* fileName, int lineNumber )
 :	std::runtime_error( msg ), mFileName( fileName ), mLineNumber( lineNumber )

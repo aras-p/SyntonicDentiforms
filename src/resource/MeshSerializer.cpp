@@ -2,7 +2,6 @@
 #include <vector>
 #include <string>
 
-using namespace dingus;
 
 #define READ_4BYTE(var) fread(&var,1,4,f)
 #define READ_2BYTE(var) fread(&var,1,2,f)

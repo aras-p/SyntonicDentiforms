@@ -11,8 +11,6 @@
 #include <assert.h>
 
 
-namespace dingus {
-
 /**
  *  Named animation bunch.
  *
@@ -168,6 +166,4 @@ inline int	CAnimationBunch::getCurveIndexByName( const std::string& name ) const
 	}
 	return -1;
 }
-
-}; // namespace
 

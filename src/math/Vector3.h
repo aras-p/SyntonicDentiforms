@@ -2,8 +2,6 @@
 
 #include <math.h>
 
-namespace dingus {
-
 struct SMatrix4x4;
 
 
@@ -115,4 +113,3 @@ inline SVector3 SVector3::getNormalized() const
 	return v;
 }
 
-}; // namespace
