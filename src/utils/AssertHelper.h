@@ -1,5 +1,4 @@
-#ifndef __ASSERT_HELP_H
-#define __ASSERT_HELP_H
+#pragma once
 
 #include <assert.h>
 
@@ -7,4 +6,3 @@
 #define ASSERT_FAIL_MSG( message ) assert( !message )
 #define ASSERT_NOT_IMPL ASSERT_FAIL_MSG("not implemented")
 
-#endif

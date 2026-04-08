@@ -1,5 +1,4 @@
-#ifndef __LINE_H
-#define __LINE_H
+#pragma once
 
 #include "Vector3.h"
 
@@ -56,4 +55,3 @@ public:
 }; // namespace
 	
 	
-#endif

@@ -1,5 +1,4 @@
-#ifndef __RESOURCE_BUNDLE_H
-#define __RESOURCE_BUNDLE_H
+#pragma once
 
 #include "ResourceId.h"
 
@@ -13,4 +12,3 @@ public:
 
 }; // namespace
 
-#endif

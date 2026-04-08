@@ -1,5 +1,4 @@
-#ifndef __STL_UTILS_H__
-#define __STL_UTILS_H__
+#pragma once
 
 namespace dingus {
 
@@ -44,4 +43,3 @@ void for_all( _T const& cont, _O& op )
 
 }; // namespace
 
-#endif 

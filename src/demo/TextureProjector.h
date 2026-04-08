@@ -1,5 +1,4 @@
-#ifndef __TEXTURE_PROJECTOR_H
-#define __TEXTURE_PROJECTOR_H
+#pragma once
 
 #include <src/math/Matrix4x4.h>
 
@@ -15,4 +14,3 @@ void gComputeTextureProjection(
 		dingus::SMatrix4x4& dest );
 
 
-#endif

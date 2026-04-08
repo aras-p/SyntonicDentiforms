@@ -1,5 +1,4 @@
-#ifndef __STORAGE_RESOURCE_BUNDLE_H
-#define __STORAGE_RESOURCE_BUNDLE_H
+#pragma once
 
 #include "ResourceBundle.h"
 #include "ResourceId.h"
@@ -114,4 +113,3 @@ private:
 }; // namespace
 
 
-#endif

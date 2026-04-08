@@ -1,5 +1,4 @@
-#ifndef __VERTICES_H
-#define __VERTICES_H
+#pragma once
 
 #include "../math/Vector3.h"
 #include <stdint.h>
@@ -21,4 +20,3 @@ struct SVertexXyzDiffuseTex1 {
 }; // namespace
 
 
-#endif

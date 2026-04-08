@@ -1,5 +1,4 @@
-#ifndef __ANIM_TYPE_TRAITS_H
-#define __ANIM_TYPE_TRAITS_H
+#pragma once
 
 #include "AnimType.h"
 #include "../resource/ResourceId.h"
@@ -22,4 +21,3 @@ namespace traits {
 
 };
 
-#endif

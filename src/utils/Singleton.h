@@ -1,5 +1,4 @@
-#ifndef __SINGLETON_H
-#define __SINGLETON_H
+#pragma once
 
 namespace dingus {
 
@@ -41,4 +40,3 @@ T* CSingleton<T>::mSingleInstance = 0;
 
 }; // namespace
 
-#endif

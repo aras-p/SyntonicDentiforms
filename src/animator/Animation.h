@@ -1,5 +1,4 @@
-#ifndef __ANIMATION_H
-#define __ANIMATION_H
+#pragma once
 
 #include "src/utils/noncopyable.h"
 
@@ -34,4 +33,3 @@ public:
 
 }; // namespace
 
-#endif

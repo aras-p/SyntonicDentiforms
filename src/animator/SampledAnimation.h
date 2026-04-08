@@ -1,5 +1,4 @@
-#ifndef __SAMPLED_ANIMATION_H
-#define __SAMPLED_ANIMATION_H
+#pragma once
 
 #include "AnimCurve.h"
 #include "Animation.h"
@@ -150,4 +149,3 @@ void CSampledAnimation<_V>::sample( float time, int firstCurve, int numCurves, _
 
 }; // namespace
 
-#endif

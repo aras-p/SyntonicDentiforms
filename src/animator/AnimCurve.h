@@ -1,6 +1,4 @@
-#ifndef __ANIM_CURVE_H
-#define __ANIM_CURVE_H
-
+#pragma once
 
 namespace dingus {
 
@@ -38,4 +36,3 @@ private:
 };
 
 
-#endif

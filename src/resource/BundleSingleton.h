@@ -1,5 +1,4 @@
-#ifndef __BUNDLE_SINGLETON_H
-#define __BUNDLE_SINGLETON_H
+#pragma once
 
 #include "../utils/AssertHelper.h"
 #include "../utils/Singleton.h"
@@ -21,4 +20,3 @@ private:
 
 }; // namespace
 
-#endif

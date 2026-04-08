@@ -1,5 +1,4 @@
-#ifndef __ANIM_H
-#define __ANIM_H
+#pragma once
 
 #include <src/animator/AnimationBunch.h>
 #include <src/math/Matrix4x4.h>
@@ -38,4 +37,3 @@ private:
 	int mCurve;
 };
 
-#endif

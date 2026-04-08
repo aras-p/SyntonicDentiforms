@@ -1,5 +1,4 @@
-#ifndef MATH_type_traits_H_
-#define MATH_type_traits_H_
+#pragma once
 
 #include "Vector3.h"
 #include "Quaternion.h"
@@ -120,4 +119,3 @@ struct math_type_traits<SQuaternion> : public math_type_traits_base<SQuaternion>
 
 }; // namespace
 
-#endif

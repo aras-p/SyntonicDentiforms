@@ -1,5 +1,4 @@
-#ifndef __RESOURCE_ID_H
-#define __RESOURCE_ID_H
+#pragma once
 
 #include <string>
 
@@ -76,4 +75,3 @@ inline bool CResourceId::operator< ( const CResourceId& rhs ) const
 
 }; // namespace
 
-#endif

@@ -1,7 +1,6 @@
 // Pretty much taken from OPCODE (www.codercorner.com) or nVidia's fastmath.cpp
 
-#ifndef __FPU_CODE_H
-#define __FPU_CODE_H
+#pragma once
 
 /** Integer representation of 1.0 value. */
 #define DINGUS_FPU_ONE			0x3F800000
@@ -81,4 +80,3 @@ inline int round( float a )
 
 }; // namespace
 
-#endif

@@ -1,5 +1,4 @@
-#ifndef __VERTEX_FORMAT_H
-#define __VERTEX_FORMAT_H
+#pragma once
 
 #include <stdint.h>
 
@@ -104,4 +103,3 @@ private:
 }; // namespace
 
 
-#endif

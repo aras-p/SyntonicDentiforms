@@ -1,5 +1,4 @@
-#ifndef __ANIMATION_BUNCH_H
-#define __ANIMATION_BUNCH_H
+#pragma once
 
 #include "src/utils/noncopyable.h"
 
@@ -172,4 +171,3 @@ inline int	CAnimationBunch::getCurveIndexByName( const std::string& name ) const
 
 }; // namespace
 
-#endif

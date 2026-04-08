@@ -1,5 +1,4 @@
-#ifndef __SCENE_OUT_H
-#define __SCENE_OUT_H
+#pragma once
 
 #include "Scene.h"
 
@@ -14,4 +13,3 @@ protected:
 	virtual void	evaluateMeshes( float t ) { };
 };
 
-#endif

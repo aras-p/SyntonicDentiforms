@@ -1,5 +1,4 @@
-#ifndef __MATH_UTILS_H
-#define __MATH_UTILS_H
+#pragma once
 
 #include <assert.h>
 
@@ -34,4 +33,3 @@ inline float fuzzySwitch( float value, float vZero, float scale ) {
 
 }; // namespace
 
-#endif

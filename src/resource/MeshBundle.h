@@ -1,5 +1,4 @@
-#ifndef __MESH_BUNDLE_H
-#define __MESH_BUNDLE_H
+#pragma once
 
 #include "BundleSingleton.h"
 #include "StorageResourceBundle.h"
@@ -31,4 +30,3 @@ private:
 
 }; // namespace
 
-#endif

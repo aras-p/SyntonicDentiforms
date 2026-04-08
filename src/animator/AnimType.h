@@ -1,5 +1,4 @@
-#ifndef __ANIM_TYPE_H
-#define __ANIM_TYPE_H
+#pragma once
 
 namespace dingus {
 
@@ -21,4 +20,3 @@ const char* anim_type_string( eAnimType type );
 
 };
 
-#endif

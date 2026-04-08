@@ -1,5 +1,4 @@
-#ifndef __MATRIX_44_H
-#define __MATRIX_44_H
+#pragma once
 
 #include "Vector3.h"
 #include "Vector4.h"
@@ -234,4 +233,3 @@ inline void SMatrix4x4::invert()
 
 }; // namespace
 
-#endif

@@ -1,5 +1,4 @@
-#ifndef __MATH_CONSTANTS_H
-#define __MATH_CONSTANTS_H
+#pragma once
 
 #include <float.h>
 
@@ -27,4 +26,3 @@ const float DINGUS_SMALL_FLOAT = FLT_EPSILON;
 };
 
 
-#endif

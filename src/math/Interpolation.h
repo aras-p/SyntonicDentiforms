@@ -1,5 +1,4 @@
-#ifndef __MATH_INTERPOLATE_H_
-#define __MATH_INTERPOLATE_H_
+#pragma once
 
 namespace dingus {
 
@@ -38,4 +37,3 @@ _R const math_catmull_rom( _A const& a0, _A const& a1, _A const& a2, _A const& a
 
 }; // namespace
 
-#endif

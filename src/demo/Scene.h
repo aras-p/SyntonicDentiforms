@@ -1,5 +1,4 @@
-#ifndef __SCENE_H
-#define __SCENE_H
+#pragma once
 
 #include "MeshEntity.h"
 #include "Anim.h"
@@ -57,4 +56,3 @@ protected:
 	TFloatVector	mCutTimes; // 0..1
 };
 
-#endif

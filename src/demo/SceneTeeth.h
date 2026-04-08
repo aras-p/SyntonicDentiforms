@@ -1,5 +1,4 @@
-#ifndef __SCENE_TEETH_H
-#define __SCENE_TEETH_H
+#pragma once
 
 #include "Scene.h"
 #include <src/animator/AnimationBunch.h>
@@ -64,5 +63,3 @@ private:
 	SMatrix4x4			mMaskMeshWVP;
 };
 
-
-#endif

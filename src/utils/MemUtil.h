@@ -1,5 +1,4 @@
-#ifndef __MEM_UTIL_H
-#define __MEM_UTIL_H
+#pragma once
 
 namespace dingus {
 
@@ -22,4 +21,3 @@ template< typename T > void safeRelease( T& o ) {
 
 }; // namespace dingus
 
-#endif

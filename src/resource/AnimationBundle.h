@@ -1,5 +1,4 @@
-#ifndef __ANIMATION_BUNDLE_H
-#define __ANIMATION_BUNDLE_H
+#pragma once
 
 #include "../animator/AnimationBunch.h"
 #include "BundleSingleton.h"
@@ -32,4 +31,3 @@ private:
 
 }; // namespace
 
-#endif

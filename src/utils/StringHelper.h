@@ -1,5 +1,4 @@
-#ifndef __STRING_HELPER_H
-#define __STRING_HELPER_H
+#pragma once
 
 #include <ctype.h>
 #include <string>
@@ -49,4 +48,3 @@ public:
 
 }; // namespace
 
-#endif

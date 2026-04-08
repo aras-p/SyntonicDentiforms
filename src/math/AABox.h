@@ -1,5 +1,4 @@
-#ifndef __MATH_AABOX_H
-#define __MATH_AABOX_H
+#pragma once
 
 #include "Vector3.h"
 #include "Constants.h"
@@ -172,4 +171,3 @@ private:
 }; // namespace
 
 
-#endif
