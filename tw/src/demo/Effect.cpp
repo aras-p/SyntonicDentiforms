@@ -266,11 +266,6 @@ void effects_init()
 	}
 }
 
-void effects_shutdown()
-{
-	//@TODO
-}
-
 void effect_apply(Effect fx)
 {
 	ASSERT_MSG(s_fx_pipes[fx].id != 0, "Uninitialized effect pipeline");

@@ -31,7 +31,7 @@ constexpr int kMainAA = 4;
 extern sokol_texture rt_main_aa, rt_main_z, rt_main_resolved;
 
 // full screen
-extern sokol_texture rt_fullscreen_1, rt_fullscreen_2;
+extern sokol_texture rt_full_toon;
 
 // 1/4 of the screen
 extern sokol_texture rt_4th_1, rt_4th_2;
@@ -62,9 +62,9 @@ struct GlobalUniforms
 	SMatrix4x4 matViewTexProj;
 	SMatrix4x4 matShadowProj;
 	SVector4 eyePos;
-	SVector4 screenFixUVs; //@TODO: perhaps not needed post-DX9
 	SVector4 lightPos;
 	SVector4 lightDir;
+	SVector4 _pad0;
 };
 
 extern GlobalUniforms g_global_u;

@@ -137,7 +137,7 @@ sg_sampler s_smp_linear_clamp;
 sg_sampler s_smp_point_clamp;
 
 sokol_texture rt_main_aa, rt_main_z, rt_main_resolved;
-sokol_texture rt_fullscreen_1 /*@TODO: might be unused ? */, rt_fullscreen_2;
+sokol_texture rt_full_toon;
 sokol_texture rt_4th_1, rt_4th_2;
 sokol_texture rt_refl_px, rt_refl_py, rt_refl_pz, rt_refl_nx, rt_refl_ny, rt_refl_nz;
 sokol_texture rt_refl_rt, rt_refl_z;
@@ -156,8 +156,7 @@ static void ensure_render_targets()
 		rt_main_aa.destroy();
 		rt_main_z.destroy();
 		rt_main_resolved.destroy();
-		rt_fullscreen_1.destroy();
-		rt_fullscreen_2.destroy();
+		rt_full_toon.destroy();
 		rt_4th_1.destroy();
 		rt_4th_2.destroy();
 		rt_refl_px.destroy();
@@ -197,8 +196,7 @@ static void ensure_render_targets()
 		rt_main_resolved.create(desc);
 		desc.usage.resolve_attachment = false;
 
-		rt_fullscreen_1.create(desc);
-		rt_fullscreen_2.create(desc);
+		rt_full_toon.create(desc);
 
 		// 1/4th size
 		desc.width = width / 4;
@@ -624,8 +622,6 @@ bool demo_update()
 	float st = float(t - gSceneStartTime);
 	float sceneDur = gGetSceneDur();
 
-	g_global_u.screenFixUVs.set( 0.5f/sapp_widthf(), 0.5f/sapp_heightf(), 0.0f, 0.0f );
-	
 	gBillboardsNormal->clear();
 	gBillboardsNoDestA->clear();
 	
@@ -880,8 +876,7 @@ void demo_shutdown()
 	rt_main_aa.destroy();
 	rt_main_z.destroy();
 	rt_main_resolved.destroy();
-	rt_fullscreen_1.destroy();
-	rt_fullscreen_2.destroy();
+	rt_full_toon.destroy();
 	rt_4th_1.destroy();
 	rt_4th_2.destroy();
 	rt_refl_px.destroy();
@@ -908,7 +903,6 @@ void demo_shutdown()
 
 	CTextureBundle::finalize();
 	CMeshBundle::finalize();
-	effects_shutdown();
 	CAnimationBundle::finalize();
 }
 

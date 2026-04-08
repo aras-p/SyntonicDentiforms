@@ -392,14 +392,11 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 
 	float relT = ta.getRelTime(t);
 
-	//@TODO ?
-	//dx.getDevice().StretchRect( dx.getBackBuffer(), NULL, RGET_SSURF(RT_FULLSCREEN_1)->getObject(), NULL, D3DTEXF_NONE );
-
-	// end previous pass, apply toon post-processing into full2
+	// end previous pass, apply toon post-processing
 	sg_end_pass();
 	{
 		sg_pass pass = {};
-		pass.attachments.colors[0] = rt_fullscreen_2.view_rt;
+		pass.attachments.colors[0] = rt_full_toon.view_rt;
 		pass.attachments.depth_stencil = {};
 		pass.action.colors[0].load_action = SG_LOADACTION_DONTCARE;
 		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
@@ -504,7 +501,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 		sg_begin_pass(&pass);
 
 		sg_bindings binds = {};
-		binds.views[0] = rt_fullscreen_2.view_tex;
+		binds.views[0] = rt_full_toon.view_tex;
 		binds.views[1] = !(BLOB_BLUR_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex;
 		binds.views[2] = RGET_TEX("AlphaEdge")->view_tex;
 		binds.samplers[0] = s_smp_linear_clamp;
@@ -543,9 +540,5 @@ void CSceneTeeth::renderTeethUI( int pack, float t, float cutAlpha, float aspect
 	CTeethAnim& ta = *mAnimTeeth[pack];
 	float relT = ta.getRelTime( t );
 	int nteeth = ta.getCount();
-
-	//CD3DDevice& dx = CD3DDevice::getInstance(); //@TODO
-	//G_RCTX->directBegin();
 	renderTeethBills( pack, t, relT, cutAlpha, false, aspect);
-	//G_RCTX->directEnd();
 }

@@ -7,9 +7,9 @@ layout(binding=0) uniform global_uniforms {
 	mat4 mViewTexProj;
 	mat4 mShadowProj;
 	vec4 vEye;
-	vec4 vFixUV; // x=0.5/texwidth, y=0.5/texheight, z=1-x*2, w=1-y*2
 	vec4 vLightPos;
 	vec4 vLightDir;
+	vec4 _pad0;
 };
 
 // Match EntityUniforms in C++
@@ -27,67 +27,6 @@ layout(binding=2) uniform entity_uniforms_fs {
 
 const float	fLightDiffuse = 0.5;
 const float	fLightK = 16;
-
-
-// --------------------------------------------------------------------------
-// shadows
-
-/* @TODO
-
-shared texture	tShadow;	// shadow map
-shared texture	tCookie;	// shadow cookie
-
-sampler2D smpShadow = sampler_state {
-    Texture   = <tShadow>;
-    MipFilter = None; MinFilter = Point; MagFilter = Point;
-    AddressU = Clamp; AddressV = Clamp;
-};
-sampler2D smpCookie = sampler_state {
-    Texture   = <tCookie>;
-    MipFilter = None; MinFilter = Linear; MagFilter = Linear;
-    AddressU = Clamp; AddressV = Clamp;
-};
-
-*/
-
-
-// --------------------------------------------------------------------------
-
-
-// cull params: CW=2 (should be default), CCW=3 (for reflected, etc.)
-//shared int		iCull = 2;
-
-
-// --------------------------------------------------------------------------
-//  common structs
-
-/*
-struct VS_P {
-	vec4	pos		: POSITION;
-};
-
-struct VS_PN {
-	vec4	pos		: POSITION;
-	vec3	normal	: NORMAL;
-};
-
-struct VS_PUV {
-	vec4 pos		: POSITION;
-	vec2 uv		: TEXCOORD0;
-};
-
-struct VS_PUV2 {
-	vec4 pos		: POSITION;
-	vec2 uv[2]	: TEXCOORD0;
-};
-
-struct VS_PCUV {
-	vec4 pos		: POSITION;
-	vec4 color 	: COLOR;
-	vec2 uv		: TEXCOORD0;
-};
-
-*/
 
 
 // --------------------------------------------------------------------------
@@ -112,20 +51,3 @@ vec4 gPSLight( vec3 n, vec3 l, vec3 h, float shadow )
 	res.a = spec;
 	return res * shadow;
 }
-
-
-// --------------------------------------------------------------------------
-//  stuff
-
-/*
-vec4 billboardpos( vec4 p ) {
-	return p * vec4( 2, 2, 1, 1 );
-}
-
-VS_PUV vsBillboard( VS_PUV i, uniform vec4 fixUV ) {
-    VS_PUV o;
-	o.pos = billboardpos( i.pos );
-	o.uv = i.uv + fixUV.xy;
-	return o;
-}
-*/

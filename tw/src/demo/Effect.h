@@ -22,5 +22,4 @@ enum Effect {
 };
 
 void effects_init();
-void effects_shutdown();
 void effect_apply(Effect fx);

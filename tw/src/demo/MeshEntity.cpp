@@ -86,17 +86,4 @@ void CMeshEntity::render(eRenderMode renderMode, sg_bindings* binds)
 	binds->index_buffer = mMesh->getIB();
 	sg_apply_bindings(binds);
 	sg_draw(0, mMesh->getIndexCount(), 1);
-
-	/*
-	if( renderMode & RM_RECV_HI )
-		G_RCTX->attach( *mMeshRecvHi );
-	if( renderMode & RM_RECV_LO )
-		G_RCTX->attach( *mMeshRecvLo );
-	if( renderMode & RM_SHADOW )
-		G_RCTX->attach( *mMeshShadow );
-	if( renderMode & RM_REFLECTIVE )
-		G_RCTX->attach( *mMeshReflection );
-	if( renderMode & RM_HI )
-		G_RCTX->attach( *mMeshHi );
-		*/
 }
