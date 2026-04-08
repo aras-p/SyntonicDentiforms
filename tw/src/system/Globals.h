@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../demo/RenderContext.h"
 #include "../demo/RenderCamera.h"
 
 #include <dingus/resource/TextureBundle.h>

@@ -30,7 +30,6 @@ add_library(dingus STATIC
 
     dingus/dingus/utils/Errors.cpp
     dingus/dingus/utils/StringHelper.cpp
-    dingus/dingus/utils/Timer.cpp
 )
 
 target_include_directories(dingus PUBLIC
@@ -61,7 +60,6 @@ add_executable(Demo WIN32
     tw/src/demo/Glare.cpp
     tw/src/demo/MeshEntity.cpp
     tw/src/demo/RenderCamera.cpp
-    tw/src/demo/RenderContext.cpp
     tw/src/demo/Scene.cpp
     tw/src/demo/SceneOut.cpp
     tw/src/demo/SceneTeeth.cpp
