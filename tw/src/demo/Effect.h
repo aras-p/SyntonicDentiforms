@@ -9,6 +9,7 @@ enum Effect {
 	fx_filterBloom,
 	fx_filterToon,
 	fx_lines,
+	fx_linesNoAa,
 	fx_noshadowHi,
 	fx_overlay2,
 	fx_overlay,

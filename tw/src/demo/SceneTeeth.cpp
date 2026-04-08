@@ -119,14 +119,8 @@ CSceneTeeth::CSceneTeeth( int number )
 		ep.addTexture( "tAlpha", *RGET_STEX( !(BLOB_BLUR_PASSES&1) ? RT_4thSCREEN_1 : RT_4thSCREEN_2 ) );
 		ep.addTexture( "tEdgeLUT", *RGET_TEX("AlphaEdge") );
 	}
-	{
-		mToothMaskMesh = new CRenderableMesh( *RGET_MESH("scene6/Tooth1"), 0 );
-		CEffectParams& ep = mToothMaskMesh->getParams();
-		ep.setEffect( *RGET_FX("caster") );
-		ep.addVector4( "vShadowID", SVector4(1.0f, 1.0f, 1.0f, 1.0f) );
-		ep.addMatrix4x4Ref( "mWVP", mMaskMeshWVP );
-	}
 	*/
+	mToothMaskMesh = RGET_MESH("scene6/Tooth1");
 }
 
 CSceneTeeth::~CSceneTeeth()
@@ -135,11 +129,6 @@ CSceneTeeth::~CSceneTeeth()
 		delete mAnimTeeth[i];
 	delete mAnimAxes[0];
 	delete mAnimAxes[1];
-	/* @TODO
-	delete mToonQuad;
-	delete mCompositeQuad;
-	delete mToothMaskMesh;
-	*/
 }
 
 void CSceneTeeth::initialize()
@@ -383,6 +372,35 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 	bills.render();
 }
 
+void CSceneTeeth::renderTeethLines(int pack, float t)
+{
+	assert(pack >= 0 && pack < TEETHPACKS);
+	CTeethAnim& ta = *mAnimTeeth[pack];
+	int nteeth = ta.getCount();
+
+	float relT = ta.getRelTime(t);
+
+	const int PATH_SIZE = PATH_FRAMES;
+	SLinePoint path[PATH_SIZE];
+	for (int i = 0; i < nteeth; ++i) {
+		float a = 0.0f;
+		float da = 1.0f / PATH_SIZE;
+		for (int j = 0; j < PATH_SIZE; ++j, a += da) {
+			path[j].pos = ta.mPaths[i][j];
+			SVector4 c;
+			c.x = 1.0f; c.y = 0.0f; c.z = 0.0f;
+			float delta = a - relT;
+			if (delta < 0.0f)
+				delta *= 4;
+			c.w = 0.75f - fabsf(delta) * 4;
+			//if( delta>=0 )
+			//	c.a = 0.0f;
+			path[j].color = c.toRGBA();
+		}
+		effect_apply(fx_lines);
+		gLineRenderer->renderStrip(PATH_SIZE, path, 0.05f);
+	}
+}
 
 void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float aspect )
 {
@@ -392,26 +410,6 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float asp
 	int i;
 
 	float relT = ta.getRelTime( t );
-
-	const int PATH_SIZE = PATH_FRAMES;
-	SLinePoint path[PATH_SIZE];
-	for( i = 0; i < nteeth; ++i ) {
-		float a = 0.0f;
-		float da = 1.0f / PATH_SIZE;
-		for( int j = 0; j < PATH_SIZE; ++j, a += da ) {
-			path[j].pos = ta.mPaths[i][j];
-			SVector4 c;
-			c.x = 1.0f; c.y = 0.0f; c.z = 0.0f;
-			float delta = a-relT;
-			if( delta < 0.0f )
-				delta *= 4;
-			c.w = 0.75f - fabsf( delta ) * 4;
-			//if( delta>=0 )
-			//	c.a = 0.0f;
-			path[j].color = c.toRGBA();
-		}
-		gLineRenderer->renderStrip( PATH_SIZE, path, 0.05f );
-	}
 
 	// end scene, copy backbuffer to texture, begin scene again
 	// toon-process all into texture
@@ -443,6 +441,13 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float asp
 	} else*/ if( pack!=TEETHPACKS-1 && cutAlpha > 1-SCALEUP_ALPHA ) {
 		toothMaskScale *= (1 - cutAlpha)/SCALEUP_ALPHA;
 	}
+	//@TODO
+	mToothMaskMesh = new CRenderableMesh(*RGET_MESH("scene6/Tooth1"), 0);
+	CEffectParams& ep = mToothMaskMesh->getParams();
+	ep.setEffect(*RGET_FX("caster"));
+	ep.addVector4("vShadowID", SVector4(1.0f, 1.0f, 1.0f, 1.0f));
+	ep.addMatrix4x4Ref("mWVP", mMaskMeshWVP);
+
 	if( toothMaskScale > 0.001f ) {
 		if( pack != TEETHPACKS-1 ) {
 			for( i = 0; i < nteeth; ++i ) {
@@ -500,6 +505,7 @@ void CSceneTeeth::renderTeethStuff( int pack, float t, float cutAlpha, float asp
 			c.a = 0.75f - fabsf( delta ) * 4;
 			path[j].color = c;
 		}
+		effect_apply(fx_lines);
 		gLineRenderer->renderStrip( PATH_SIZE, path, 0.05f );
 	}
 	*/

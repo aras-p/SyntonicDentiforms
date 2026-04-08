@@ -365,9 +365,9 @@ bool demo_init()
 	gMusicPlayer->play( "data/music.ogg" );
 	gSceneStartTime = float(GET_TIME - DELAY_ACTION);
 #else
-	//gSceneMode = SC_SCENE;
-	//gSceneIndex = 5;
-	//gSceneStartTime = -15.0f;
+	gSceneMode = SC_SCENE;
+	gSceneIndex = 5;
+	gSceneStartTime = -15.0f;
 #endif
 
 	gCut.reset();
@@ -570,6 +570,7 @@ static void gRenderCredits( float cutAlpha )
 		}
 		linepts[i].color = SVector4(1,0,0,ptA).toRGBA();
 	}
+	effect_apply(fx_linesNoAa);
 	gLineRenderer->renderStrip( LINE_PTS, linepts, lineWidth );
 
 	//
@@ -720,15 +721,18 @@ bool demo_update()
 	gComputeTextureProjection(gRenderCam.getCameraMatrix(), gLightViewProjMatrix, g_global_u.matShadowProj);
 	gCameraViewProjMatrix = gRenderCam.getViewProjMatrix();
 
-	sg_pass pass = {};
-	pass.attachments.colors[0] = rt_main_aa.view_rt;
-	pass.attachments.depth_stencil = rt_main_z.view_z;
-	pass.attachments.resolves[0] = rt_main_resolved.view_resolve;
-	pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
-	pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
-	pass.action.depth.load_action = SG_LOADACTION_CLEAR;
-	pass.action.depth.clear_value = 1.0f;
-	sg_begin_pass(&pass);
+	// Begin main MSAA 3D rendering pass
+	{
+		sg_pass pass = {};
+		pass.attachments.colors[0] = rt_main_aa.view_rt;
+		pass.attachments.depth_stencil = rt_main_z.view_z;
+		pass.attachments.resolves[0] = rt_main_resolved.view_resolve;
+		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
+		pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
+		pass.action.depth.load_action = SG_LOADACTION_CLEAR;
+		pass.action.depth.clear_value = 1.0f;
+		sg_begin_pass(&pass);
+	}
 
 	sg_bindings binds = {};
 	if( gSceneMode != SC_OUTER )
@@ -741,10 +745,30 @@ bool demo_update()
 
 		binds.samplers[0] = s_smp_linear_clamp;
 		gScenes[gSceneIndex]->render(RM_REFLECTIVE, &binds);
+
+		// last scene teeth lines
+		if (gCut.isInCut() && gSceneIndex == SCENES - 1)
+		{
+			CSceneTeeth* steeth = (CSceneTeeth*)gScenes[gSceneIndex];
+			steeth->renderTeethLines(gCut.doneCount, sceneAlpha);
+		}
 	}
 	else
 	{
 		gSceneOut->render(RM_HI, &binds);
+	}
+
+	// End main 3D MSAA rendering; resolves into rt_main_resolved.
+	// Start render pass into that, without depth buffer.
+	sg_end_pass();
+	{
+		sg_pass pass = {};
+		pass.attachments.colors[0] = rt_main_resolved.view_rt;
+		pass.attachments.depth_stencil = {};
+		pass.action.colors[0].load_action = SG_LOADACTION_LOAD;
+		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
+		pass.action.depth.clear_value = 1.0f;
+		sg_begin_pass(&pass);
 	}
 
 	//
@@ -791,16 +815,13 @@ bool demo_update()
 	// overlay for cuts...
 	const float OVERLAY_CUT_DUR = 0.17f;
 	const float OVERLAY_CUT_HALF = OVERLAY_CUT_DUR * 0.5f;
-	bool teethCut = false;
-	float cutTime = 0.0f;
 	if( gCut.isInCut() ) {
-		cutTime = float(t - gCut.startTime);
+		float cutTime = float(t - gCut.startTime);
 		if( gSceneIndex == SCENES-1 ) {
 			CSceneTeeth* steeth = (CSceneTeeth*)gScenes[gSceneIndex];
 			float aspect = sapp_widthf() / sapp_heightf();
 			steeth->renderTeethStuff( gCut.doneCount, sceneAlpha, cutTime/gCut.duration, aspect);
 			steeth->renderTeethUI( gCut.doneCount, sceneAlpha, cutTime/gCut.duration, aspect);
-			teethCut = true;
 		}
 
 		if( cutTime < OVERLAY_CUT_DUR ) {

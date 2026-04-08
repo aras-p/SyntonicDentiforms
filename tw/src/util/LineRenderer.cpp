@@ -98,7 +98,6 @@ void CLineRenderer::renderStrip( int npoints, const SLinePoint* points, float ha
 	delete[] chunk;
 
 	// render
-	effect_apply(fx_lines);
 	sg_apply_uniforms(0, { &g_global_u, sizeof(g_global_u) });
 
 	sg_bindings binds = {};

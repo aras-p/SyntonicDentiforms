@@ -56,7 +56,7 @@ void effects_init()
 		sg_pipeline_desc desc = {};
 		desc.shader = sg_make_shader(billboards_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
-		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.index_type = SG_INDEXTYPE_UINT16;
 		desc.layout.attrs[0].format = SG_VERTEXFORMAT_FLOAT3;
@@ -65,7 +65,6 @@ void effects_init()
 		desc.layout.attrs[1].offset = 12;
 		desc.layout.attrs[2].format = SG_VERTEXFORMAT_FLOAT2;
 		desc.layout.attrs[2].offset = 16;
-		desc.sample_count = kMainAA;
 		// blend, no depth, no cull
 		desc.colors[0].blend.enabled = true;
 		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA;
@@ -82,9 +81,8 @@ void effects_init()
 		sg_pipeline_desc desc = {};
 		desc.shader = sg_make_shader(overlay_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
-		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
-		desc.sample_count = kMainAA;
 		// additive blend, no depth, no cull
 		desc.colors[0].blend.enabled = true;
 		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_ONE;
@@ -143,6 +141,11 @@ void effects_init()
 		desc.depth.write_enabled = false;
 		desc.cull_mode = SG_CULLMODE_NONE;
 		s_fx_pipes[fx_lines] = sg_make_pipeline(desc);
+
+		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
+		desc.sample_count = 1;
+		s_fx_pipes[fx_linesNoAa] = sg_make_pipeline(desc);
 	}
 	// receiver Lo
 	{
