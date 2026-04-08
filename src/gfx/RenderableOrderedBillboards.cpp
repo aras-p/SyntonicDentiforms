@@ -1,11 +1,9 @@
 #include "RenderableOrderedBillboards.h"
-#include "geometry/DynamicVBManager.h"
+#include "DynamicVBManager.h"
 
 #include "Vertices.h"
 
 #include "src/utils/AssertHelper.h"
-
-
 
 
 CRenderableOrderedBillboards::CRenderableOrderedBillboards(

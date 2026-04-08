@@ -10,7 +10,6 @@
 	static T identity(); - returns identity.
 	static void identify( T& ); - makes given value identity.
 	static R interpolate( T& a1, T& a2, TT& t ); - lerps.
-	static R cm_interpolate( T& a0, T& a1, T& a2, T& a3, TT& t ); - catmull-rom interpolates.
 */
 
 template<typename _T>
@@ -18,10 +17,6 @@ struct math_type_traits_base {
 	template<typename _R, typename _TT>
 	static inline _R interpolate( _T const& a1, _T const& a2, _TT const& t ) {
 		return math_lerp<_R>( a1, a2, t );
-	}
-	template<typename _R, typename _TT>
-	static inline _R cm_interpolate( _T const& a0, _T const& a1, _T const& a2, _T const& a3, _TT const& t ) {
-		return math_catmull_rom<_R>( a0, a1, a2, a3, t );
 	}
 };
 
@@ -46,10 +41,6 @@ struct math_type_traits<float> : public math_type_traits_base<float> {
 	static inline float interpolate( float const& a1, float const& a2, _TT const& t ) {
 		return math_lerp<float>( a1, a2, t );
 	};
-	template<typename _TT>
-	static inline float cm_interpolate(float const& a0, float const& a1, float const& a2, float const& a3, _TT const& t ) {
-		return math_catmull_rom<float>( a0, a1, a2, a3, t );
-	};
 };
 
 
@@ -63,10 +54,6 @@ struct math_type_traits<int> : public math_type_traits_base<int> {
 
 	template<typename _TT> static inline float interpolate(int const& a1, int const& a2, _TT const& t ) {
 		return math_lerp<float>( a1, a2, t );
-	};
-	template<typename _TT>
-	static inline float cm_interpolate(int const& a0, int const& a1, int const& a2, int const& a3, _TT const& t ) {
-		return math_catmull_rom<float>( a0, a1, a2, a3, t );
 	};
 };
 
@@ -82,10 +69,6 @@ struct math_type_traits<SVector3> : public math_type_traits_base<SVector3> {
 	template<typename _TT>
 	static inline SVector3 interpolate(SVector3 const& a1, SVector3 const& a2, _TT const& t ) {
 		return math_lerp<SVector3>( a1, a2, t );
-	};
-	template<typename _TT>
-	static inline SVector3 cm_interpolate(SVector3 const& a0, SVector3 const& a1, SVector3 const& a2, SVector3 const& a3, _TT const& t ) {
-		return math_catmull_rom<SVector3>( a0, a1, a2, a3, t );
 	};
 };
 
@@ -104,14 +87,4 @@ struct math_type_traits<SQuaternion> : public math_type_traits_base<SQuaternion>
 		o.slerp(a1, a2, t);
 		return o;
 	};
-
-	// TBD: slerp for now
-	template<typename _TT>
-	static inline SQuaternion cm_interpolate( SQuaternion const& a0, SQuaternion const& a1, SQuaternion const& a2, SQuaternion const& a3, _TT const& t ) {
-		SQuaternion o;
-		o.slerp(a1, a2, t);
-		return o;
-	};
 };
-
-

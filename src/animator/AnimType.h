@@ -1,18 +1,7 @@
 #pragma once
 
-// NOTE: change array in anim_type_string if eAnimType changed!
-// NOTE: implement corresponding traits if new types added!
-
 enum eAnimType {
 	TYPE_FLOAT = 1,
-	TYPE_INT,
-	TYPE_VECTOR3,
-	TYPE_QUATERNION,
-	TYPE_MATRIX,
-	TYPE_RESOURCEID,
-	//TYPE_KEYFRAME,
-	TYPE_CUSTOM
+	TYPE_VECTOR3 = 3,
+	TYPE_QUATERNION = 4,
 };
-
-const char* anim_type_string( eAnimType type );
-

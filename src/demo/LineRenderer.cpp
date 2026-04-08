@@ -2,7 +2,7 @@
 #include "DemoResources.h"
 #include "Effect.h"
 #include "Globals.h"
-#include <src/gfx/geometry/DynamicVBManager.h>
+#include <src/gfx/DynamicVBManager.h>
 #include <src/utils/AssertHelper.h>
 
 CLineRenderer::CLineRenderer()

@@ -2,7 +2,7 @@
 #include <src/math/Plane.h>
 #include <src/math/MathUtils.h>
 
-#include <src/gfx/geometry/DynamicVBManager.h>
+#include <src/gfx/DynamicVBManager.h>
 
 #include "Demo.h"
 #include "DemoResources.h"

@@ -7,8 +7,7 @@ endif()
 
 add_executable(Demo WIN32
     src/animator/AnimationBunch.cpp
-    src/animator/AnimType.cpp
-    src/gfx/geometry/DynamicVBManager.cpp
+    src/gfx/DynamicVBManager.cpp
     src/gfx/Mesh.cpp
     src/gfx/RenderableOrderedBillboards.cpp
     src/gfx/Texture.cpp

@@ -4,7 +4,7 @@
 
 
 /**
- *  Vertex format descriptor. It's like FVF, but supports more than that.
+ *  Vertex format descriptor.
  *
  *  In the end it's a 4 byte value with bits indicating various vertex components and
  *  their modes.
@@ -96,5 +96,3 @@ public:
 private:
 	uint32_t	mFormatBits;
 };
-
-
