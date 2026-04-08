@@ -17,14 +17,6 @@ int CVertexFormat::calcFloat3Size( eFloat3Mode flt3 )
 	return sizes[flt3];
 }
 
-//@TODO
-//int CVertexFormat::calcFloat3Type( eFloat3Mode flt3 )
-//{
-//	assert( flt3 > FLT3_NONE && flt3 <= FLT3_DEC3N );
-//	int types[] = { 0, D3DDECLTYPE_FLOAT3, D3DDECLTYPE_D3DCOLOR, D3DDECLTYPE_DEC3N };
-//	return types[flt3];
-//}
-
 int CVertexFormat::calcSkinSize() const
 {
 	eSkinMode skin = getSkinMode();

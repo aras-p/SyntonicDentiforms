@@ -20,8 +20,6 @@ add_library(dingus STATIC
     dingus/dingus/math/Vector3.cpp
     dingus/dingus/math/Vector4.cpp
 
-    dingus/dingus/renderer/RenderableMesh.cpp
-
     dingus/dingus/resource/AnimationBundle.cpp
     dingus/dingus/resource/MeshBundle.cpp
     dingus/dingus/resource/MeshSerializer.cpp

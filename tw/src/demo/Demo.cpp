@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-#include <dingus/renderer/RenderableMesh.h>
 #include <dingus/math/Matrix4x4.h>
 #include <dingus/math/Plane.h>
 #include <dingus/math/MathUtils.h>
