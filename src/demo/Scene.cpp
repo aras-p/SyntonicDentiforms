@@ -160,8 +160,10 @@ void CScene::render(eRenderMode renderMode, sg_bindings* binds)
 
 	sg_apply_uniforms(0, { &g_global_u, sizeof(g_global_u) });
 
+	SPlane planes[6];
+	extractFrustumPlanes(gRenderCam.getViewProjMatrix(), planes);
 	for( int i = 0; i < n; ++i )
-		mMeshes[i].mesh->render(renderMode, binds);
+		mMeshes[i].mesh->render(renderMode, binds, planes);
 }
 
 void CScene::addCut( float frame )

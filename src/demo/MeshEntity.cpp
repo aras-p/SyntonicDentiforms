@@ -37,12 +37,12 @@ CMeshEntity::~CMeshEntity()
 {
 }
 
-void CMeshEntity::render(eRenderMode renderMode, sg_bindings* binds)
+void CMeshEntity::render(eRenderMode renderMode, sg_bindings* binds, const SPlane planes[6])
 {
 	if( !(mRenderModesMask & (1<<renderMode)) )
 		return;
 
-	if (frustumCull(gRenderCam.getViewProjMatrix()))
+	if (frustumCull(planes))
 		return;
 
 	if (renderMode == RM_REFLECTIVE)

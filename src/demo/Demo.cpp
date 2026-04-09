@@ -352,9 +352,12 @@ void gRenderWallReflections()
 		SVector3(0,0,-1), SVector3(0,0,1),
 	};
 
+	SPlane frustumPlanes[6];
+	extractFrustumPlanes(gCameraViewProjMatrix, frustumPlanes);
+
 	for( int currWall = 0; currWall < CFACE_COUNT; ++currWall )
 	{
-		if (gWallMeshes[currWall]->frustumCull(gCameraViewProjMatrix))
+		if (gWallMeshes[currWall]->frustumCull(frustumPlanes))
 			continue;
 
 		SPlane reflPlane( planePos[currWall] + planeNrm[currWall]*0.05f, planeNrm[currWall] );

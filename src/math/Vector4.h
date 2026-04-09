@@ -27,8 +27,5 @@ public:
 	float x, y, z, w;
 };
 
-
 inline void SVector4::set( float vx, float vy, float vz, float vw ) { x=vx; y=vy; z=vz; w=vw; };
-
-void SVector4TransformArray(SVector4* out, const SVector4* in, const SMatrix4x4* matrix, int elements);
 

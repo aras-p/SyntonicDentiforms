@@ -20,10 +20,12 @@ public:
 	CMeshEntity(DataMesh type);
     ~CMeshEntity();
     
-	bool	frustumCull( const SMatrix4x4& viewProj ) const {
-		return mMesh->getTotalAABB().frustumCull( mMatrix, viewProj );
+	bool	frustumCull(const SPlane planes[6]) const
+	{
+		return mMesh->getTotalAABB().frustumCull(mMatrix, planes);
 	}
-	void	render(eRenderMode renderMode, sg_bindings *binds);
+
+	void	render(eRenderMode renderMode, sg_bindings *binds, const SPlane planes[6]);
 
 public:
     SMatrix4x4    mMatrix;

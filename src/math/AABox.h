@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include "Constants.h"
 #include "Matrix4x4.h"
+#include "Plane.h"
 
 
 /**
@@ -64,53 +65,33 @@ public:
 			p.z>=mMin.z && p.z<=mMax.z;
 	}
 
-	/**
-	 *  Checks frustum cull.
-	 *  @param world World matrix of AABB.
-	 *  @param viewProj Combined view and projection matrices.
-	 *  @return true if completely outside.
-	 */
-	bool frustumCull( const SMatrix4x4& world, const SMatrix4x4& viewProj ) const {
-		enum {
-			ClipLeft   = (1<<0),
-			ClipRight  = (1<<1),
-			ClipBottom = (1<<2),
-			ClipTop    = (1<<3),
-			ClipNear   = (1<<4),
-			ClipFar    = (1<<5),
-		};
-		const int CORNERS = 8;
-		SVector4 v[CORNERS];
-		v[0].set( mMin.x, mMin.y, mMin.z, 1.0f );
-		v[1].set( mMin.x, mMin.y, mMax.z, 1.0f );
-		v[2].set( mMin.x, mMax.y, mMin.z, 1.0f );
-		v[3].set( mMin.x, mMax.y, mMax.z, 1.0f );
-		v[4].set( mMax.x, mMin.y, mMin.z, 1.0f );
-		v[5].set( mMax.x, mMin.y, mMax.z, 1.0f );
-		v[6].set( mMax.x, mMax.y, mMin.z, 1.0f );
-		v[7].set( mMax.x, mMax.y, mMax.z, 1.0f );
-		SVector4TransformArray(v, v, &world, CORNERS);
-		SVector4TransformArray(v, v, &viewProj, CORNERS);
-		
-		int andFlags = 0xFFFF;
-		int orFlags  = 0;
-		for( int i = 0; i < CORNERS; ++i ) {
-			int clip = 0;
-			const SVector4& vv = v[i];
-			if( vv.x < -vv.w )		clip |= ClipLeft;
-			else if( vv.x > vv.w )	clip |= ClipRight;
-			if( vv.y < -vv.w )		clip |= ClipBottom;
-			else if( vv.y > vv.w )	clip |= ClipTop;
-			if( vv.z < -vv.w )		clip |= ClipNear;
-			else if( vv.z > vv.w )	clip |= ClipFar;
-			andFlags &= clip;
-			orFlags  |= clip;
+	// Culls this AABB, transformed by the given world matrix, against frustum planes
+	// (extracted from view*projection matrix).
+	bool frustumCull( const SMatrix4x4& world, const SPlane planes[6] ) const
+	{
+		// calculate OBB center in world space
+		SVector3 center = (mMin + mMax) * 0.5f;
+		SVector3 cw(
+			center.x*world.m[0][0] + center.y*world.m[1][0] + center.z*world.m[2][0] + world.m[3][0],
+			center.x*world.m[0][1] + center.y*world.m[1][1] + center.z*world.m[2][1] + world.m[3][1],
+			center.x*world.m[0][2] + center.y*world.m[1][2] + center.z*world.m[2][2] + world.m[3][2]);
+		// calculate OBB half extents
+		SVector3 h = (mMax - mMin) * 0.5f;
+		const SVector3& axX = world.getAxisX();
+		const SVector3& axY = world.getAxisY();
+		const SVector3& axZ = world.getAxisZ();
+
+		for (int i = 0; i < 6; ++i)
+		{
+			const SPlane& p = planes[i];
+			SVector3 n(p.a, p.b, p.c);
+			float dc = n.dot(cw) + p.d;
+			// OBB support radius along n
+			float r = h.x*fabsf(n.dot(axX)) + h.y*fabsf(n.dot(axY)) + h.z*fabsf(n.dot(axZ));
+			if (dc < -r)
+				return true;
 		}
-		if( orFlags == 0 )
-			return false; // inside
-		if( andFlags != 0 )
-			return true; // outside
-		return false; // partial
+		return false;
 	}
 
 private:

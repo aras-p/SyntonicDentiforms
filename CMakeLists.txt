@@ -61,7 +61,6 @@ set (SOURCES
     src/math/TypeTraits.h
     src/math/Vector3.cpp
     src/math/Vector3.h
-    src/math/Vector4.cpp
     src/math/Vector4.h
 )
 
