@@ -7,13 +7,14 @@
 #include <src/math/Matrix4x4.h>
 #include <src/gfx/Texture.h>
 
-// Something with MSAA reflection texture resolves causes garbage
-// on the web, both in Chrome / macOS 15.7 and Safari / iOS 18 on Apple systems.
-// So just do reflections without MSAA on the web, LOL!
+// Multi-pass rendering of reflections causes garbage artifacts on
+// the web, but only on Apple systems.
+// Both in Chrome / macOS 15.7 and Safari / iOS 18.
+// Just bias the reflections for now!
 #if defined(__EMSCRIPTEN__)
-constexpr bool kReflectionsAA = false;
+constexpr bool kReflectionsDepthBias = true;
 #else
-constexpr bool kReflectionsAA = true;
+constexpr bool kReflectionsDepthBias = false;
 #endif
 
 // --------------------------------------------------------------------------

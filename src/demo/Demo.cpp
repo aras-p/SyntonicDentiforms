@@ -192,16 +192,8 @@ static void ensure_render_targets()
 		rt_4th_2.create(desc);
 
 		// reflection textures
-        if (kReflectionsAA)
-        {
-            desc.usage.color_attachment = false;
-            desc.usage.resolve_attachment = true;
-        }
-        else
-        {
-            desc.usage.color_attachment = true;
-            desc.usage.resolve_attachment = false;
-        }
+        desc.usage.color_attachment = false;
+        desc.usage.resolve_attachment = true;
 		desc.width = width / 2;
 		desc.height = height / 2;
 		rt_refl_px.create(desc);
@@ -380,25 +372,13 @@ void gRenderWallReflections()
 
 		sg_pass pass = {};
 		pass.attachments.depth_stencil = rt_refl_z.view_z;
-        if (kReflectionsAA)
-        {
-            sg_view resolve_views[CFACE_COUNT] = {
-                rt_refl_px.view_resolve, rt_refl_nx.view_resolve,
-                rt_refl_py.view_resolve, rt_refl_ny.view_resolve,
-                rt_refl_pz.view_resolve, rt_refl_nz.view_resolve,
-            };
-            pass.attachments.colors[0] = rt_refl_rt.view_rt;
-            pass.attachments.resolves[0] = resolve_views[currWall];
-        }
-        else
-        {
-            sg_view rt_views[CFACE_COUNT] = {
-                rt_refl_px.view_rt, rt_refl_nx.view_rt,
-                rt_refl_py.view_rt, rt_refl_ny.view_rt,
-                rt_refl_pz.view_rt, rt_refl_nz.view_rt,
-            };
-            pass.attachments.colors[0] = rt_views[currWall];
-        }
+        sg_view resolve_views[CFACE_COUNT] = {
+            rt_refl_px.view_resolve, rt_refl_nx.view_resolve,
+            rt_refl_py.view_resolve, rt_refl_ny.view_resolve,
+            rt_refl_pz.view_resolve, rt_refl_nz.view_resolve,
+        };
+        pass.attachments.colors[0] = rt_refl_rt.view_rt;
+        pass.attachments.resolves[0] = resolve_views[currWall];
 		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
 		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
 		pass.action.colors[0].clear_value = { 0, 0, 0, 1 };

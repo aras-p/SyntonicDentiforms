@@ -222,9 +222,6 @@ void pipelines_init()
 		desc.depth.write_enabled = true;
 		desc.cull_mode = SG_CULLMODE_FRONT;
 		s_fx_pipes[pip_renderLitShadowed] = sg_make_pipeline(desc);
-
-        if (!kReflectionsAA)
-            desc.sample_count = 1;
 		desc.cull_mode = SG_CULLMODE_BACK; // reflection; inverted culling
 		s_fx_pipes[pip_renderLitShadowedFlip] = sg_make_pipeline(desc);
 	}
@@ -268,6 +265,8 @@ void pipelines_init()
 		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
 		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
 		desc.depth.write_enabled = false;
+        if (kReflectionsDepthBias)
+            desc.depth.bias = -10.0f;
 		s_fx_pipes[pip_renderReflective] = sg_make_pipeline(desc);
 	}
 }
