@@ -354,8 +354,7 @@ void gRenderWallReflections()
 
 	for( int currWall = 0; currWall < CFACE_COUNT; ++currWall )
 	{
-		gWallMeshes[currWall]->updateMatrices();
-		if( gWallMeshes[currWall]->frustumCull(gCameraViewProjMatrix) )
+		if (gWallMeshes[currWall]->frustumCull(gCameraViewProjMatrix))
 			continue;
 
 		SPlane reflPlane( planePos[currWall] + planeNrm[currWall]*0.05f, planeNrm[currWall] );

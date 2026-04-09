@@ -113,53 +113,6 @@ public:
 		return false; // partial
 	}
 
-	/**
-	 *  Checks frustum cull.
-	 *  @param worldViewProj World matrix of AABB combined with view and proj matrices.
-	 *  @return true if completely outside.
-	 */
-	bool frustumCull( const SMatrix4x4& worldViewProj ) const {
-		enum {
-			ClipLeft   = (1<<0),
-			ClipRight  = (1<<1),
-			ClipBottom = (1<<2),
-			ClipTop    = (1<<3),
-			ClipNear   = (1<<4),
-			ClipFar    = (1<<5),
-		};
-		const int CORNERS = 8;
-		SVector4 v[CORNERS];
-		v[0].set( mMin.x, mMin.y, mMin.z, 1.0f );
-		v[1].set( mMin.x, mMin.y, mMax.z, 1.0f );
-		v[2].set( mMin.x, mMax.y, mMin.z, 1.0f );
-		v[3].set( mMin.x, mMax.y, mMax.z, 1.0f );
-		v[4].set( mMax.x, mMin.y, mMin.z, 1.0f );
-		v[5].set( mMax.x, mMin.y, mMax.z, 1.0f );
-		v[6].set( mMax.x, mMax.y, mMin.z, 1.0f );
-		v[7].set( mMax.x, mMax.y, mMax.z, 1.0f );
-		SVector4TransformArray(v, v, &worldViewProj, CORNERS);
-		
-		int andFlags = 0xFFFF;
-		int orFlags  = 0;
-		for( int i = 0; i < CORNERS; ++i ) {
-			int clip = 0;
-			const SVector4& vv = v[i];
-			if( vv.x < -vv.w )		clip |= ClipLeft;
-			else if( vv.x > vv.w )	clip |= ClipRight;
-			if( vv.y < -vv.w )		clip |= ClipBottom;
-			else if( vv.y > vv.w )	clip |= ClipTop;
-			if( vv.z < -vv.w )		clip |= ClipNear;
-			else if( vv.z > vv.w )	clip |= ClipFar;
-			andFlags &= clip;
-			orFlags  |= clip;
-		}
-		if( orFlags == 0 )
-			return false; // inside
-		if( andFlags != 0 )
-			return true; // outside
-		return false; // partial
-	}
-
 private:
 	SVector3	mMin;
 	SVector3	mMax;

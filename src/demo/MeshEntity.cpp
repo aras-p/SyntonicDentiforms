@@ -6,7 +6,7 @@ CMeshEntity::CMeshEntity(DataMesh type)
 :	mMesh(nullptr),
 	mCubeFace(CFACE_PX)
 {
-    mMatrix.identify(); mWVPMatrix.identify();
+    mMatrix.identify();
     
     assert(type < DataMeshCOUNT);
 	if (type == DataMeshBox)
@@ -42,8 +42,7 @@ void CMeshEntity::render(eRenderMode renderMode, sg_bindings* binds)
 	if( !(mRenderModesMask & (1<<renderMode)) )
 		return;
 
-	updateMatrices();
-	if( frustumCull() )
+	if (frustumCull(gRenderCam.getViewProjMatrix()))
 		return;
 
 	if (renderMode == RM_REFLECTIVE)

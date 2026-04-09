@@ -20,25 +20,13 @@ public:
 	CMeshEntity(DataMesh type);
     ~CMeshEntity();
     
-    /// Updates WVP from current matrix and current render camera
-    void updateMatrices() {
-        mWVPMatrix = mMatrix * gRenderCam.getViewProjMatrix();
-    }
-
-	/// Culls with current W matrix and given VP matrix. Returns true if outside frustum.
 	bool	frustumCull( const SMatrix4x4& viewProj ) const {
 		return mMesh->getTotalAABB().frustumCull( mMatrix, viewProj );
 	}
-	/// Culls with current WVP matrix. Returns true if outside frustum.
-	bool	frustumCull() const {
-		return mMesh->getTotalAABB().frustumCull( mWVPMatrix );
-	}
-	/// Updates WVP, renders
 	void	render(eRenderMode renderMode, sg_bindings *binds);
 
 public:
     SMatrix4x4    mMatrix;
-    SMatrix4x4    mWVPMatrix;
 
 private:
 	CMesh*  mMesh;
