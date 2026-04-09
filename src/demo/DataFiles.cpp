@@ -18,6 +18,7 @@ static const char* kTexturePaths[DataTexCOUNT] = {
 	"data/tex/Greetings.png",
 	"data/tex/Line1.png",
 	"data/tex/SpotLight.png",
+	"data/tex/Start.png",
 };
 
 sokol_texture* g_data_tex[DataTexCOUNT];

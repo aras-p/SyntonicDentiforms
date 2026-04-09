@@ -23,6 +23,7 @@
 #include "external/sokol_app.h"
 #include "external/sokol_glue.h"
 #include "external/sokol_time.h"
+#include "external/sokol_audio.h"
 #include "external/sokol_debugtext.h"
 
 #if !USE_WINDOWS_OPENGL
@@ -786,6 +787,31 @@ bool demo_update()
 		sg_apply_uniforms(0, { &gOverlayColor, sizeof(gOverlayColor) });
 		sg_draw(0, 3, 1);
 	}
+
+	// click to start (web, while not clicked yet -- since music can't play)
+	#if defined(__EMSCRIPTEN__) && defined(WITHMUSIC)
+	if (saudio_suspended())
+	{
+		billboards_clear();
+		SOBillboard& bill = billboards_add();
+
+		sokol_texture* tex = g_data_tex[DataTexStart];
+		bill.texture = tex->view_tex;
+		const float scw = sapp_widthf();
+		const float sch = sapp_heightf();
+		float ww = sg_query_image_width(tex->image);
+		float hh = sg_query_image_height(tex->image);
+		bill.x1 = -ww/scw;
+		bill.x2 = ww/scw;
+		bill.y1 = -hh/sch;
+		bill.y2 = hh/sch;
+		bill.color = SVector4(1, 1, 1, 0.3f + (cosf(stm_sec(time0) * 2.4f) * 0.5f + 0.5f) * 0.7f).toRGBA();
+		bill.setWholeTexture();
+		pipeline_apply(pip_billboardsClearDestAlpha);
+		billboards_render();
+	}
+	#endif
+
 
 	sg_end_pass();
 

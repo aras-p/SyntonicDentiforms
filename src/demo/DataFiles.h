@@ -22,6 +22,7 @@ enum DataTexture {
 	DataTexGreetings,
 	DataTexLine1,
 	DataTexSpotLight,
+	DataTexStart,
 
 	DataTexCOUNT
 };
