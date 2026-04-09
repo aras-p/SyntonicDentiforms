@@ -1,0 +1,64 @@
+# manually triggered script to build and deploy the web version to github pages
+name: Deploy Web Build
+on: workflow_dispatch
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: install-ninja
+        run: |
+          sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: prepare
+        run: |
+          git clone https://github.com/emscripten-core/emsdk
+          cd emsdk
+          ./emsdk install 5.0.5
+          ./emsdk activate 5.0.5
+          cd ..
+      - name: build
+        run: |
+          source emsdk/emsdk_env.sh
+          cmake --preset emscripten-release
+          cmake --build --preset em-release
+          cd build/emscripten-release
+          mv Demo.html index.html
+          mkdir web
+          cp Demo.wasm index.html Demo.js web
+      - name: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webpage
+          path: build/emscripten-release/web
+          retention-days: 1
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup-pages
+        uses: actions/configure-pages@v5
+      - name: download-artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: webpage
+      - name: upload-artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - name: deploy-gh-pages
+        id: deployment
+        uses: actions/deploy-pages@v4
