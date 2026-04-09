@@ -38,26 +38,52 @@ in vec3 normal;
 in vec3 tolight;
 out vec4 frag_color;
 
-float sampleShadow(vec3 uv)
+vec3 finalShadowCoord(vec2 baseUV, vec2 deltaUV, float depth, vec3 receiverPlaneDepthBias)
 {
-	const vec2 poisson[8] = vec2[](
-		vec2(-0.326, -0.406),
-		vec2(-0.840, -0.074),
-		vec2(-0.696,  0.457),
-		vec2(-0.203,  0.621),
-		vec2( 0.962, -0.195),
-		vec2( 0.473, -0.480),
-		vec2( 0.519,  0.767),
-		vec2( 0.185, -0.893)
-	);
-	vec2 scale = 1.5 / vec2(1024.0);
+    vec3 uv = vec3(baseUV + deltaUV, depth + receiverPlaneDepthBias.z);
+    uv.z += dot(deltaUV, receiverPlaneDepthBias.xy);
+    return uv;
+}
 
-	float sum = 0.0;
-	for (int i = 0; i < 8; ++i)
-	{
-		sum += texture(sampler2DShadow(texShadow, smpShadow), vec3(uv.xy + poisson[i] * scale, uv.z));
-	}
-	return sum * (1.0 / 8.0);
+float sampleShadow(vec3 coord)
+{
+	vec3 receiverPlaneDepthBias = vec3(0.0); // just don't use receiver plane bias for now
+
+	// optimized 5x5 PCF filter by Ignacio Castano:
+	// https://www.ludicon.com/castano/blog/articles/shadow-mapping-summary-part-1/
+
+	float shadowMapSize = 1024.0;
+	vec2 texelSize = 1.0 / vec2(shadowMapSize);
+    vec2 offset = vec2(0.5, 0.5);
+    vec2 uv = coord.xy * shadowMapSize + offset;
+    vec2 base_uv = (floor(uv) - offset) * texelSize.xy;
+    vec2 st = fract(uv);
+
+    vec3 uw = vec3(4 - 3 * st.x, 7, 1 + 3 * st.x);
+    vec3 u = vec3((3 - 2 * st.x) / uw.x - 2, (3 + st.x) / uw.y, st.x / uw.z + 2);
+    u *= texelSize.x;
+
+    vec3 vw = vec3(4 - 3 * st.y, 7, 1 + 3 * st.y);
+    vec3 v = vec3((3 - 2 * st.y) / vw.x - 2, (3 + st.y) / vw.y, st.y / vw.z + 2);
+    v *= texelSize.y;
+
+    float sum = 0.0f;
+
+    vec3 accum = uw * vw.x;
+    sum += accum.x * texture(sampler2DShadow(texShadow, smpShadow), finalShadowCoord(base_uv, vec2(u.x, v.x), coord.z, receiverPlaneDepthBias));
+    sum += accum.y * texture(sampler2DShadow(texShadow, smpShadow), finalShadowCoord(base_uv, vec2(u.y, v.x), coord.z, receiverPlaneDepthBias));
+    sum += accum.z * texture(sampler2DShadow(texShadow, smpShadow), finalShadowCoord(base_uv, vec2(u.z, v.x), coord.z, receiverPlaneDepthBias));
+
+    accum = uw * vw.y;
+    sum += accum.x * texture(sampler2DShadow(texShadow, smpShadow), finalShadowCoord(base_uv, vec2(u.x, v.y), coord.z, receiverPlaneDepthBias));
+    sum += accum.y * texture(sampler2DShadow(texShadow, smpShadow), finalShadowCoord(base_uv, vec2(u.y, v.y), coord.z, receiverPlaneDepthBias));
+    sum += accum.z * texture(sampler2DShadow(texShadow, smpShadow), finalShadowCoord(base_uv, vec2(u.z, v.y), coord.z, receiverPlaneDepthBias));
+
+    accum = uw * vw.z;
+    sum += accum.x * texture(sampler2DShadow(texShadow, smpShadow), finalShadowCoord(base_uv, vec2(u.x, v.z), coord.z, receiverPlaneDepthBias));
+    sum += accum.y * texture(sampler2DShadow(texShadow, smpShadow), finalShadowCoord(base_uv, vec2(u.y, v.z), coord.z, receiverPlaneDepthBias));
+    sum += accum.z * texture(sampler2DShadow(texShadow, smpShadow), finalShadowCoord(base_uv, vec2(u.z, v.z), coord.z, receiverPlaneDepthBias));
+    return sum / 144.0f;
 }
 
 void main()
