@@ -5,7 +5,7 @@
       "name": "win-x64",
       "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build"
+      "binaryDir": "${sourceDir}/build/${presetName}"
     },
     {
       "name": "win-x64-debug",
