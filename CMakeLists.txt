@@ -146,6 +146,7 @@ set(SHADER_FILES
     src/fx/noshadowHi.glsl
     src/fx/overlay.glsl
     src/fx/receiverHi.glsl
+    src/fx/renderWhite.glsl
     src/fx/reflective.glsl
 )
 foreach(shader ${SHADER_FILES})

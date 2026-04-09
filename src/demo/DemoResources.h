@@ -17,7 +17,7 @@ extern SVector4			gScreenFixUVs;
 
 extern sg_sampler s_smp_linear_repeat;
 extern sg_sampler s_smp_linear_clamp;
-extern sg_sampler s_smp_point_clamp;
+extern sg_sampler s_smp_shadow;
 
 
 // --------------------------------------------------------------------------
@@ -47,7 +47,6 @@ extern sokol_texture rt_refl_rt, rt_refl_z;
 
 const int SZ_SHADOWMAP = 1024;
 
-extern sokol_texture rt_shadow_rt;
 extern sokol_texture rt_shadow_z;
 
 // match global_uniforms in shaders
@@ -73,8 +72,3 @@ struct EntityUniformsVS
 	SMatrix4x4	matWV;
 	SMatrix4x4	matWVP;
 };
-struct EntityUniformsFS
-{
-	SVector4 shadowID; // zero shadow ID: receive all shadows
-};
-

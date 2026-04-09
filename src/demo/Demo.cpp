@@ -116,14 +116,13 @@ static bool gPreload()
 
 sg_sampler s_smp_linear_repeat;
 sg_sampler s_smp_linear_clamp;
-sg_sampler s_smp_point_clamp;
+sg_sampler s_smp_shadow;
 
 sokol_texture rt_main_aa, rt_main_z, rt_main_resolved;
 sokol_texture rt_full_toon;
 sokol_texture rt_4th_1, rt_4th_2;
 sokol_texture rt_refl_px, rt_refl_py, rt_refl_pz, rt_refl_nx, rt_refl_ny, rt_refl_nz;
 sokol_texture rt_refl_rt, rt_refl_z;
-sokol_texture rt_shadow_rt;
 sokol_texture rt_shadow_z;
 
 static void ensure_render_targets()
@@ -209,16 +208,12 @@ static void ensure_render_targets()
 	}
 
 	// fixed size textures
-	if (!rt_shadow_rt.valid())
+	if (!rt_shadow_z.valid())
 	{
 		sg_image_desc desc = {};
 		desc.sample_count = 1;
 		desc.width = SZ_SHADOWMAP;
 		desc.height = SZ_SHADOWMAP;
-
-		desc.usage.color_attachment = true;
-		desc.pixel_format = SG_PIXELFORMAT_RGBA8;
-		rt_shadow_rt.create(desc);
 
 		desc.usage.color_attachment = false;
 		desc.usage.depth_stencil_attachment = true;
@@ -235,27 +230,20 @@ bool demo_init()
 		desc.min_filter = desc.mag_filter = SG_FILTER_LINEAR;
 		desc.wrap_u = desc.wrap_v = SG_WRAP_REPEAT;
 		s_smp_linear_repeat = sg_make_sampler(&desc);
+	}
+	{
+		sg_sampler_desc desc = {};
 		desc.min_filter = desc.mag_filter = SG_FILTER_LINEAR;
 		desc.wrap_u = desc.wrap_v = SG_WRAP_CLAMP_TO_EDGE;
 		s_smp_linear_clamp = sg_make_sampler(&desc);
-		desc.min_filter = desc.mag_filter = SG_FILTER_NEAREST;
-		s_smp_point_clamp = sg_make_sampler(&desc);
 	}
-	/*
-	state.pip = sg_make_pipeline(&(sg_pipeline_desc) {
-		.shader = sg_make_shader(triangle_shader_desc(sg_query_backend())),
-			.layout = {
-				.attrs = {
-					[ATTR_triangle_position] .format = SG_VERTEXFORMAT_FLOAT3,
-					[ATTR_triangle_color0].format = SG_VERTEXFORMAT_FLOAT4
-				}
-		},
-	});
-
-	state.pass_action = (sg_pass_action){
-		.colors[0] = {.load_action = SG_LOADACTION_CLEAR, .clear_value = {0.0f, 0.0f, 0.0f, 1.0f } }
-	};
-	*/
+	{
+		sg_sampler_desc desc = {};
+		desc.min_filter = desc.mag_filter = SG_FILTER_LINEAR;
+		desc.wrap_u = desc.wrap_v = SG_WRAP_CLAMP_TO_EDGE;
+		desc.compare = SG_COMPAREFUNC_LESS;
+		s_smp_shadow = sg_make_sampler(&desc);
+	}
 
 	dynamic_vb_init(2 * 1024 * 1024);
 
@@ -391,9 +379,9 @@ void gRenderWallReflections()
 		sg_begin_pass(&pass);
 
 		sg_bindings binds = {};
-		binds.views[0] = rt_shadow_rt.view_tex;
+		binds.views[0] = rt_shadow_z.view_tex;
 		binds.views[1] = g_data_tex[DataTexSpotLight]->view_tex;
-		binds.samplers[0] = s_smp_point_clamp;
+		binds.samplers[0] = s_smp_shadow;
 		binds.samplers[1] = s_smp_linear_clamp;
 		gScenes[gSceneIndex]->render(RM_RECV_LO, &binds);
 
@@ -410,12 +398,12 @@ void gRenderShadowMap()
 	gLightViewProjMatrix = gRenderCam.getViewProjMatrix();
 
 	sg_pass pass = {};
-	pass.attachments.colors[0] = rt_shadow_rt.view_rt;
+	pass.attachments.colors[0] = {};
 	pass.attachments.depth_stencil = rt_shadow_z.view_z;
-	pass.action.colors[0].store_action = SG_STOREACTION_STORE;
-	pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
-	pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
+	pass.action.colors[0].store_action = SG_STOREACTION_DONTCARE;
+	pass.action.colors[0].load_action = SG_LOADACTION_DONTCARE;
 	pass.action.depth.load_action = SG_LOADACTION_CLEAR;
+	pass.action.depth.store_action = SG_STOREACTION_STORE;
 	pass.action.depth.clear_value = 1.0f;
 
 	sg_begin_pass(&pass);
@@ -683,9 +671,9 @@ bool demo_update()
 	sg_bindings binds = {};
 	if( gSceneMode != SC_OUTER )
 	{
-		binds.views[0] = rt_shadow_rt.view_tex;
+		binds.views[0] = rt_shadow_z.view_tex;
 		binds.views[1] = g_data_tex[DataTexSpotLight]->view_tex;
-		binds.samplers[0] = s_smp_point_clamp;
+		binds.samplers[0] = s_smp_shadow;
 		binds.samplers[1] = s_smp_linear_clamp;
 		gScenes[gSceneIndex]->render(RM_RECV_HI, &binds);
 
@@ -838,7 +826,6 @@ void demo_shutdown()
 	rt_refl_nz.destroy();
 	rt_refl_rt.destroy();
 	rt_refl_z.destroy();
-	rt_shadow_rt.destroy();
 	rt_shadow_z.destroy();
 	
 	for( int i = 0; i < SCENES; ++i )

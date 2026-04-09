@@ -45,8 +45,5 @@ public:
 private:
 	CMesh*  mMesh;
 	int		mRenderModesMask;
-	float   mShadowVal;
 	int		mCubeFace; // reflection cube face
-
-	static int	mShadowIDGenerator;
 };

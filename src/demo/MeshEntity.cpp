@@ -2,8 +2,6 @@
 #include "DemoResources.h"
 #include <assert.h>
 
-int CMeshEntity::mShadowIDGenerator = 0;
-
 CMeshEntity::CMeshEntity(DataMesh type)
 :	mMesh(nullptr),
 	mCubeFace(CFACE_PX)
@@ -11,16 +9,13 @@ CMeshEntity::CMeshEntity(DataMesh type)
     mMatrix.identify(); mWVPMatrix.identify();
     
     assert(type < DataMeshCOUNT);
-	int shadowID = 0;
 	if (type == DataMeshBox)
 	{
 		mRenderModesMask = 1 << RM_HI;
-		shadowID = 0;
 	}
 	else if (type >= DataMeshCube && type <= DataMeshCubePZ)
 	{
 		mRenderModesMask = (1<<RM_RECV_HI) | (1<<RM_RECV_LO);
-		shadowID = 0;
 		if (type != DataMeshCube)
 		{
 			mRenderModesMask |= 1<<RM_REFLECTIVE;
@@ -33,15 +28,9 @@ CMeshEntity::CMeshEntity(DataMesh type)
 		}
 	} else {
 		mRenderModesMask = (1<<RM_RECV_HI) | (1<<RM_RECV_LO) | (1<<RM_SHADOW);
-		++mShadowIDGenerator;
-		if( mShadowIDGenerator >= 16 )
-			mShadowIDGenerator = 1;
-		shadowID = mShadowIDGenerator;
 	}
 
 	mMesh = g_data_mesh[type];
-
-	mShadowVal = (shadowID * 16) / 255.0f;
 }
 
 CMeshEntity::~CMeshEntity()
@@ -72,13 +61,6 @@ void CMeshEntity::render(eRenderMode renderMode, sg_bindings* binds)
 	uboVS.matWV = mWVMatrix;
 	uboVS.matWVP = mWVPMatrix;
 	sg_apply_uniforms(1, {&uboVS, sizeof(uboVS)});
-
-	if (renderMode != RM_REFLECTIVE && renderMode != RM_HI)
-	{
-		EntityUniformsFS uboFS = {};
-		uboFS.shadowID.set(mShadowVal, mShadowVal, mShadowVal, mShadowVal);
-		sg_apply_uniforms(2, { &uboFS, sizeof(uboFS) });
-	}
 
 	binds->vertex_buffers[0] = mMesh->getVB();
 	binds->index_buffer = mMesh->getIB();

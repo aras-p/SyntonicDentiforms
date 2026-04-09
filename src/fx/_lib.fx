@@ -18,9 +18,6 @@ layout(binding=1) uniform entity_uniforms_vs {
 	mat4 mWorldView;
 	mat4 mWVP;
 };
-layout(binding=2) uniform entity_uniforms_fs {
-	vec4 vShadowID;
-};
 
 // --------------------------------------------------------------------------
 // light

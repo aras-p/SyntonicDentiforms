@@ -415,13 +415,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 		toothMaskScale *= (1 - cutAlpha) / SCALEUP_ALPHA;
 	}
 
-	// Render by mis-using shadow caster shader with all-1.0 shadow ID
-	// color.
-	effect_apply(fx_casterNoZ);
-	EntityUniformsFS uboFS = {};
-	uboFS.shadowID.set(1, 1, 1, 1);
-	sg_apply_uniforms(2, { &uboFS, sizeof(uboFS) });
-
+	effect_apply(fx_renderWhite);
 	EntityUniformsVS uboVS = {};
 	uboVS.mat.identify(); // not really used
 	uboVS.matWV.identify(); // not really used

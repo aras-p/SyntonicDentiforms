@@ -14,6 +14,7 @@
 #include "../fx/overlay.glsl.h"
 #include "../fx/receiverHi.glsl.h"
 #include "../fx/reflective.glsl.h"
+#include "../fx/renderWhite.glsl.h"
 
 #include "external/sokol_gfx.h"
 
@@ -138,11 +139,28 @@ void effects_init()
 		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE;
 		s_fx_pipes[fx_overlay2] = sg_make_pipeline(desc);
 	}
+	// render white
+	{
+		sg_pipeline_desc desc = {};
+		desc.shader = sg_make_shader(renderWhite_prog_shader_desc(backend));
+		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
+		desc.index_type = SG_INDEXTYPE_UINT16;
+		desc.layout.buffers[0].stride = 16;
+		desc.layout.attrs[0].format = SG_VERTEXFORMAT_FLOAT3;
+		desc.layout.attrs[0].offset = 0;
+		desc.cull_mode = SG_CULLMODE_FRONT;
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
+		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
+		desc.depth.write_enabled = false;
+		s_fx_pipes[fx_renderWhite] = sg_make_pipeline(desc);
+	}
 	// caster
 	{
 		sg_pipeline_desc desc = {};
 		desc.shader = sg_make_shader(caster_prog_shader_desc(backend));
-		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
+		desc.colors[0].pixel_format = SG_PIXELFORMAT_NONE;
 		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.index_type = SG_INDEXTYPE_UINT16;
@@ -151,13 +169,9 @@ void effects_init()
 		desc.layout.attrs[0].offset = 0;
 		desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
 		desc.depth.write_enabled = true;
-		desc.cull_mode = SG_CULLMODE_FRONT;
+		desc.cull_mode = SG_CULLMODE_BACK; // render backfaces into the shadowmap (reduces acne)
 		s_fx_pipes[fx_caster] = sg_make_pipeline(desc);
 
-		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
-		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
-		desc.depth.write_enabled = false;
-		s_fx_pipes[fx_casterNoZ] = sg_make_pipeline(desc);
 	}
 	// lines
 	{

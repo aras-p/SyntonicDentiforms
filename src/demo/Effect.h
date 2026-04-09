@@ -5,7 +5,7 @@ enum Effect {
 	fx_billboards,
 	fx_billboardsNoDestAlpha,
 	fx_caster,
-	fx_casterNoZ,
+	fx_renderWhite,
 	fx_compositeAdd,
 	fx_compositeAlpha,
 	fx_filterBloom,
