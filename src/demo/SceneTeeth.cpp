@@ -1,4 +1,6 @@
 #include "SceneTeeth.h"
+
+#include "Billboards.h"
 #include "DemoResources.h"
 #include "Glare.h"
 #include "Effect.h"
@@ -247,7 +249,6 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 	const float BEDGE = 0.12f;
 	const float MEDGE = 0.06f;
 
-	CBillboards& bills = *(masks ? gBillboardsNormal : gBillboardsNoDestA);
 	SOBillboard* bill;
 
 	if( pack != TEETHPACKS-1 ) {
@@ -259,7 +260,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 				continue;
 			
 			// tooth image
-			bill = &bills.addBill();
+			bill = &billboards_add();
 			bill->x1 = 1.0f - BEDGE - BSIZE;
 			bill->y1 = -1.0f + BEDGE*aspect;
 			bill->x2 = bill->x1 + BSIZE;
@@ -278,7 +279,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 			// greets image
 			const float texelScale = 1.0f / 768.0f;
 			const float* uvs = greetUVs[pack][i];
-			bill = &bills.addBill();
+			bill = &billboards_add();
 			bill->x1 = 1.0f - BEDGE*0.5f - BSIZE - (uvs[2]-uvs[0]) * texelScale;
 			bill->y1 = -1.0f + BEDGE*aspect*0.2f;
 			bill->x2 = 1.0f - BEDGE*0.5f - BSIZE;
@@ -301,7 +302,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 	} else {
 		const float GRP_WIDTH = 0.8f;
 		const float GRP_HEIGHT = GRP_WIDTH*aspect*898.0f/1050.0f;
-		bill = &bills.addBill();
+		bill = &billboards_add();
 		bill->x1 = -GRP_WIDTH/2;
 		bill->y1 = -GRP_HEIGHT/2;
 		bill->x2 = GRP_WIDTH/2;
@@ -327,7 +328,8 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 	}
 
 	effect_apply(masks ? fx_billboards : fx_billboardsNoDestAlpha);
-	bills.renderBills();
+	billboards_render();
+	billboards_clear();
 }
 
 void CSceneTeeth::renderTeethLines(int pack, float t)

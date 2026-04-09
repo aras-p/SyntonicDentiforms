@@ -7,16 +7,12 @@
 #include <src/math/Matrix4x4.h>
 #include <src/gfx/Texture.h>
 
-#include "Billboards.h"
-
 // --------------------------------------------------------------------------
 // misc
 
 class CLineRenderer;
 extern CLineRenderer*	gLineRenderer;
 
-extern CBillboards*	gBillboardsNormal;
-extern CBillboards*	gBillboardsNoDestA;
 extern SVector4			gScreenFixUVs;
 
 extern sg_sampler s_smp_linear_repeat;

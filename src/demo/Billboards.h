@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../math/Vector3.h"
 #include "external/sokol_gfx.h"
-#include <vector>
 
 struct SOBillboard {
 public:
@@ -14,24 +12,6 @@ public:
 	sg_view			texture;
 };
 
-class CBillboards {
-public:
-	CBillboards(sg_buffer ib, sg_sampler sampler);
-	
-	SOBillboard& addBill() { mBills.push_back(SOBillboard()); return mBills.back(); };
-	void clear() { mBills.clear(); }
-	void renderBills();
-
-private:
-	struct TVertex {
-		SVector3	p;
-		uint32_t	diffuse;
-		float		tu, tv;
-	};
-	typedef std::vector<SOBillboard>	TBillVector;
-
-private:
-	sg_buffer mIB;
-	sg_sampler mSampler;
-	TBillVector mBills;
-};
+SOBillboard& billboards_add();
+void billboards_clear();
+void billboards_render();

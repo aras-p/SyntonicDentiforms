@@ -4,6 +4,7 @@
 
 #include <src/gfx/DynamicVBManager.h>
 
+#include "Billboards.h"
 #include "Demo.h"
 #include "DemoResources.h"
 #include "Effect.h"
@@ -77,10 +78,8 @@ SSceneCut	gCut;
 
 // --------------------------------------------------------------------------
 
-// line renderer, billboards
+// line renderer
 CLineRenderer*	gLineRenderer;
-CBillboards*	gBillboardsNormal;
-CBillboards*	gBillboardsNoDestA;
 
 // camera
 CCameraEntity	gCamera;
@@ -113,8 +112,6 @@ static bool gPreload()
 	effects_init();
 	return true;
 }
-
-static sg_buffer s_ib_quads;
 
 sg_sampler s_smp_linear_repeat;
 sg_sampler s_smp_linear_clamp;
@@ -261,28 +258,6 @@ bool demo_init()
 
 	dynamic_vb_init(2 * 1024 * 1024);
 
-	// ------------------------------
-	//  shared index buffers, etc
-	
-	{
-		// Fills 6 indices for a quad in this way:
-		//	0----13
-		//	|   / |
-		//	| /   |
-		//	25----4
-		// Here vertex 0 is upper left, 1 is upper right, 2 is lower right, 3 is lower left (so clockwise).
-		uint16_t quadIBData[6] = { 0, 1, 3, 1, 2, 3 };
-		sg_buffer_desc desc = {};
-		desc.usage.index_buffer = true;
-		desc.data.ptr = quadIBData;
-		desc.data.size = 6 * 2;
-		desc.usage.immutable = true;
-		s_ib_quads = sg_make_buffer(&desc);
-        assert(sg_query_buffer_state(s_ib_quads) == SG_RESOURCESTATE_VALID);
-	}
-
-	gBillboardsNormal = new CBillboards(s_ib_quads, s_smp_linear_clamp);
-	gBillboardsNoDestA = new CBillboards(s_ib_quads, s_smp_linear_clamp);
 	gLineRenderer = new CLineRenderer();
 
 	// --------------------------------
@@ -479,8 +454,7 @@ static void gRenderCredits( float cutAlpha )
 	int i;
 	const bool outer = (gSceneMode==SC_OUTER);
 
-	CBillboards& bills = *gBillboardsNoDestA;
-	bills.clear();
+	billboards_clear();
 
 	const float CENTER_X = outer ? -0.02f : -0.2f;
 	const float TOP_Y = outer ? 0.6f : 0.7f;
@@ -558,7 +532,7 @@ static void gRenderCredits( float cutAlpha )
 		const float edgeBill = edgeDistX * (1.0f + (float)i/BILLCOUNT*0.5f );
 		SOBillboard* b;
 		// left...
-		b = &bills.addBill();
+		b = &billboards_add();
 		b->x1 = CENTER_X - edgeBill - WIDTH;	b->y1 = TOP_Y;
 		b->x2 = b->x1 + WIDTH;					b->y2 = b->y1 + HEIGHT;
 		if( outer ) {
@@ -572,7 +546,7 @@ static void gRenderCredits( float cutAlpha )
 		b->texture = btex->view_tex;
 		b->color = BILLCOL;
 		// right...
-		b = &bills.addBill();
+		b = &billboards_add();
 		b->x1 = CENTER_X + edgeBill;			b->y1 = TOP_Y + SECOND_BILL_LOWER;
 		b->x2 = b->x1 + WIDTH;					b->y2 = b->y1 + HEIGHT;
 		if( outer ) {
@@ -587,7 +561,7 @@ static void gRenderCredits( float cutAlpha )
 	}
 
 	effect_apply(fx_billboardsNoDestAlpha);
-	bills.renderBills();
+	billboards_render();
 }
 
 bool demo_update()
@@ -599,8 +573,7 @@ bool demo_update()
 	float st = float(t - gSceneStartTime);
 	float sceneDur = gGetSceneDur();
 
-	gBillboardsNormal->clear();
-	gBillboardsNoDestA->clear();
+	billboards_clear();
 	
 	float znear = 0.1f, zfar = 50.0f;
 	float camfov = M_PI/4;
@@ -871,12 +844,9 @@ void demo_shutdown()
 		delete gScenes[i];
 	delete gSceneOut;
 	delete gLineRenderer;
-	delete gBillboardsNormal;
-	delete gBillboardsNoDestA;
 	delete gAnimSynch;
 
 	dynamic_vb_shutdown();
-	sg_destroy_buffer(s_ib_quads);
 }
 
 void demo_event(const sapp_event* evt)
