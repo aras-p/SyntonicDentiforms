@@ -17,7 +17,7 @@
 #include "LineRenderer.h"
 #include "MusicPlayer.h"
 
-#include <src/utils/AssertHelper.h>
+#include <assert.h>
 
 #include "external/sokol_app.h"
 #include "external/sokol_glue.h"
@@ -275,7 +275,7 @@ bool demo_init()
 		desc.data.size = 6 * 2;
 		desc.usage.immutable = true;
 		s_ib_quads = sg_make_buffer(&desc);
-		ASSERT_MSG(sg_query_buffer_state(s_ib_quads) == SG_RESOURCESTATE_VALID, "Failed to create Quad IB");
+        assert(sg_query_buffer_state(s_ib_quads) == SG_RESOURCESTATE_VALID);
 	}
 
 	gBillboardsNormal = new CRenderableOrderedBillboards(s_ib_quads, s_smp_linear_clamp);

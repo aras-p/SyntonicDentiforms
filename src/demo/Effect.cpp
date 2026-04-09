@@ -1,6 +1,6 @@
 #include "Effect.h"
 #include "DemoResources.h"
-#include "src/utils/AssertHelper.h"
+#include <assert.h>
 
 #include "../fx/billboards.glsl.h"
 #include "../fx/blit.glsl.h"
@@ -258,6 +258,6 @@ void effects_init()
 
 void effect_apply(Effect fx)
 {
-	ASSERT_MSG(s_fx_pipes[fx].id != 0, "Uninitialized effect pipeline");
+    assert(s_fx_pipes[fx].id != 0);
 	sg_apply_pipeline(s_fx_pipes[fx]);
 }

@@ -4,7 +4,7 @@
 #include "DemoResources.h"
 #include "SceneData.h"
 
-#include "src/utils/AssertHelper.h"
+#include <assert.h>
 
 CScene::CScene( int number )
 :	mNumber(number)
@@ -157,7 +157,7 @@ void CScene::render(eRenderMode renderMode, sg_bindings* binds)
 		effect_apply(fx_noshadowHi);
 		break;
 	default:
-		ASSERT_MSG(false, "Unknown render mode");
+        assert(false);
 	}
 
 	if (ubo0)

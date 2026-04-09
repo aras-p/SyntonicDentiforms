@@ -5,7 +5,7 @@
 #include "Effect.h"
 #include "DataFiles.h"
 #include <src/gfx/DynamicVBManager.h>
-#include <src/utils/AssertHelper.h>
+#include <assert.h>
 
 CLineRenderer::CLineRenderer()
 {
@@ -36,7 +36,7 @@ CLineRenderer::CLineRenderer()
 	desc.data.size = kSegments * kQuadSize * 2;
 	desc.usage.immutable = true;
 	mIB = sg_make_buffer(&desc);
-	ASSERT_MSG(sg_query_buffer_state(mIB) == SG_RESOURCESTATE_VALID, "Failed to create Lines IB");
+    assert(sg_query_buffer_state(mIB) == SG_RESOURCESTATE_VALID);
 
 	delete[] ib;
 }

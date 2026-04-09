@@ -1,6 +1,6 @@
 #include "MeshEntity.h"
 #include "DemoResources.h"
-#include "src/utils/AssertHelper.h"
+#include <assert.h>
 
 int CMeshEntity::mShadowIDGenerator = 0;
 
@@ -10,7 +10,7 @@ CMeshEntity::CMeshEntity(DataMesh type)
 {
     mMatrix.identify(); mWVPMatrix.identify();
     
-	ASSERT_MSG(type < DataMeshCOUNT, "Invalid mesh type");
+    assert(type < DataMeshCOUNT);
 	int shadowID = 0;
 	if (type == DataMeshBox)
 	{

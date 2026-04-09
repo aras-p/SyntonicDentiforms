@@ -3,7 +3,7 @@
 
 #include "Vertices.h"
 
-#include "src/utils/AssertHelper.h"
+#include <assert.h>
 
 
 CRenderableOrderedBillboards::CRenderableOrderedBillboards(
@@ -11,8 +11,8 @@ CRenderableOrderedBillboards::CRenderableOrderedBillboards(
 :	mIB( ib ),
 	mSampler(sampler)
 {
-	ASSERT_MSG(ib.id != 0, "Billboards need an index buffer");
-	ASSERT_MSG(sampler.id != 0, "Billboards need a sampler");
+    assert(ib.id != 0);
+    assert(sampler.id != 0);
 }
 
 CRenderableOrderedBillboards::~CRenderableOrderedBillboards()

@@ -1,6 +1,6 @@
 #include "Texture.h"
 
-#include "src/utils/AssertHelper.h"
+#include <assert.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
@@ -11,14 +11,14 @@ void sokol_texture::create(const sg_image_desc& desc)
 	assert(image.id == 0);
 
 	image = sg_make_image(&desc);
-	ASSERT_MSG(sg_query_image_state(image) == SG_RESOURCESTATE_VALID, "Failed to create Image");
+    assert(sg_query_image_state(image) == SG_RESOURCESTATE_VALID);
 
 	if (desc.usage.color_attachment)
 	{
 		sg_view_desc vdesc = {};
 		vdesc.color_attachment.image = image;
 		view_rt = sg_make_view(&vdesc);
-		ASSERT_MSG(sg_query_view_state(view_rt) == SG_RESOURCESTATE_VALID, "Failed to create RT View");
+        assert(sg_query_view_state(view_rt) == SG_RESOURCESTATE_VALID);
 	}
 
 	if (desc.usage.depth_stencil_attachment)
@@ -26,7 +26,7 @@ void sokol_texture::create(const sg_image_desc& desc)
 		sg_view_desc vdesc = {};
 		vdesc.depth_stencil_attachment.image = image;
 		view_z = sg_make_view(&vdesc);
-		ASSERT_MSG(sg_query_view_state(view_z) == SG_RESOURCESTATE_VALID, "Failed to create Z View");
+        assert(sg_query_view_state(view_z) == SG_RESOURCESTATE_VALID);
 	}
 
 	if (desc.usage.resolve_attachment)
@@ -34,14 +34,14 @@ void sokol_texture::create(const sg_image_desc& desc)
 		sg_view_desc vdesc = {};
 		vdesc.resolve_attachment.image = image;
 		view_resolve = sg_make_view(&vdesc);
-		ASSERT_MSG(sg_query_view_state(view_resolve) == SG_RESOURCESTATE_VALID, "Failed to create Resolve View");
+        assert(sg_query_view_state(view_resolve) == SG_RESOURCESTATE_VALID);
 	}
 
 	{
 		sg_view_desc vdesc = {};
 		vdesc.texture.image = image;
 		view_tex = sg_make_view(&vdesc);
-		ASSERT_MSG(sg_query_view_state(view_tex) == SG_RESOURCESTATE_VALID, "Failed to create Texture View");
+        assert(sg_query_view_state(view_tex) == SG_RESOURCESTATE_VALID);
 	}
 }
 

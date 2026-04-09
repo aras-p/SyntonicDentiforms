@@ -1,20 +1,20 @@
 #include "Mesh.h"
-#include "src/utils/AssertHelper.h"
+#include <assert.h>
 #include <vector>
 
 
 CMesh::CMesh(int vertCount, int idxCount, const CVertexFormat& vertFormat, int indexStride, const void* vbData, const void* ibData, int groupCount, const CGroup* groups)
 	: mGroups(groups, groups + groupCount)
 {
-	ASSERT_MSG(vertCount > 0, "bad vertex count");
-	ASSERT_MSG(idxCount > 0, "bad index count");
-	ASSERT_MSG(indexStride == 2 || indexStride == 4, "bad index stride");
-	ASSERT_MSG(groupCount >= 1 && groups != nullptr, "bad group info");
+    assert(vertCount > 0);
+    assert(idxCount > 0);
+    assert(indexStride == 2 || indexStride == 4);
+    assert(groupCount >= 1 && groups != nullptr);
 	mVertexCount = vertCount;
 	mIndexCount = idxCount;
 	mVertexFormat = vertFormat;
 	mVertexStride = vertFormat.calcVertexSize();
-	ASSERT_MSG(mVertexStride > 0, "bad vertex stride");
+    assert(mVertexStride > 0);
 	mIndexStride = indexStride;
 
 	// vertex buffer
@@ -33,7 +33,7 @@ CMesh::CMesh(int vertCount, int idxCount, const CVertexFormat& vertFormat, int i
 			desc.usage.immutable = false;
 		}
 		mVB = sg_make_buffer(&desc);
-		ASSERT_MSG(sg_query_buffer_state(mVB) == SG_RESOURCESTATE_VALID, "Failed to create Mesh VB");
+        assert(sg_query_buffer_state(mVB) == SG_RESOURCESTATE_VALID);
 	}
 
 	// index buffer
@@ -52,7 +52,7 @@ CMesh::CMesh(int vertCount, int idxCount, const CVertexFormat& vertFormat, int i
 			desc.usage.immutable = false;
 		}
 		mIB = sg_make_buffer(&desc);
-		ASSERT_MSG(sg_query_buffer_state(mIB) == SG_RESOURCESTATE_VALID, "Failed to create Mesh IB");
+        assert(sg_query_buffer_state(mIB) == SG_RESOURCESTATE_VALID);
 	}
 
 	// AABBs

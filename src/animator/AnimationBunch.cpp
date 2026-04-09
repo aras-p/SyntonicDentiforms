@@ -1,7 +1,7 @@
 #include "AnimationBunch.h"
 #include "AnimType.h"
 #include "SampledAnimation.h"
-#include "src/utils/AssertHelper.h"
+#include <assert.h>
 
 
 CAnimationBunch::~CAnimationBunch()
@@ -114,7 +114,7 @@ static void readSampledData(CAnimationBunch& bunch, FILE* f, int loop, int curve
             }
             break;
         default:
-            ASSERT_FAIL_MSG( "unknown animation sample type" );
+            assert(false);
         }
     }
 }
@@ -136,7 +136,7 @@ CAnimationBunch* load_animation(const char* path)
     fread( &magic, 1, 4, f );
     if( magic[0]!='D' || magic[1]!='A' || magic[2]!='N' || magic[3]!='I' )
     {
-        ASSERT_FAIL_MSG("File is not a valid animation file");
+        assert(false);
         return nullptr;
     }
     // read anim type
@@ -166,9 +166,7 @@ CAnimationBunch* load_animation(const char* path)
         readSampledData( *bunch, f, loopType, curveCount, groupCount );
         break;
     default:
-        {
-        ASSERT_FAIL_MSG("Animation file contains unknown anim type");
-        }
+        assert(false);
     }
 
     // close file

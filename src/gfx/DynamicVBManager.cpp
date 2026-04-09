@@ -1,5 +1,5 @@
 #include "DynamicVBManager.h"
-#include "src/utils/AssertHelper.h"
+#include <assert.h>
 
 static sg_buffer s_dynamic_buffer;
 
@@ -11,7 +11,7 @@ void dynamic_vb_init(size_t capacityBytes)
 	desc.usage.immutable = false;
 	desc.usage.dynamic_update = true;
 	s_dynamic_buffer = sg_make_buffer(&desc);
-	ASSERT_MSG(sg_query_buffer_state(s_dynamic_buffer) == SG_RESOURCESTATE_VALID, "Failed to create Dynamic VB");
+    assert(sg_query_buffer_state(s_dynamic_buffer) == SG_RESOURCESTATE_VALID);
 }
 
 void dynamic_vb_shutdown()
@@ -23,7 +23,7 @@ void dynamic_vb_shutdown()
 int dynamic_vb_append(const void* data, size_t size)
 {
 	int offset = sg_append_buffer(s_dynamic_buffer, {data, size});
-	ASSERT_MSG(!sg_query_buffer_overflow(s_dynamic_buffer), "Dynamic VB overflow");
+    assert(!sg_query_buffer_overflow(s_dynamic_buffer));
 	return offset;
 }
 
