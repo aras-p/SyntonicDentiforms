@@ -67,7 +67,6 @@ set (SOURCES
     src/math/Vector4.h
 
     src/utils/AssertHelper.h
-    src/utils/Singleton.h
     src/utils/STLUtils.h
     src/utils/StringHelper.h
 )
