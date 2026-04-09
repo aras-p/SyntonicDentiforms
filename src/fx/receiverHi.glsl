@@ -37,14 +37,35 @@ in vec3 hlf;
 in vec3 normal;
 in vec3 tolight;
 out vec4 frag_color;
+
+float sampleShadow(vec3 uv)
+{
+	const vec2 poisson[8] = vec2[](
+		vec2(-0.326, -0.406),
+		vec2(-0.840, -0.074),
+		vec2(-0.696,  0.457),
+		vec2(-0.203,  0.621),
+		vec2( 0.962, -0.195),
+		vec2( 0.473, -0.480),
+		vec2( 0.519,  0.767),
+		vec2( 0.185, -0.893)
+	);
+	vec2 scale = 1.5 / vec2(1024.0);
+
+	float sum = 0.0;
+	for (int i = 0; i < 8; ++i)
+	{
+		sum += texture(sampler2DShadow(texShadow, smpShadow), vec3(uv.xy + poisson[i] * scale, uv.z));
+	}
+	return sum * (1.0 / 8.0);
+}
+
 void main()
 {
 	vec3 uv;
 	uv.xyz = uvShadow.xyz / uvShadow.w;
 
-	float shadow = 0.0;
-	shadow += texture(sampler2DShadow(texShadow, smpShadow), uv);
-	//shadow /= 9.0;
+	float shadow = sampleShadow(uv);
 	
 	float cookie = texture(sampler2D(texCookie, smpCookie), uv.xy).r;
 	shadow *= cookie;
