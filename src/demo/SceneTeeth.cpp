@@ -6,7 +6,7 @@
 #include "DataFiles.h"
 #include "SceneData.h"
 #include <src/math/MathUtils.h>
-#include <src/utils/StringHelper.h>
+#include <stdio.h>
 
 const int TOTAL_FRAMES = 1500;
 
@@ -119,50 +119,47 @@ void CSceneTeeth::initialize()
 	// create axes
 
 	mAxesIdx[0] = mMeshes.size();
-	addStaticMesh("scene6/Axis1", DataMesh6Axis1);
+	addStaticMesh(DataMesh6Axis1);
 	mAxesIdx[1] = mMeshes.size();
-	addStaticMesh("scene6/Axis2", DataMesh6Axis2);
+	addStaticMesh(DataMesh6Axis2);
 
 	//
 	// create meshes
 
+	int tooth1Count = 0, tooth2Count = 0;
 	for( int i = 0; i < sd.count; ++i ) {
 		const SceneEntityData& e = sd.entities[i];
 		SVector3 rot0(e.rot0[0], e.rot0[1], e.rot0[2]);
 		SVector3 rot1(e.rot1[0], e.rot1[1], e.rot1[2]);
 		SMesh mesh;
-		mesh.name = e.name;
-		mesh.parent = e.parent;
-		mesh.parentIdx = -1;
+		mesh.parentIdx = e.parentIdx;
 		mesh.pos = SVector3(e.pos[0], e.pos[1], e.pos[2]);
 		mesh.rot = rot0 * (M_PI/180.0f);
 		mesh.rotVel = (rot1-rot0) * (mLength * M_PI / 180.0f);
 
 		// teeth?
-		if( CStringHelper::startsWith( mesh.name, "Tooth" ) ) {
+		if( e.mesh == DataMesh6Tooth1 || e.mesh == DataMesh6Tooth2 ) {
+			char toothName[16];
+			if( e.mesh == DataMesh6Tooth1 )
+				snprintf( toothName, sizeof(toothName), "Tooth1_%d", tooth1Count++ );
+			else
+				snprintf( toothName, sizeof(toothName), "Tooth2_%d", tooth2Count++ );
 			bool found = false;
 			for( int j = 0; j < TEETHPACKS; ++j ) {
-				found = mAnimTeeth[j]->possiblyAddTooth( mesh.name, mMeshes.size() );
+				found = mAnimTeeth[j]->possiblyAddTooth( toothName, mMeshes.size() );
 				if( found )
 					break;
 			}
 			assert( found );
-			if( CStringHelper::startsWith( mesh.name, "Tooth1_" ) ) {
-				mesh.name = "Tooth1";
-				mesh.parentIdx = 0;
-			} else {
-				mesh.name = "Tooth2";
-				mesh.parentIdx = 1;
-			}
 		}
 		// gear?
-		if( mesh.name == "Gear1" ) {
+		if( e.mesh == DataMesh6Gear1 ) {
 			mGearsIdx[0] = mMeshes.size();
-		} else if( mesh.name == "Gear2" ) {
+		} else if( e.mesh == DataMesh6Gear2 ) {
 			mGearsIdx[1] = mMeshes.size();
 		}
 
-		mesh.mesh = new CMeshEntity(find_mesh_by_name(mNumber, mesh.name.c_str()));
+		mesh.mesh = new CMeshEntity(e.mesh);
 		mMeshes.push_back( mesh );
 		toMatrix( mesh.pos, mesh.rot, mesh.mesh->mMatrix );
 	}

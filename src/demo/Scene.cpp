@@ -32,13 +32,11 @@ void CScene::initialize()
 		SVector3 rot0(e.rot0[0], e.rot0[1], e.rot0[2]);
 		SVector3 rot1(e.rot1[0], e.rot1[1], e.rot1[2]);
 		SMesh mesh;
-		mesh.name = e.name;
-		mesh.parent = e.parent;
-		mesh.parentIdx = -1;
+		mesh.parentIdx = e.parentIdx;
 		mesh.pos = SVector3(e.pos[0], e.pos[1], e.pos[2]);
 		mesh.rot = rot0 * (M_PI/180.0f);
 		mesh.rotVel = (rot1-rot0) * (mLength * M_PI / 180.0f);
-		mesh.mesh = new CMeshEntity(find_mesh_by_name(mNumber, mesh.name.c_str()));
+		mesh.mesh = new CMeshEntity(e.mesh);
 		mMeshes.push_back( mesh );
 
 		toMatrix( mesh.pos, mesh.rot, mesh.mesh->mMatrix );
@@ -48,8 +46,7 @@ void CScene::initialize()
 	// calculate hierarchy traversal order
 
 	for( int i = 0; i < (int)mMeshes.size(); ++i ) {
-		if( mMeshes[i].parent == "NONE" ) {
-			mMeshes[i].parentIdx = -1;
+		if( mMeshes[i].parentIdx == -1 ) {
 			recurseAdd( i );
 		}
 	}
@@ -61,19 +58,15 @@ void CScene::recurseAdd( int idx )
 	mEvalOrder.push_back( idx );
 	int n = mMeshes.size();
 	for( int i = 0; i < n; ++i ) {
-		if( mMeshes[i].parent == mMeshes[idx].name ) {
-			assert( mMeshes[i].parentIdx == -1 );
-			mMeshes[i].parentIdx = idx;
+		if( mMeshes[i].parentIdx == idx ) {
 			recurseAdd( i );
 		}
 	}
 }
 
-CMeshEntity* CScene::addStaticMesh(const std::string& name, DataMesh data)
+CMeshEntity* CScene::addStaticMesh(DataMesh data)
 {
 	SMesh mesh;
-	mesh.name = name;
-	mesh.parent = "NONE";
 	mesh.mesh = new CMeshEntity(data);
 	mesh.pos.set(0,0,0);
 	mesh.rot.set(0,0,0);

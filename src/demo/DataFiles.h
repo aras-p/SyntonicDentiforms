@@ -103,5 +103,3 @@ extern CMesh* g_data_mesh[DataMeshCOUNT];
 extern CAnimationBunch* g_data_anim[DataAnimCOUNT];
 
 bool load_data_files();
-
-DataMesh find_mesh_by_name(int scene, const char* name);

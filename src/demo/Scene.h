@@ -7,8 +7,6 @@
 class CScene {
 public:
 	struct SMesh {
-		std::string		name;
-		std::string		parent;
 		CMeshEntity*	mesh;
 		SVector3		pos;
 		SVector3		rot;
@@ -32,7 +30,7 @@ public:
 
 	int		getLength() const { return mLength; }
 
-	CMeshEntity* addStaticMesh(const std::string& name, DataMesh data);
+	CMeshEntity* addStaticMesh(DataMesh data);
 
 	void	addCut( float frame );
 	float	getPastCut( float t ) const;

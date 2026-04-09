@@ -123,17 +123,3 @@ bool load_data_files()
 	return true;
 }
 
-DataMesh find_mesh_by_name(int scene, const char* name)
-{
-	int prefixLen = strlen("data/mesh/scene");
-	for (int idx = DataMeshCubePZ + 1; idx < DataMeshCOUNT; ++idx)
-	{
-		if (kMeshPaths[idx][prefixLen] != '0' + scene)
-			continue;
-		if (strncmp(name, kMeshPaths[idx] + prefixLen + 2, strlen(name)) != 0)
-			continue;
-		if (kMeshPaths[idx][prefixLen + 2 + strlen(name)] == '.')
-			return (DataMesh)idx;
-	}
-	return DataMeshCOUNT;
-}

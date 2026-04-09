@@ -90,7 +90,6 @@ SMatrix4x4		gLightViewProjMatrix;
 CCameraEntity	gLightCamera;
 // reflective wals
 CMeshEntity*	gWallMeshes[CFACE_COUNT];
-const char*		gWallNames[CFACE_COUNT] = { "CubePX", "CubeNX", "CubePY", "CubeNY", "CubePZ", "CubeNZ" };
 DataMesh        gWallData[CFACE_COUNT] = { DataMeshCubePX, DataMeshCubeNX, DataMeshCubePY, DataMeshCubeNY, DataMeshCubePZ, DataMeshCubeNZ, };
 CCameraEntity	gWallCamera;
 
@@ -309,9 +308,9 @@ bool demo_init()
 		else
 			gScenes[s] = new CScene(s+1);
 		gScenes[s]->initialize();
-		gScenes[s]->addStaticMesh("Cube", DataMeshCube);
+		gScenes[s]->addStaticMesh(DataMeshCube);
 		for( int i = 0; i < CFACE_COUNT; ++i )
-			gWallMeshes[i] = gScenes[s]->addStaticMesh(gWallNames[i], gWallData[i]);
+			gWallMeshes[i] = gScenes[s]->addStaticMesh(gWallData[i]);
 	}
 
 	gSceneOut->addCut( 110 );

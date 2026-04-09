@@ -65,7 +65,6 @@ set (SOURCES
     src/math/Vector4.h
 
     src/utils/AssertHelper.h
-    src/utils/StringHelper.h
 )
 
 add_executable(Demo ${SOURCES})
