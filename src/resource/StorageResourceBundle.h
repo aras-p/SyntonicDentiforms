@@ -1,16 +1,15 @@
 #pragma once
 
-#include "ResourceBundle.h"
-#include "ResourceId.h"
 #include <map>
 #include <vector>
+#include <string>
 #include <assert.h>
 
 
 template<class T>
-class CStorageResourceBundle : public IResourceBundle {
+class CStorageResourceBundle {
 private:
-	typedef std::map<CResourceId, T*>	TResourceMap;
+	typedef std::map<std::string, T*>	TResourceMap;
 	
 public:
 	virtual ~CStorageResourceBundle() {}
@@ -19,7 +18,7 @@ public:
 	 *  Gets or loads resource given it's name.
 	 *  Name is without pre-path and without file extension.
 	 */
-	T* getResourceById( const CResourceId& id ) {
+	T* getResourceById( const std::string& id ) {
 		// find if already loaded
 		T* resource = findResource( id );
 		if( resource )
@@ -37,7 +36,7 @@ public:
 	}
 
 	// NOTE: deletes the resource, so make sure no one references it!
-	void clearResourceById( CResourceId const& id ) {
+	void clearResourceById( std::string const& id ) {
 		typename TResourceMap::iterator it = mResourceMap.find( id );
 		if( it != mResourceMap.end() ) {
 			assert( (*it).second );
@@ -59,7 +58,7 @@ public:
 protected:
 	CStorageResourceBundle( const std::string& preDir ) : mPreDir(preDir) { }
 
-	T* findResource( CResourceId const& id ) {
+	T* findResource( std::string const& id ) {
         typename TResourceMap::const_iterator it = mResourceMap.find( id );
 		return ( ( it != mResourceMap.end() ) ? it->second : NULL );
 	}
@@ -69,11 +68,11 @@ protected:
 	 *  all extensions. Simpler ones can just append predir and extension
 	 *  to id and use loadResourceById(), or some other bundle to load.
 	 */
-	virtual T* tryLoadResourceById( const CResourceId& id ) {
+	virtual T* tryLoadResourceById( const std::string& id ) {
 		// try all extensions
 		int n = mExtensions.size();
 		for( int i = 0; i < n; ++i ) {
-			CResourceId idWithPathExt( mPreDir + id.getUniqueName() + mExtensions[i] );
+			std::string idWithPathExt( mPreDir + id + mExtensions[i] );
 			
 			T* resource = loadResourceById( id, idWithPathExt );
 			if( resource )
@@ -91,7 +90,7 @@ protected:
 	 *  @param id Resource ID.
 	 *  @param fullName Resource ID with predir, name and extension applied.
 	 */
-	virtual T* loadResourceById( const CResourceId& id, const CResourceId& fullName ) = 0;
+	virtual T* loadResourceById( const std::string& id, const std::string& fullName ) = 0;
 	virtual void deleteResource( T& resource ) = 0;	
 
 protected:

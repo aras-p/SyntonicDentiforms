@@ -70,12 +70,9 @@ set (SOURCES
     src/resource/AnimationBundle.cpp
     src/resource/AnimationBundle.h
     src/resource/BundleSingleton.h
-    src/resource/ResourceBundle.h
-    src/resource/ResourceId.h
     src/resource/StorageResourceBundle.h
     
     src/utils/AssertHelper.h
-    src/utils/MemUtil.h
     src/utils/noncopyable.h
     src/utils/Singleton.h
     src/utils/STLUtils.h

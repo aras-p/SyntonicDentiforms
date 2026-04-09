@@ -21,16 +21,16 @@ static inline std::string gReadString( FILE* f )
 	return str;
 }
 
-CAnimationBunch* CAnimationBundle::loadResourceById( const CResourceId& id, const CResourceId& fullName )
+CAnimationBunch* CAnimationBundle::loadResourceById( const std::string& id, const std::string& fullName )
 {
 	// try open file
-	FILE* f = fopen( fullName.getUniqueName().c_str(), "rb" );
+	FILE* f = fopen( fullName.c_str(), "rb" );
 	if( !f )
 		return NULL;
 	assert( f );
 
 	// create bunch
-	CAnimationBunch* bunch = new CAnimationBunch( id.getUniqueName() );
+	CAnimationBunch* bunch = new CAnimationBunch(id);
 	assert( bunch );
 
 	// read magic

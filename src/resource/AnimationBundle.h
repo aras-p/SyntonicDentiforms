@@ -16,7 +16,7 @@ public:
 	}
 
 protected:
-	virtual CAnimationBunch* loadResourceById( const CResourceId& id, const CResourceId& fullName );
+	virtual CAnimationBunch* loadResourceById( const std::string& id, const std::string& fullName );
 	virtual void deleteResource( CAnimationBunch& resource ) { delete &resource; }
 	
 private:
