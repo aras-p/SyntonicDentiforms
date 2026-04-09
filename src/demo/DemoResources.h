@@ -7,6 +7,15 @@
 #include <src/math/Matrix4x4.h>
 #include <src/gfx/Texture.h>
 
+// Something with MSAA reflection texture resolves causes garbage
+// on the web, both in Chrome / macOS 15.7 and Safari / iOS 18 on Apple systems.
+// So just do reflections without MSAA on the web, LOL!
+#if defined(__EMSCRIPTEN__)
+constexpr bool kReflectionsAA = false;
+#else
+constexpr bool kReflectionsAA = true;
+#endif
+
 // --------------------------------------------------------------------------
 // misc
 

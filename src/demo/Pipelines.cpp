@@ -223,6 +223,8 @@ void pipelines_init()
 		desc.cull_mode = SG_CULLMODE_FRONT;
 		s_fx_pipes[pip_renderLitShadowed] = sg_make_pipeline(desc);
 
+        if (!kReflectionsAA)
+            desc.sample_count = 1;
 		desc.cull_mode = SG_CULLMODE_BACK; // reflection; inverted culling
 		s_fx_pipes[pip_renderLitShadowedFlip] = sg_make_pipeline(desc);
 	}
