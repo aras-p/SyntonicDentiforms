@@ -19,19 +19,25 @@ jobs:
       - name: install-ninja
         run: |
           sudo apt-get update && sudo apt-get install -y ninja-build
-      - name: prepare
+      - name: prepare emscripten
         run: |
           git clone https://github.com/emscripten-core/emsdk
           cd emsdk
           ./emsdk install 5.0.5
           ./emsdk activate 5.0.5
           cd ..
+      - name: Download sokol-shdc
+        run: |
+          mkdir -p tools/bin
+          URL="https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/linux/sokol-shdc"
+          OUT="tools/sokol-shdc"
+          curl -L -o "$OUT" "$URL"
+          chmod +x "$OUT"      
       - name: build
         run: |
           source emsdk/emsdk_env.sh
           cmake --preset emscripten-release
           cmake --build --preset em-release
-          cd build/emscripten-release
           mv Demo.html index.html
           mkdir web
           cp Demo.wasm index.html Demo.js web
@@ -39,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: webpage
-          path: build/emscripten-release/web
+          path: web
           retention-days: 1
 
   deploy:

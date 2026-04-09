@@ -10,6 +10,27 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v4
+      - name: Download sokol-shdc (linux/mac)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          mkdir -p tools/bin
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            URL="https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/linux/sokol-shdc"
+          else
+            URL="https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/osx/sokol-shdc"
+          fi
+          OUT="tools/sokol-shdc"
+          curl -L -o "$OUT" "$URL"
+          chmod +x "$OUT"      
+      - name: Download sokol-shdc (win)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Invoke-WebRequest `
+            -Uri "https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/win32/sokol-shdc.exe" `
+            -OutFile "tools/sokol-shdc.exe"          
+
       - name: prepare-linux
         if: runner.os == 'Linux'
         run: |
@@ -29,13 +50,20 @@ jobs:
       - name: install-ninja
         run: |
           sudo apt-get update && sudo apt-get install -y ninja-build
-      - name: prepare
+      - name: prepare emscripten
         run: |
           git clone https://github.com/emscripten-core/emsdk
           cd emsdk
           ./emsdk install 5.0.5
           ./emsdk activate 5.0.5
           cd ..
+      - name: Download sokol-shdc
+        run: |
+          mkdir -p tools/bin
+          URL="https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/linux/sokol-shdc"
+          OUT="tools/sokol-shdc"
+          curl -L -o "$OUT" "$URL"
+          chmod +x "$OUT"      
       - name: build
         run: |
           source emsdk/emsdk_env.sh
