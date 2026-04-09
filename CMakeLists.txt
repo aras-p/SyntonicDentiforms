@@ -2,32 +2,84 @@ cmake_minimum_required(VERSION 3.20)
 project(SyntonicDentiforms)
 
 add_executable(Demo
+    src/animator/Animation.h
     src/animator/AnimationBunch.cpp
-    src/gfx/DynamicVBManager.cpp
-    src/gfx/Mesh.cpp
-    src/gfx/RenderableOrderedBillboards.cpp
-    src/gfx/Texture.cpp
-    src/gfx/VertexFormat.cpp
-    src/math/Vector3.cpp
-    src/math/Vector4.cpp
-    src/resource/AnimationBundle.cpp
-    src/utils/StringHelper.cpp
-
+    src/animator/AnimationBunch.h
+    src/animator/AnimCurve.h
+    src/animator/AnimType.h
+    src/animator/SampledAnimation.h
+    
     src/demo/Anim.cpp
+    src/demo/Anim.h
     src/demo/DataFiles.cpp
+    src/demo/DataFiles.h
     src/demo/Demo.cpp
+    src/demo/Demo.h
+    src/demo/DemoResources.h
     src/demo/Effect.cpp
+    src/demo/Effect.h
     src/demo/Entity.cpp
+    src/demo/Entity.h
     src/demo/Glare.cpp
+    src/demo/Glare.h
+    src/demo/Globals.h
     src/demo/LineRenderer.cpp
+    src/demo/LineRenderer.h
     src/demo/main.cpp
     src/demo/MeshEntity.cpp
+    src/demo/MeshEntity.h
     src/demo/MusicPlayer.cpp
+    src/demo/MusicPlayer.h
     src/demo/RenderCamera.cpp
+    src/demo/RenderCamera.h
     src/demo/Scene.cpp
+    src/demo/Scene.h
     src/demo/SceneOut.cpp
+    src/demo/SceneOut.h
     src/demo/SceneTeeth.cpp
+    src/demo/SceneTeeth.h
     src/demo/TextureProjector.cpp
+    src/demo/TextureProjector.h
+
+    src/gfx/DynamicVBManager.cpp
+    src/gfx/DynamicVBManager.h
+    src/gfx/Mesh.cpp
+    src/gfx/Mesh.h
+    src/gfx/RenderableOrderedBillboards.cpp
+    src/gfx/RenderableOrderedBillboards.h
+    src/gfx/Texture.cpp
+    src/gfx/Texture.h
+    src/gfx/VertexFormat.cpp
+    src/gfx/VertexFormat.h
+    src/gfx/Vertices.h
+    
+    src/math/AABox.h
+    src/math/Constants.h
+    src/math/Interpolation.h
+    src/math/Line3.h
+    src/math/MathUtils.h
+    src/math/Matrix4x4.h
+    src/math/Plane.h
+    src/math/Quaternion.h
+    src/math/TypeTraits.h
+    src/math/Vector3.cpp
+    src/math/Vector3.h
+    src/math/Vector4.cpp
+    src/math/Vector4.h
+
+    src/resource/AnimationBundle.cpp
+    src/resource/AnimationBundle.h
+    src/resource/BundleSingleton.h
+    src/resource/ResourceBundle.h
+    src/resource/ResourceId.h
+    src/resource/StorageResourceBundle.h
+    
+    src/utils/AssertHelper.h
+    src/utils/MemUtil.h
+    src/utils/noncopyable.h
+    src/utils/Singleton.h
+    src/utils/STLUtils.h
+    src/utils/StringHelper.h
 )
 
 target_include_directories(Demo PRIVATE

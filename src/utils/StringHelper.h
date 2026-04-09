@@ -5,16 +5,6 @@
 
 class CStringHelper {
 public:
-	/** Replaces tabs with single spaces. */
-	static void replaceTabs( std::string& s );
-	/** Replaces line ends with single spaces. */
-	static void replaceLineEnds( std::string& s );
-	/** Replaces white space with single spaces. */
-	static void replaceWhitespace( std::string& s );
-
-	/** Trims whitespace from ends. */
-	static void trimString( std::string& s );
-	
 	static bool isLetter( char c ) { return isalpha(c)?true:false; }
 	static bool isDigit( char c ) { return isdigit(c)?true:false; }
 	///** checks is string format [whitespace] [sign] [digits] [.digits] [ {d | D | e | E }[sign]digits] */
@@ -22,25 +12,15 @@ public:
 	///** checks is string format [whitespace] [sign] [digits] */
 	//static bool isInt( const std::string& s );
 	
-	/** Is valid name? Names can be letters, numbers and '_', and start with non-number. */
-	static bool isName( const std::string& s );
-
-	static bool equalsIgnoreCase( const std::string& s0, const std::string& s1 );
-
 	static bool startsWith( const std::string& s, const std::string& subs ) {
 		return s.find( subs ) == 0;
 	}
 	static bool endsWith( const std::string& s, const std::string& subs ) {
 		return s.find( subs ) == (s.length() - subs.length());
 	}
-	static void stripPrefix( std::string& s, const std::string& prefix );
-	
 	static char toLower( char c ) { return tolower(c); }
 	static char toUpper( char c ) { return toupper(c); }
 	static void toLower( std::string& s );
 	static void toUpper( std::string& s );
-	
-	static std::string floatValue( float f );
-	static std::string intValue( int i );
 };
 
