@@ -1,10 +1,10 @@
 #pragma once
 
-#include <src/animator/AnimationBunch.h>
 #include <src/math/Matrix4x4.h>
 #include <src/math/Vector3.h>
 #include <src/math/Quaternion.h>
 
+#include "DataFiles.h"
 
 class CAnim {
 public:
@@ -16,7 +16,7 @@ public:
 	};
 
 public:
-	CAnim( const std::string& animation, const std::string& curve, int anims = ALL );
+    CAnim(DataAnim animation, const std::string& curve, int anims = ALL);
 
 	void	setDefaultPos( const SVector3& pos ) { mDefaultPos = pos; }
 	void	setDefaultRot( const SQuaternion& rot ) { mDefaultRot = rot; }

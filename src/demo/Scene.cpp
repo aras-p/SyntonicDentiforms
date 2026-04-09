@@ -3,16 +3,13 @@
 
 #include "DemoResources.h"
 
+#include "src/utils/AssertHelper.h"
+
 CScene::CScene( int number )
 :	mNumber(number)
 {
-	//
-	// load anims
-
-	char buf[100];
-	sprintf( buf, "Anim%i", number );
-	mAnimLight = new CAnim( buf, "Light" );
-	mAnimCamera = new CAnim( buf, "Camera" );
+	mAnimLight = new CAnim((DataAnim)(DataAnimAnim0 + number), "Light" );
+	mAnimCamera = new CAnim((DataAnim)(DataAnimAnim0 + number), "Camera" );
 }
 
 CScene::~CScene()

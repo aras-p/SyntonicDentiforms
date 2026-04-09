@@ -17,6 +17,8 @@
 #include "LineRenderer.h"
 #include "MusicPlayer.h"
 
+#include <src/utils/AssertHelper.h>
+
 #include "external/sokol_app.h"
 #include "external/sokol_glue.h"
 
@@ -107,13 +109,6 @@ static bool gPreload()
 	if (!load_data_files())
 		return false;
 	effects_init();
-	// anims...
-	RGET_ANIM("Anim0"); RGET_ANIM("Anim1"); RGET_ANIM("Anim2");
-	RGET_ANIM("Anim3"); RGET_ANIM("Anim4"); RGET_ANIM("Anim5");
-	RGET_ANIM("Anim6");
-	RGET_ANIM("Synch");
-	RGET_ANIM("6/Axes");
-	RGET_ANIM("6/TeethA"); RGET_ANIM("6/TeethB"); RGET_ANIM("6/TeethC"); RGET_ANIM("6/TeethD");
 	return true;
 }
 
@@ -262,11 +257,6 @@ bool demo_init()
 	};
 	*/
 
-	//
-	// resources
-
-	CAnimationBundle::init("data/anim/");
-
 	dynamic_vb_init(2 * 1024 * 1024);
 
 	// ------------------------------
@@ -306,7 +296,7 @@ bool demo_init()
 	// --------------------------------
 	// synch
 
-	gAnimSynch = new CAnim( "Synch", "BeatBox", CAnim::POSITION );
+    gAnimSynch = new CAnim(DataAnimSynch, "BeatBox", CAnim::POSITION);
 
 	// --------------------------------
 	// scenes
@@ -885,8 +875,6 @@ void demo_shutdown()
 
 	dynamic_vb_shutdown();
 	sg_destroy_buffer(s_ib_quads);
-
-	CAnimationBundle::finalize();
 }
 
 void demo_event(const sapp_event* evt)

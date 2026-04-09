@@ -15,10 +15,10 @@ const int BLOB_BLUR_PASSES = 5;
 // --------------------------------------------------------------------------
 
 
-CTeethAnim::CTeethAnim( const std::string& animation, int startFrame, int endFrame )
+CTeethAnim::CTeethAnim(DataAnim animation, int startFrame, int endFrame)
 {
 	int i;
-	mAnim = RGET_ANIM(animation);
+    mAnim = g_data_anim[animation];
 	mPosAnim = mAnim->findVector3Anim( "pos" );
 	assert( mPosAnim );
 	mRotAnim = mAnim->findQuatAnim( "rot" );
@@ -93,12 +93,12 @@ bool CTeethAnim::possiblyAddTooth( const std::string& name, int index )
 CSceneTeeth::CSceneTeeth( int number )
 :	CScene(number)
 {
-	mAnimTeeth[0] = new CTeethAnim( "6/TeethA", 350, 480 );
-	mAnimTeeth[1] = new CTeethAnim( "6/TeethB", 490, 590 );
-	mAnimTeeth[2] = new CTeethAnim( "6/TeethC", 745, 860 );
-	mAnimTeeth[3] = new CTeethAnim( "6/TeethD", 860, 965 );
-	mAnimAxes[0] = new CAnim( "6/Axes", "Axis1", CAnim::POSITION | CAnim::ROTATION );
-	mAnimAxes[1] = new CAnim( "6/Axes", "Axis2", CAnim::POSITION | CAnim::ROTATION );
+	mAnimTeeth[0] = new CTeethAnim(DataAnim6TeethA, 350, 480 );
+	mAnimTeeth[1] = new CTeethAnim(DataAnim6TeethB, 490, 590 );
+	mAnimTeeth[2] = new CTeethAnim(DataAnim6TeethC, 745, 860 );
+	mAnimTeeth[3] = new CTeethAnim(DataAnim6TeethD, 860, 965 );
+	mAnimAxes[0] = new CAnim(DataAnim6Axes, "Axis1", CAnim::POSITION | CAnim::ROTATION );
+	mAnimAxes[1] = new CAnim(DataAnim6Axes, "Axis2", CAnim::POSITION | CAnim::ROTATION );
 }
 
 CSceneTeeth::~CSceneTeeth()

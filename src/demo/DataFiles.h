@@ -1,5 +1,6 @@
 #pragma once
 
+#include "src/animator/AnimationBunch.h"
 #include "src/gfx/Mesh.h"
 #include "src/gfx/Texture.h"
 
@@ -79,8 +80,27 @@ enum DataMesh {
 	DataMeshCOUNT
 };
 
+enum DataAnim {
+    DataAnimAnim0,
+    DataAnimAnim1,
+    DataAnimAnim2,
+    DataAnimAnim3,
+    DataAnimAnim4,
+    DataAnimAnim5,
+    DataAnimAnim6,
+    DataAnimSynch,
+    DataAnim6Axes,
+    DataAnim6TeethA,
+    DataAnim6TeethB,
+    DataAnim6TeethC,
+    DataAnim6TeethD,
+    
+    DataAnimCOUNT
+};
+
 extern sokol_texture* g_data_tex[DataTexCOUNT];
 extern CMesh* g_data_mesh[DataMeshCOUNT];
+extern CAnimationBunch* g_data_anim[DataAnimCOUNT];
 
 bool load_data_files();
 

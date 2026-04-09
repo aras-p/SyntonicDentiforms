@@ -76,6 +76,23 @@ static const char* kMeshPaths[DataMeshCOUNT] = {
 
 CMesh* g_data_mesh[DataMeshCOUNT];
 
+static const char* kAnimPaths[DataAnimCOUNT] = {
+    "data/anim/Anim0.danim",
+    "data/anim/Anim1.danim",
+    "data/anim/Anim2.danim",
+    "data/anim/Anim3.danim",
+    "data/anim/Anim4.danim",
+    "data/anim/Anim5.danim",
+    "data/anim/Anim6.danim",
+    "data/anim/Synch.danim",
+    "data/anim/6/Axes.danim",
+    "data/anim/6/TeethA.danim",
+    "data/anim/6/TeethB.danim",
+    "data/anim/6/TeethC.danim",
+    "data/anim/6/TeethD.danim",
+};
+
+CAnimationBunch* g_data_anim[DataAnimCOUNT];
 
 bool load_data_files()
 {
@@ -95,6 +112,14 @@ bool load_data_files()
 			return false;
 		}
 	}
+    for (int i = 0; i < DataAnimCOUNT; ++i)
+    {
+        g_data_anim[i] = load_animation(kAnimPaths[i]);
+        if (g_data_anim[i] == nullptr)
+        {
+            return false;
+        }
+    }
 	return true;
 }
 

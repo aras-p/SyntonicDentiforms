@@ -8,7 +8,7 @@
 
 class CTeethAnim {
 public:
-	CTeethAnim( const std::string& animation, int startFrame, int endFrame );
+	CTeethAnim(DataAnim animation, int startFrame, int endFrame);
 	~CTeethAnim();
 
 	bool evaluate( float t );

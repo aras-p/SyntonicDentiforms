@@ -1,13 +1,13 @@
 #include "Anim.h"
 #include "Globals.h"
 
-CAnim::CAnim( const std::string& animation, const std::string& curve, int anims )
+CAnim::CAnim(DataAnim animation, const std::string& curve, int anims )
 :	mDefaultPos(0,0,0),
 	mDefaultRot(0,0,0,1),
 	mDefaultScale(1),
 	mPosAnim(0), mRotAnim(0), mScaleAnim(0)
 {
-	CAnimationBunch* ab = RGET_ANIM(animation);
+	CAnimationBunch* ab = g_data_anim[animation];
 	mCurve = ab->getCurveIndexByName( curve );
 	if( anims & POSITION ) {
 		mPosAnim = ab->findVector3Anim( "pos" );

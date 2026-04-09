@@ -67,11 +67,6 @@ set (SOURCES
     src/math/Vector4.cpp
     src/math/Vector4.h
 
-    src/resource/AnimationBundle.cpp
-    src/resource/AnimationBundle.h
-    src/resource/BundleSingleton.h
-    src/resource/StorageResourceBundle.h
-    
     src/utils/AssertHelper.h
     src/utils/noncopyable.h
     src/utils/Singleton.h

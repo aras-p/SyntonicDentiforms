@@ -28,10 +28,8 @@ public:
 	typedef IAnimation<float>		TFloatAnimation;
 
 public:
-	CAnimationBunch( const std::string& name ) : mName(name) { };
+	CAnimationBunch() { };
 	~CAnimationBunch();
-
-	const std::string& getName() const { return mName; }
 
 	/// Adds named Vector3 animation.
 	void addVector3Anim( const std::string& name, TVector3Animation& anim );
@@ -94,8 +92,6 @@ private:
 	TFloatAnimMap		mFloatAnims;
 
 	TCurveDescVector	mCurveDescs;
-
-	std::string			mName;
 };
 
 
@@ -166,4 +162,6 @@ inline int	CAnimationBunch::getCurveIndexByName( const std::string& name ) const
 	}
 	return -1;
 }
+
+CAnimationBunch* load_animation(const char* path);
 

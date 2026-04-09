@@ -1,5 +1,6 @@
 #include "MeshEntity.h"
 #include "DemoResources.h"
+#include "src/utils/AssertHelper.h"
 
 int CMeshEntity::mShadowIDGenerator = 0;
 
