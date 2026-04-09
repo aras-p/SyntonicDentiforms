@@ -12,6 +12,8 @@
 #include "external/sokol_gfx.h"
 #include "external/sokol_log.h"
 #include "external/sokol_glue.h"
+#define SOKOL_GFX_UTILS_IMPL
+#include "external/sokol_gfx_utils.h"
 
 #include "Demo.h"
 

@@ -22,6 +22,7 @@
 
 #include "external/sokol_app.h"
 #include "external/sokol_glue.h"
+#include "external/sokol_gfx_utils.h"
 
 #ifndef _DEBUG
 #define WITHMUSIC
@@ -849,6 +850,36 @@ void demo_shutdown()
 	dynamic_vb_shutdown();
 }
 
+static bool write_tga(const char* filename, const uint8_t* rgba, int width, int height)
+{
+	FILE* f = fopen(filename, "wb");
+	if (!f)
+		return false;
+
+	uint8_t header[18] = { 0 };
+	header[2] = 2; // uncompressed, true color
+	header[12] = (uint8_t)(width & 0xFF);
+	header[13] = (uint8_t)((width >> 8) & 0xFF);
+	header[14] = (uint8_t)(height & 0xFF);
+	header[15] = (uint8_t)((height >> 8) & 0xFF);
+	header[16] = 24;	// 24 bpp
+	header[17] = 0;		// no alpha, origin bottom left
+
+	fwrite(header, 1, sizeof(header), f);
+	for (int y = height - 1; y >= 0; --y)
+	{
+		const uint8_t* row = rgba + y * width * 4;
+		for (int x = 0; x < width; ++x)
+		{
+			const uint8_t* p = row + x * 4;
+			uint8_t bgr[4] = { p[2], p[1], p[0] };
+			fwrite(bgr, 1, 3, f);
+		}
+	}
+	fclose(f);
+	return true;
+}
+
 void demo_event(const sapp_event* evt)
 {
 	static bool spaceDown = false;
@@ -860,9 +891,53 @@ void demo_event(const sapp_event* evt)
 		if (evt->key_code == SAPP_KEYCODE_RIGHT)	gDebugTime += dt * 1.0f;
 		if (evt->key_code == SAPP_KEYCODE_PAGE_UP)	gDebugTime -= dt * 5.0f;
 		if (evt->key_code == SAPP_KEYCODE_PAGE_DOWN)		gDebugTime += dt * 5.0f;
+		if (evt->key_code == SAPP_KEYCODE_1) {
+			gSceneIndex = 1;
+			gSceneMode = SC_SCENE;
+			gSceneStartTime = gDebugTime-5.0f;
+		}
+		if (evt->key_code == SAPP_KEYCODE_2) {
+			gSceneIndex = 2;
+			gSceneMode = SC_SCENE;
+			gSceneStartTime = gDebugTime - 5.0f;
+		}
+		if (evt->key_code == SAPP_KEYCODE_3) {
+			gSceneIndex = 3;
+			gSceneMode = SC_SCENE;
+			gSceneStartTime = gDebugTime - 5.0f;
+		}
+		if (evt->key_code == SAPP_KEYCODE_4) {
+			gSceneIndex = 4;
+			gSceneMode = SC_SCENE;
+			gSceneStartTime = gDebugTime - 5.0f;
+		}
+		if (evt->key_code == SAPP_KEYCODE_5) {
+			gSceneIndex = 5;
+			gSceneMode = SC_SCENE;
+			gSceneStartTime = gDebugTime - 5.0f;
+		}
 		if (evt->key_code == SAPP_KEYCODE_SPACE && !spaceDown) {
 			gDebugTime += 1.0f;
 			spaceDown = true;
+		}
+		if (evt->key_code == SAPP_KEYCODE_F9) {
+			sg_image image = rt_main_resolved.image;
+			int width = sg_query_image_width(image);
+			int height = sg_query_image_height(image);
+			void* readback = sg_readback_request(image);
+			sg_readback_wait(readback);
+			uint8_t* data = new uint8_t[width * height * 4];
+			sg_readback_copy_data(readback, data);
+
+			static int shotCounter = 0;
+			++shotCounter;
+			char buf[100] = "shot00.tga";
+			buf[4] = '0' + (shotCounter / 10);
+			buf[5] = '0' + (shotCounter % 10);
+			write_tga(buf, data, width, height);
+
+			delete[] data;
+			sg_readback_destroy(readback);
 		}
 #endif
 		if (evt->key_code == SAPP_KEYCODE_ESCAPE) {
