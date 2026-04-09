@@ -1,8 +1,6 @@
 #pragma once
 
-#include "src/utils/noncopyable.h"
-
-#include "Animation.h"
+#include "SampledAnimation.h"
 #include "../math/Vector3.h"
 #include "../math/Quaternion.h"
 #include <string>
@@ -11,11 +9,11 @@
 #include <assert.h>
 
 
-class CAnimationBunch : public noncopyable {
+class CAnimationBunch {
 public:
-	typedef IAnimation<SVector3>	TVector3Animation;
-	typedef IAnimation<SQuaternion>	TQuatAnimation;
-	typedef IAnimation<float>		TFloatAnimation;
+    typedef CSampledAnimation<SVector3>	TVector3Animation;
+	typedef CSampledAnimation<SQuaternion>	TQuatAnimation;
+	typedef CSampledAnimation<float>		TFloatAnimation;
 
 public:
 	CAnimationBunch() { };

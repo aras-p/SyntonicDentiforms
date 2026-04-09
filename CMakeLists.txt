@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.20)
 project(SyntonicDentiforms)
 
 set (SOURCES
-    src/animator/Animation.h
     src/animator/AnimationBunch.cpp
     src/animator/AnimationBunch.h
     src/animator/AnimCurve.h
@@ -68,7 +67,6 @@ set (SOURCES
     src/math/Vector4.h
 
     src/utils/AssertHelper.h
-    src/utils/noncopyable.h
     src/utils/Singleton.h
     src/utils/STLUtils.h
     src/utils/StringHelper.h

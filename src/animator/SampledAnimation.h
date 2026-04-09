@@ -1,9 +1,9 @@
 #pragma once
 
 #include "AnimCurve.h"
-#include "Animation.h"
 #include "../math/TypeTraits.h"
-
+#include <vector>
+#include <assert.h>
 
 
 /**
@@ -13,7 +13,7 @@
  *  into single value).
  */
 template<typename value_type>
-class CSampledAnimation : public IAnimation<value_type> {
+class CSampledAnimation {
 public:
 	/**
 	 *  Animation loop type.
@@ -28,13 +28,10 @@ public:
 public:
 	CSampledAnimation( int samplesInCurve, eLoopType loopType ) : mSamplesInCurve(samplesInCurve), mLoopType(loopType) { };
 
-	void	addSample( const value_type& sample ) { mSamples.push_back(sample); }
-	void	reserveSamples( int sampleCount ) { mSamples.reserve(sampleCount); }
 	void	resizeSamples( int sampleCount ) { mSamples.resize(sampleCount); }
-	int		getTotalSampleCount() const { return mSamples.size(); }
 	const value_type& getSample( int index ) const
     {
-        assert( index>=0 && index < getTotalSampleCount() );
+        assert( index>=0 && index < mSamples.size() );
         return mSamples[index];
     }
 
@@ -42,11 +39,6 @@ public:
 	void	reserveCurves( int curveCount ) { mCurves.reserve(curveCount); }
 	int		getCurveCount() const { return mCurves.size(); }
 	const curve_type& getCurve( int index ) const;
-
-	int		getSamplesInCurve() const { return mSamplesInCurve; }
-
-	void		setLoopType( eLoopType loopType ) { mLoopType = loopType; }
-	eLoopType	getLoopType() const { return mLoopType; }
 
 	/**
 	 *  @param time Relative time (zero is start, one is end).
@@ -56,7 +48,7 @@ public:
 	/**
 	 *  @param time Relative time (zero is start, one is end).
 	 */
-	virtual void sample( float time, int firstCurve, int numCurves, value_type* dest, int destStride = sizeof(value_type) ) const;
+    void sample( float time, int firstCurve, int numCurves, value_type* dest, int destStride = sizeof(value_type) ) const;
 
 private:
 	typedef std::vector<value_type>	TSampleVector;
@@ -140,5 +132,3 @@ void CSampledAnimation<value_type>::sample( float time, int firstCurve, int numC
 		((const char*&)dest) += destStride;
 	};
 };
-
-

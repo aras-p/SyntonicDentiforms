@@ -1,7 +1,5 @@
 #pragma once
 
-#include "src/utils/noncopyable.h"
-
 #include "VertexFormat.h"
 #include "../math/Vector3.h"
 #include "../math/AABox.h"
@@ -13,7 +11,7 @@
 
 
 
-class CMesh : public noncopyable {
+class CMesh {
 public:
 	/**
 	 *  A subset of a mesh. Mesh can have multiple subsets, eg. when portions
