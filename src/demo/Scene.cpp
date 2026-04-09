@@ -2,6 +2,7 @@
 #include "Effect.h"
 
 #include "DemoResources.h"
+#include "SceneData.h"
 
 #include "src/utils/AssertHelper.h"
 
@@ -19,51 +20,34 @@ CScene::~CScene()
 		delete mMeshes[i].mesh;
 }
 
+static const SceneData* kSceneDatas[] = { nullptr, &kScene1, &kScene2, &kScene3, &kScene4, &kScene5, &kScene6 };
+
 void CScene::initialize()
 {
-	int i;
-	char buf[100];
-	sprintf( buf, "data/scene%i.txt", mNumber );
-	FILE* f = fopen( buf, "rt" );
-	assert( f );
+	const SceneData& sd = *kSceneDatas[mNumber];
+	mLength = sd.length;
 
-	int n;
-	float flen;
-	fscanf( f, "length = %f\n", &flen );
-	mLength = flen;
-	assert( mLength > 0 );
-	fscanf( f, "count = %i\n", &n );
-	assert( n > 0 );
-	char meshname[100], parentname[100];
-	SVector3 pos, rot0, rot1;
-
-	//
-	// read meshes
-
-	for( i = 0; i < n; ++i ) {
-		fscanf( f, "name=%s parent=%s\n", meshname, parentname );
-		fscanf( f, "pos=%f,%f,%f\n", &pos.x, &pos.y, &pos.z );
-		fscanf( f, "rot0=%f,%f,%f ", &rot0.x, &rot0.y, &rot0.z );
-		fscanf( f, "rot1=%f,%f,%f\n", &rot1.x, &rot1.y, &rot1.z );
+	for( int i = 0; i < sd.count; ++i ) {
+		const SceneEntityData& e = sd.entities[i];
+		SVector3 rot0(e.rot0[0], e.rot0[1], e.rot0[2]);
+		SVector3 rot1(e.rot1[0], e.rot1[1], e.rot1[2]);
 		SMesh mesh;
-		mesh.name = meshname;
-		mesh.parent = parentname;
+		mesh.name = e.name;
+		mesh.parent = e.parent;
 		mesh.parentIdx = -1;
-		mesh.pos = pos;
+		mesh.pos = SVector3(e.pos[0], e.pos[1], e.pos[2]);
 		mesh.rot = rot0 * (M_PI/180.0f);
-		mesh.rotVel = (rot1-rot0) * (mLength* M_PI /180.0f);
+		mesh.rotVel = (rot1-rot0) * (mLength * M_PI / 180.0f);
 		mesh.mesh = new CMeshEntity(find_mesh_by_name(mNumber, mesh.name.c_str()));
 		mMeshes.push_back( mesh );
 
 		toMatrix( mesh.pos, mesh.rot, mesh.mesh->mMatrix );
 	}
 
-	fclose( f );
-
 	//
 	// calculate hierarchy traversal order
 
-	for( i = 0; i < mMeshes.size(); ++i ) {
+	for( int i = 0; i < (int)mMeshes.size(); ++i ) {
 		if( mMeshes[i].parent == "NONE" ) {
 			mMeshes[i].parentIdx = -1;
 			recurseAdd( i );

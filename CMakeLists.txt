@@ -30,6 +30,7 @@ set (SOURCES
     src/demo/MusicPlayer.h
     src/demo/Scene.cpp
     src/demo/Scene.h
+    src/demo/SceneData.h
     src/demo/SceneOut.cpp
     src/demo/SceneOut.h
     src/demo/SceneTeeth.cpp

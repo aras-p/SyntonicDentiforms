@@ -4,6 +4,7 @@
 #include "Effect.h"
 #include "LineRenderer.h"
 #include "DataFiles.h"
+#include "SceneData.h"
 #include <src/math/MathUtils.h>
 #include <src/utils/StringHelper.h>
 
@@ -111,21 +112,8 @@ CSceneTeeth::~CSceneTeeth()
 
 void CSceneTeeth::initialize()
 {
-	int i;
-	char buf[100];
-	sprintf( buf, "data/scene%i.txt", mNumber );
-	FILE* f = fopen( buf, "rt" );
-	assert( f );
-
-	int n;
-	float flen;
-	fscanf( f, "length = %f\n", &flen );
-	mLength = flen;
-	assert( mLength > 0 );
-	fscanf( f, "count = %i\n", &n );
-	assert( n > 0 );
-	char meshname[100], parentname[100];
-	SVector3 pos, rot0, rot1;
+	const SceneData& sd = kScene6;
+	mLength = sd.length;
 
 	//
 	// create axes
@@ -136,26 +124,25 @@ void CSceneTeeth::initialize()
 	addStaticMesh("scene6/Axis2", DataMesh6Axis2);
 
 	//
-	// read meshes
+	// create meshes
 
-	for( i = 0; i < n; ++i ) {
-		fscanf( f, "name=%s parent=%s\n", meshname, parentname );
-		fscanf( f, "pos=%f,%f,%f\n", &pos.x, &pos.y, &pos.z );
-		fscanf( f, "rot0=%f,%f,%f ", &rot0.x, &rot0.y, &rot0.z );
-		fscanf( f, "rot1=%f,%f,%f\n", &rot1.x, &rot1.y, &rot1.z );
+	for( int i = 0; i < sd.count; ++i ) {
+		const SceneEntityData& e = sd.entities[i];
+		SVector3 rot0(e.rot0[0], e.rot0[1], e.rot0[2]);
+		SVector3 rot1(e.rot1[0], e.rot1[1], e.rot1[2]);
 		SMesh mesh;
-		mesh.name = meshname;
-		mesh.parent = parentname;
+		mesh.name = e.name;
+		mesh.parent = e.parent;
 		mesh.parentIdx = -1;
-		mesh.pos = pos;
+		mesh.pos = SVector3(e.pos[0], e.pos[1], e.pos[2]);
 		mesh.rot = rot0 * (M_PI/180.0f);
-		mesh.rotVel = (rot1-rot0) * (mLength* M_PI /180.0f);
+		mesh.rotVel = (rot1-rot0) * (mLength * M_PI / 180.0f);
 
 		// teeth?
 		if( CStringHelper::startsWith( mesh.name, "Tooth" ) ) {
 			bool found = false;
-			for( int i = 0; i < TEETHPACKS; ++i ) {
-				found = mAnimTeeth[i]->possiblyAddTooth( mesh.name, mMeshes.size() );
+			for( int j = 0; j < TEETHPACKS; ++j ) {
+				found = mAnimTeeth[j]->possiblyAddTooth( mesh.name, mMeshes.size() );
 				if( found )
 					break;
 			}
@@ -179,8 +166,6 @@ void CSceneTeeth::initialize()
 		mMeshes.push_back( mesh );
 		toMatrix( mesh.pos, mesh.rot, mesh.mesh->mMatrix );
 	}
-
-	fclose( f );
 }
 
 void CSceneTeeth::evaluateMeshes( float t )
