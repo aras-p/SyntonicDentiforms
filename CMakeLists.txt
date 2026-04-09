@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(SyntonicDentiforms)
 
-add_executable(Demo
+set (SOURCES
     src/animator/Animation.h
     src/animator/AnimationBunch.cpp
     src/animator/AnimationBunch.h
@@ -81,6 +81,9 @@ add_executable(Demo
     src/utils/STLUtils.h
     src/utils/StringHelper.h
 )
+
+add_executable(Demo ${SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
 target_include_directories(Demo PRIVATE
     ${CMAKE_SOURCE_DIR}
