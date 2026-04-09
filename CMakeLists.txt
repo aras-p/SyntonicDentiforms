@@ -80,8 +80,10 @@ function(add_sokol_shader target_name shader_file)
     set(SHADER_OUTPUT "${CMAKE_SOURCE_DIR}/${shader_file}.h")
     if(WIN32)
         set(SHADER_BACKENDS "hlsl5")
+    elseif(APPLE)
+        set(SHADER_BACKENDS "metal_macos")
     else()
-        set(SHADER_BACKENDS "glsl430:metal_macos")
+        set(SHADER_BACKENDS "glsl430")
     endif()
 
     add_custom_command(
