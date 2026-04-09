@@ -3,7 +3,7 @@
 #include "Billboards.h"
 #include "DemoResources.h"
 #include "Glare.h"
-#include "Effect.h"
+#include "Pipelines.h"
 #include "LineRenderer.h"
 #include "DataFiles.h"
 #include "SceneData.h"
@@ -327,7 +327,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 		bill->setWholeTexture();
 	}
 
-	effect_apply(masks ? fx_billboards : fx_billboardsNoDestAlpha);
+	pipeline_apply(masks ? pip_billboards : pip_billboardsClearDestAlpha);
 	billboards_render();
 	billboards_clear();
 }
@@ -357,7 +357,7 @@ void CSceneTeeth::renderTeethLines(int pack, float t)
 			//	c.a = 0.0f;
 			path[j].color = c.toRGBA();
 		}
-		effect_apply(fx_lines);
+		pipeline_apply(pip_renderLines);
 		gLineRenderer->renderStrip(PATH_SIZE, path, 0.05f);
 	}
 }
@@ -386,7 +386,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 		binds.views[1] = g_data_tex[DataTexColorLuts]->view_tex;
 		binds.samplers[0] = s_smp_linear_clamp;
 
-		effect_apply(fx_filterToon);
+		pipeline_apply(pip_postToon);
 		sg_apply_bindings(binds);
 		sg_draw(0, 4, 1);
 
@@ -415,7 +415,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 		toothMaskScale *= (1 - cutAlpha) / SCALEUP_ALPHA;
 	}
 
-	effect_apply(fx_renderWhite);
+	pipeline_apply(pip_renderWhite);
 	EntityUniformsVS uboVS = {};
 	uboVS.mat.identify(); // not really used
 	uboVS.matWV.identify(); // not really used
@@ -482,7 +482,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 		binds.views[2] = g_data_tex[DataTexAlphaEdge]->view_tex;
 		binds.samplers[0] = s_smp_linear_clamp;
 
-		effect_apply(fx_compositeAlpha);
+		pipeline_apply(pip_postComposeToon);
 		sg_apply_bindings(binds);
 		sg_draw(0, 4, 1);
 	}
@@ -504,7 +504,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 			c.a = 0.75f - fabsf( delta ) * 4;
 			path[j].color = c;
 		}
-		effect_apply(fx_lines);
+		pipeline_apply(pip_renderLines);
 		gLineRenderer->renderStrip( PATH_SIZE, path, 0.05f );
 	}
 	*/

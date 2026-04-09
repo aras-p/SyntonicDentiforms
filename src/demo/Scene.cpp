@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "Effect.h"
+#include "Pipelines.h"
 
 #include "DemoResources.h"
 #include "SceneData.h"
@@ -141,20 +141,20 @@ void CScene::render(eRenderMode renderMode, sg_bindings* binds)
 	bool ubo0 = true;
 	switch (renderMode) {
 	case RM_RECV_HI:
-		effect_apply(fx_receiverHi);
+		pipeline_apply(pip_renderLitShadowed);
 		break;
 	case RM_RECV_LO:
-		effect_apply(fx_receiverLo);
+		pipeline_apply(pip_renderLitShadowedFlip);
 		break;
 	case RM_SHADOW:
-		effect_apply(fx_caster);
+		pipeline_apply(pip_shadowCaster);
 		ubo0 = false;
 		break;
 	case RM_REFLECTIVE:
-		effect_apply(fx_reflective);
+		pipeline_apply(pip_renderReflective);
 		break;
 	case RM_HI:
-		effect_apply(fx_noshadowHi);
+		pipeline_apply(pip_renderLit);
 		break;
 	default:
         assert(false);

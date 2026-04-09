@@ -7,7 +7,7 @@
 #include "Demo.h"
 #include "DemoResources.h"
 #include "DynamicVB.h"
-#include "Effect.h"
+#include "Pipelines.h"
 #include "Scene.h"
 #include "SceneTeeth.h"
 #include "SceneOut.h"
@@ -112,7 +112,7 @@ static bool gPreload()
 		assert(false);
 		return false;
 	}
-	effects_init();
+	pipelines_init();
 	return true;
 }
 
@@ -510,7 +510,7 @@ static void gRenderCredits( float cutAlpha )
 		}
 		linepts[i].color = SVector4(1,0,0,ptA).toRGBA();
 	}
-	effect_apply(fx_linesNoAa);
+	pipeline_apply(pip_renderLinesNoAA);
 	gLineRenderer->renderStrip( LINE_PTS, linepts, lineWidth );
 
 	//
@@ -552,7 +552,7 @@ static void gRenderCredits( float cutAlpha )
 		b->color = BILLCOL;
 	}
 
-	effect_apply(fx_billboardsNoDestAlpha);
+	pipeline_apply(pip_billboardsClearDestAlpha);
 	billboards_render();
 }
 
@@ -738,7 +738,7 @@ bool demo_update()
 		gOverlayColor2.set( beat, beat, beat, beat );
 		if( beat > 0.001f )
 		{
-			effect_apply(fx_overlay2);
+			pipeline_apply(pip_overlay2);
 			sg_apply_uniforms(0, { &gOverlayColor2, sizeof(gOverlayColor2) });
 			sg_draw(0, 4, 1);
 		}
@@ -777,7 +777,7 @@ bool demo_update()
 
 	gOverlayColor.w = clamp( gOverlayColor.w, 0.0f, 1.0f );
 	if( gOverlayColor.w > 0.001f ) {
-		effect_apply(fx_overlay);
+		pipeline_apply(pip_overlay1);
 		sg_apply_uniforms(0, { &gOverlayColor, sizeof(gOverlayColor) });
 		sg_draw(0, 4, 1);
 	}

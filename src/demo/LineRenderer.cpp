@@ -2,7 +2,7 @@
 
 #include "Camera.h"
 #include "DemoResources.h"
-#include "Effect.h"
+#include "Pipelines.h"
 #include "DataFiles.h"
 #include "DynamicVB.h"
 #include <assert.h>

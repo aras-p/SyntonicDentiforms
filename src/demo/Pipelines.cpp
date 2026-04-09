@@ -1,4 +1,4 @@
-#include "Effect.h"
+#include "Pipelines.h"
 #include "DemoResources.h"
 #include <assert.h>
 
@@ -18,9 +18,9 @@
 
 #include "external/sokol_gfx.h"
 
-static sg_pipeline s_fx_pipes[fxCount] = {};
+static sg_pipeline s_fx_pipes[pipCount] = {};
 
-void effects_init()
+void pipelines_init()
 {
 	sg_backend backend = sg_query_backend();
 	// blit
@@ -30,7 +30,7 @@ void effects_init()
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
-		s_fx_pipes[fx_blit] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_blit] = sg_make_pipeline(desc);
 	}
 	// compositeAdd
 	{
@@ -40,7 +40,7 @@ void effects_init()
 		// Z off
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
-		s_fx_pipes[fx_compositeAdd] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_postComposeBloom] = sg_make_pipeline(desc);
 	}
 	// compositeAlpha
 	{
@@ -58,7 +58,7 @@ void effects_init()
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
 		desc.cull_mode = SG_CULLMODE_NONE;
-		s_fx_pipes[fx_compositeAlpha] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_postComposeToon] = sg_make_pipeline(desc);
 	}
 	// filterBloom
 	{
@@ -70,7 +70,7 @@ void effects_init()
 		// Z off
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
-		s_fx_pipes[fx_filterBloom] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_postBlurStep] = sg_make_pipeline(desc);
 	}
 	// filterToon
 	{
@@ -82,7 +82,7 @@ void effects_init()
 		// Z off
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
-		s_fx_pipes[fx_filterToon] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_postToon] = sg_make_pipeline(desc);
 	}
 	// billboards
 	{
@@ -107,13 +107,13 @@ void effects_init()
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
 		desc.cull_mode = SG_CULLMODE_NONE;
-		s_fx_pipes[fx_billboards] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_billboards] = sg_make_pipeline(desc);
 
 		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA;
 		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
 		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
 		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_SRC_ALPHA;
-		s_fx_pipes[fx_billboardsNoDestAlpha] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_billboardsClearDestAlpha] = sg_make_pipeline(desc);
 	}
 	// overlay /2
 	{
@@ -131,13 +131,13 @@ void effects_init()
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
 		desc.cull_mode = SG_CULLMODE_NONE;
-		s_fx_pipes[fx_overlay] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_overlay1] = sg_make_pipeline(desc);
 
 		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_DST_COLOR;
 		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_DST_ALPHA;
 		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE;
 		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE;
-		s_fx_pipes[fx_overlay2] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_overlay2] = sg_make_pipeline(desc);
 	}
 	// render white
 	{
@@ -154,7 +154,7 @@ void effects_init()
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
-		s_fx_pipes[fx_renderWhite] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_renderWhite] = sg_make_pipeline(desc);
 	}
 	// caster
 	{
@@ -170,7 +170,7 @@ void effects_init()
 		desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
 		desc.depth.write_enabled = true;
 		desc.cull_mode = SG_CULLMODE_BACK; // render backfaces into the shadowmap (reduces acne)
-		s_fx_pipes[fx_caster] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_shadowCaster] = sg_make_pipeline(desc);
 
 	}
 	// lines
@@ -197,12 +197,12 @@ void effects_init()
 		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
 		desc.depth.write_enabled = false;
 		desc.cull_mode = SG_CULLMODE_NONE;
-		s_fx_pipes[fx_lines] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_renderLines] = sg_make_pipeline(desc);
 
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		desc.sample_count = 1;
-		s_fx_pipes[fx_linesNoAa] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_renderLinesNoAA] = sg_make_pipeline(desc);
 	}
 	// receiver Hi/Lo
 	{
@@ -221,10 +221,10 @@ void effects_init()
 		desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
 		desc.depth.write_enabled = true;
 		desc.cull_mode = SG_CULLMODE_FRONT;
-		s_fx_pipes[fx_receiverHi] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_renderLitShadowed] = sg_make_pipeline(desc);
 
 		desc.cull_mode = SG_CULLMODE_BACK; // reflection; inverted culling
-		s_fx_pipes[fx_receiverLo] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_renderLitShadowedFlip] = sg_make_pipeline(desc);
 	}
 	// noshadow Hi
 	{
@@ -243,7 +243,7 @@ void effects_init()
 		desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
 		desc.depth.write_enabled = true;
 		desc.cull_mode = SG_CULLMODE_FRONT;
-		s_fx_pipes[fx_noshadowHi] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_renderLit] = sg_make_pipeline(desc);
 	}
 	// reflective
 	{
@@ -266,11 +266,11 @@ void effects_init()
 		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
 		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
 		desc.depth.write_enabled = false;
-		s_fx_pipes[fx_reflective] = sg_make_pipeline(desc);
+		s_fx_pipes[pip_renderReflective] = sg_make_pipeline(desc);
 	}
 }
 
-void effect_apply(Effect fx)
+void pipeline_apply(Pipeline fx)
 {
     assert(s_fx_pipes[fx].id != 0);
 	sg_apply_pipeline(s_fx_pipes[fx]);

@@ -1,5 +1,5 @@
 #include "Glare.h"
-#include "Effect.h"
+#include "Pipelines.h"
 #include "DemoResources.h"
 
 #include "external/sokol_app.h"
@@ -32,7 +32,7 @@ void pingPongBlur(int passes)
 		binds.views[0] = pingPong[(i+1) & 1]->view_tex;
 		binds.samplers[0] = s_smp_linear_clamp;
 
-		effect_apply(fx_filterBloom);
+		pipeline_apply(pip_postBlurStep);
 
 		sg_apply_uniforms(0, { &offset, sizeof(offset) });
 
@@ -59,7 +59,7 @@ void renderBloom()
 		binds.views[0] = rt_main_resolved.view_tex;
 		binds.samplers[0] = s_smp_linear_clamp;
 
-		effect_apply(fx_blit);
+		pipeline_apply(pip_blit);
 		sg_apply_bindings(binds);
 		sg_draw(0, 4, 1);
 
@@ -83,7 +83,7 @@ void renderBloom()
 		binds.views[1] = !(BLOOM_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex;
 		binds.samplers[0] = s_smp_linear_clamp;		
 
-		effect_apply(fx_compositeAdd);
+		pipeline_apply(pip_postComposeBloom);
 		sg_apply_bindings(binds);
 		sg_draw(0, 4, 1);
 	}

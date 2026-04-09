@@ -21,8 +21,6 @@ set (SOURCES
     src/demo/DemoResources.h
     src/demo/DynamicVB.cpp
     src/demo/DynamicVB.h
-    src/demo/Effect.cpp
-    src/demo/Effect.h
     src/demo/ExternalsImpl.cpp
     src/demo/Glare.cpp
     src/demo/Glare.h
@@ -33,6 +31,8 @@ set (SOURCES
     src/demo/MeshEntity.h
     src/demo/MusicPlayer.cpp
     src/demo/MusicPlayer.h
+    src/demo/Pipelines.cpp
+    src/demo/Pipelines.h
     src/demo/Scene.cpp
     src/demo/Scene.h
     src/demo/SceneData.h
