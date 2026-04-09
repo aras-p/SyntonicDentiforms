@@ -1,7 +1,7 @@
 #pragma sokol @module renderReflective
 
 #pragma sokol @block commonlib
-#pragma sokol @include _lib.fx
+#pragma sokol @include lib_lighting.glsl
 #pragma sokol @end
 
 #pragma sokol @vs vs
