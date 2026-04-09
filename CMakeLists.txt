@@ -99,6 +99,10 @@ if (APPLE)
         "-framework AudioToolbox"
     )
 endif ()
+if (LINUX)
+    find_package(Threads REQUIRED)
+    target_link_libraries(Demo PRIVATE X11 Xi Xcursor GL asound dl m Threads::Threads)
+endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
 	if (MSVC)

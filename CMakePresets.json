@@ -2,15 +2,17 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "win-x64",
+      "name": "base",
       "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/${presetName}"
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "installDir": "${sourceDir}/build/${presetName}"
     },
     {
-      "name": "win-x64-debug",
+      "name": "x64-debug",
       "displayName": "x64 Debug",
-      "inherits": "win-x64",
+      "inherits": "base",
+      "generator": "Ninja",
       "architecture": {
         "value": "x64",
         "strategy": "external"
@@ -20,9 +22,9 @@
       }
     },
     {
-      "name": "win-x64-release",
+      "name": "x64-release",
       "displayName": "x64 Release",
-      "inherits": "win-x64-debug",
+      "inherits": "x64-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }

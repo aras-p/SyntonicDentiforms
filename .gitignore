@@ -4,3 +4,4 @@
 tools/sokol-shdc*
 .DS_Store
 /Demo*
+.idea/

@@ -2,6 +2,7 @@
 #pragma sokol @module compositeAdd
 
 #pragma sokol @vs vs
+#pragma sokol @glsl_options flip_vert_y
 const vec2 pos[4] = {
     vec2(-1.0, -1.0),
     vec2(+1.0, -1.0),
