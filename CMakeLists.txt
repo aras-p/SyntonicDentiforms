@@ -118,10 +118,13 @@ endif ()
 function(add_sokol_shader target_name shader_file)
     set(SOKOL_SHDC "${CMAKE_SOURCE_DIR}/tools/sokol-shdc")
     set(SHADER_OUTPUT "${CMAKE_SOURCE_DIR}/${shader_file}.h")
+    set(SHADER_ARGS "")
     if(WIN32)
         set(SHADER_BACKENDS "hlsl5")
+        set(SHADER_ARGS "--bytecode")
     elseif(APPLE)
         set(SHADER_BACKENDS "metal_macos")
+        set(SHADER_ARGS "--bytecode")
     else()
         set(SHADER_BACKENDS "glsl430")
     endif()
@@ -132,6 +135,7 @@ function(add_sokol_shader target_name shader_file)
             --input ${CMAKE_SOURCE_DIR}/${shader_file}
             --output ${SHADER_OUTPUT}
             --slang ${SHADER_BACKENDS}
+            ${SHADER_ARGS}
         DEPENDS ${CMAKE_SOURCE_DIR}/${shader_file}
         COMMENT "Compiling shader ${shader_file} with sokol-shdc"
         VERBATIM
