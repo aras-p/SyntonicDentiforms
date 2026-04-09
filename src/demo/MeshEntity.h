@@ -15,11 +15,16 @@ enum eRenderMode {
 enum eCubeFaces {
 	CFACE_PX = 0, CFACE_NX, CFACE_PY, CFACE_NY, CFACE_PZ, CFACE_NZ, CFACE_COUNT };
 
-
-class CMeshEntity : public CAbstractEntity {
+class CMeshEntity {
 public:
 	CMeshEntity(DataMesh type);
-	virtual ~CMeshEntity();
+    ~CMeshEntity();
+    
+    /// Updates WV/WVP from current matrix and current render camera
+    void updateMatrices() {
+        mWVMatrix = mMatrix * gRenderCam.getViewMatrix();
+        mWVPMatrix = mMatrix * gRenderCam.getViewProjMatrix();
+    }
 
 	/// Culls with current W matrix and given VP matrix. Returns true if outside frustum.
 	bool	frustumCull( const SMatrix4x4& viewProj ) const {
@@ -31,6 +36,11 @@ public:
 	}
 	/// Updates WVP, renders
 	void	render(eRenderMode renderMode, sg_bindings *binds);
+
+public:
+    SMatrix4x4    mMatrix;
+    SMatrix4x4    mWVMatrix;
+    SMatrix4x4    mWVPMatrix;
 
 private:
 	CMesh*  mMesh;

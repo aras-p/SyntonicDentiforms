@@ -8,6 +8,8 @@ CMeshEntity::CMeshEntity(DataMesh type)
 :	mMesh(nullptr),
 	mCubeFace(CFACE_PX)
 {
+    mMatrix.identify(); mWVPMatrix.identify();
+    
 	ASSERT_MSG(type < DataMeshCOUNT, "Invalid mesh type");
 	int shadowID = 0;
 	if (type == DataMeshBox)

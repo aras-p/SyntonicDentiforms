@@ -5,6 +5,7 @@
 
 CCameraEntity::CCameraEntity()
 {
+    mMatrix.identify();
 }
 
 void CCameraEntity::setProjectionParams( float fov, float aspect, float znear, float zfar )

@@ -5,27 +5,7 @@
 
 // --------------------------------------------------------------------------
 
-class CAbstractEntity {
-public:
-	CAbstractEntity() { mMatrix.identify(); mWVPMatrix.identify(); }
-	virtual ~CAbstractEntity() { }
-
-	/// Updates WV/WVP from current matrix and current render camera
-	void updateMatrices() {
-		mWVMatrix = mMatrix * gRenderCam.getViewMatrix();
-		mWVPMatrix = mMatrix * gRenderCam.getViewProjMatrix();
-	}
-
-public:
-	SMatrix4x4	mMatrix;
-	SMatrix4x4	mWVMatrix;
-	SMatrix4x4	mWVPMatrix;
-};
-
-
-// --------------------------------------------------------------------------
-
-class CCameraEntity : public CAbstractEntity {
+class CCameraEntity {
 public:
 	CCameraEntity();
 
@@ -55,8 +35,12 @@ public:
 	 *  Set current camera parameters onto rendering context's camera.
 	 */
 	void	setOntoRenderContext() const;
-	
+
+public:
+    SMatrix4x4    mMatrix;
+
 private:
+
 	// projection params
 	SMatrix4x4	mProjectionMatrix;
 	bool	mOrtho;
