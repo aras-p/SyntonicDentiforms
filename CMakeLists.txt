@@ -142,17 +142,17 @@ endfunction()
 set(SHADER_FILES
     src/fx/billboards.glsl
     src/fx/blit.glsl
-    src/fx/caster.glsl
-    src/fx/compositeAdd.glsl
-    src/fx/compositeAlpha.glsl
-    src/fx/filterBloom.glsl
-    src/fx/filterToon.glsl
+    src/fx/shadowCaster.glsl
+    src/fx/postComposeBloom.glsl
+    src/fx/postComposeToon.glsl
+    src/fx/postBlurStep.glsl
+    src/fx/postToon.glsl
     src/fx/lines.glsl
-    src/fx/noshadowHi.glsl
+    src/fx/renderLit.glsl
     src/fx/overlay.glsl
-    src/fx/receiverHi.glsl
+    src/fx/renderLitShadowed.glsl
     src/fx/renderWhite.glsl
-    src/fx/reflective.glsl
+    src/fx/renderReflective.glsl
 )
 foreach(shader ${SHADER_FILES})
     add_sokol_shader(Demo ${shader})

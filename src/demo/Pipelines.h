@@ -12,8 +12,8 @@ enum Pipeline {
 
 	pip_billboards,
 	pip_billboardsClearDestAlpha,
-	pip_renderLines,
-	pip_renderLinesNoAA,
+	pip_lines,
+	pip_linesNoAA,
 
 	pip_renderWhite,
 	pip_renderLit,

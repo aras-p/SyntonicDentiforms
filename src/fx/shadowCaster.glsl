@@ -1,5 +1,5 @@
 
-#pragma sokol @module caster
+#pragma sokol @module shadowCaster
 
 #pragma sokol @block commonlib
 #pragma sokol @include _lib.fx

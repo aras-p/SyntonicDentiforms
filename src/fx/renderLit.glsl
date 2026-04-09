@@ -1,4 +1,4 @@
-#pragma sokol @module reflective
+#pragma sokol @module renderLit
 
 #pragma sokol @block commonlib
 #pragma sokol @include _lib.fx
@@ -7,30 +7,29 @@
 #pragma sokol @vs vs
 #pragma sokol @include_block commonlib
 layout(location=0) in vec3 va_position;
+layout(location=1) in vec2 va_normal;
 
-out vec4 uvRefl;
+out vec3 hlf;
+out vec3 normal;
+out vec3 tolight;
 
 void main()
 {
 	gl_Position = mWVP * vec4(va_position, 1.0);
-	vec4 uv = mWorldView * vec4(va_position, 1.0);
-	uvRefl = mViewTexProj * uv;
+	gVSLightTerms(va_position, va_normal, mWorld, normal, tolight, hlf);
 }
 #pragma sokol @end
 
 #pragma sokol @fs fs
 #pragma sokol @include_block commonlib
 
-layout(binding=0) uniform texture2D texRefl;
-layout(binding=0) uniform sampler smpRefl;
-
-in vec4 uvRefl;
+in vec3 hlf;
+in vec3 normal;
+in vec3 tolight;
 out vec4 frag_color;
 void main()
 {
-	vec4 refl = textureProj(sampler2D(texRefl, smpRefl), uvRefl);
-	refl.a = 0.25;
-	frag_color = refl;
+	frag_color = gPSLight(normal, tolight, normalize(hlf), 1.0);
 }
 #pragma sokol @end
 

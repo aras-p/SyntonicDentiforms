@@ -357,7 +357,7 @@ void CSceneTeeth::renderTeethLines(int pack, float t)
 			//	c.a = 0.0f;
 			path[j].color = c.toRGBA();
 		}
-		pipeline_apply(pip_renderLines);
+		pipeline_apply(pip_lines);
 		gLineRenderer->renderStrip(PATH_SIZE, path, 0.05f);
 	}
 }
@@ -504,7 +504,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 			c.a = 0.75f - fabsf( delta ) * 4;
 			path[j].color = c;
 		}
-		pipeline_apply(pip_renderLines);
+		pipeline_apply(pip_lines);
 		gLineRenderer->renderStrip( PATH_SIZE, path, 0.05f );
 	}
 	*/

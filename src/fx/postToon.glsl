@@ -1,4 +1,4 @@
-#pragma sokol @module filterToon
+#pragma sokol @module postToon
 
 #pragma sokol @vs vs
 #pragma sokol @glsl_options flip_vert_y

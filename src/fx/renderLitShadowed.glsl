@@ -1,4 +1,4 @@
-#pragma sokol @module receiverHi
+#pragma sokol @module renderLitShadowed
 
 #pragma sokol @block commonlib
 #pragma sokol @include _lib.fx

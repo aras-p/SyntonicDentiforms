@@ -1,4 +1,4 @@
-#pragma sokol @module filterBloom
+#pragma sokol @module postBlurStep
 
 #pragma sokol @vs vs
 #pragma sokol @glsl_options flip_vert_y

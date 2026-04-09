@@ -510,7 +510,7 @@ static void gRenderCredits( float cutAlpha )
 		}
 		linepts[i].color = SVector4(1,0,0,ptA).toRGBA();
 	}
-	pipeline_apply(pip_renderLinesNoAA);
+	pipeline_apply(pip_linesNoAA);
 	gLineRenderer->renderStrip( LINE_PTS, linepts, lineWidth );
 
 	//
