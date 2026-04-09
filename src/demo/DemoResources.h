@@ -69,6 +69,5 @@ extern GlobalUniforms g_global_u;
 struct EntityUniformsVS
 {
 	SMatrix4x4	mat;
-	SMatrix4x4	matWV;
 	SMatrix4x4	matWVP;
 };

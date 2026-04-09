@@ -418,7 +418,6 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 	pipeline_apply(pip_renderWhite);
 	EntityUniformsVS uboVS = {};
 	uboVS.mat.identify(); // not really used
-	uboVS.matWV.identify(); // not really used
 
 	sg_bindings binds = {};
 

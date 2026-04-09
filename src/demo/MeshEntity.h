@@ -20,9 +20,8 @@ public:
 	CMeshEntity(DataMesh type);
     ~CMeshEntity();
     
-    /// Updates WV/WVP from current matrix and current render camera
+    /// Updates WVP from current matrix and current render camera
     void updateMatrices() {
-        mWVMatrix = mMatrix * gRenderCam.getViewMatrix();
         mWVPMatrix = mMatrix * gRenderCam.getViewProjMatrix();
     }
 
@@ -39,7 +38,6 @@ public:
 
 public:
     SMatrix4x4    mMatrix;
-    SMatrix4x4    mWVMatrix;
     SMatrix4x4    mWVPMatrix;
 
 private:

@@ -15,19 +15,12 @@ layout(binding=0) uniform global_uniforms {
 // Match EntityUniforms in C++
 layout(binding=1) uniform entity_uniforms_vs {
 	mat4 mWorld;
-	mat4 mWorldView;
 	mat4 mWVP;
 };
-
-// --------------------------------------------------------------------------
-// light
 
 const float	fLightDiffuse = 0.5;
 const float	fLightK = 16;
 
-
-// --------------------------------------------------------------------------
-//  common lighting code
 
 vec3 gUnpackOctahedralNormal(vec2 f)
 {

@@ -12,8 +12,9 @@ out vec4 uvRefl;
 
 void main()
 {
-	gl_Position = mWVP * vec4(va_position, 1.0);
-	vec4 uv = mWorldView * vec4(va_position, 1.0);
+    vec4 worldPos = mWorld * vec4(va_position, 1.0);
+    gl_Position = mViewProj * worldPos;
+	vec4 uv = mView * worldPos;
 	uvRefl = mViewTexProj * uv;
 }
 #pragma sokol @end

@@ -16,8 +16,9 @@ out vec3 tolight;
 
 void main()
 {
-	gl_Position = mWVP * vec4(va_position, 1.0);
-	vec4 uvs = mWorldView * vec4(va_position, 1.0);
+    vec4 worldPos = mWorld * vec4(va_position, 1.0);
+    gl_Position = mViewProj * worldPos;
+	vec4 uvs = mView * worldPos;
 	uvShadow = mShadowProj * uvs;
 
 	gVSLightTerms(va_position, va_normal, mWorld, normal, tolight, hlf);
