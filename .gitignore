@@ -1,7 +1,6 @@
 ﻿.vs
-/build
-*.glsl.h
-tools/sokol-shdc*
-.DS_Store
-/Demo*
 .idea/
+.DS_Store
+/build
+tools/sokol-shdc*
+/Demo*

@@ -2,19 +2,19 @@
 #include "DemoResources.h"
 #include <assert.h>
 
-#include "../fx/billboards.glsl.h"
-#include "../fx/blit.glsl.h"
-#include "../fx/shadowCaster.glsl.h"
-#include "../fx/postComposeBloom.glsl.h"
-#include "../fx/postComposeToon.glsl.h"
-#include "../fx/postBlurStep.glsl.h"
-#include "../fx/postToon.glsl.h"
-#include "../fx/lines.glsl.h"
-#include "../fx/renderLit.glsl.h"
-#include "../fx/overlay.glsl.h"
-#include "../fx/renderLitShadowed.glsl.h"
-#include "../fx/renderReflective.glsl.h"
-#include "../fx/renderWhite.glsl.h"
+#include "billboards.glsl.h"
+#include "blit.glsl.h"
+#include "shadowCaster.glsl.h"
+#include "postComposeBloom.glsl.h"
+#include "postComposeToon.glsl.h"
+#include "postBlurStep.glsl.h"
+#include "postToon.glsl.h"
+#include "lines.glsl.h"
+#include "renderLit.glsl.h"
+#include "overlay.glsl.h"
+#include "renderLitShadowed.glsl.h"
+#include "renderReflective.glsl.h"
+#include "renderWhite.glsl.h"
 
 #include "external/sokol_gfx.h"
 
@@ -29,14 +29,14 @@ void pipelines_init()
 		desc.shader = sg_make_shader(blit_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
-		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		s_fx_pipes[pip_blit] = sg_make_pipeline(desc);
 	}
 	// postComposeBloom
 	{
 		sg_pipeline_desc desc = {};
 		desc.shader = sg_make_shader(postComposeBloom_prog_shader_desc(backend));
-		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		// Z off
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
@@ -46,7 +46,7 @@ void pipelines_init()
 	{
 		sg_pipeline_desc desc = {};
 		desc.shader = sg_make_shader(postComposeToon_prog_shader_desc(backend));
-		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		// blend, no depth, no cull
@@ -64,7 +64,7 @@ void pipelines_init()
 	{
 		sg_pipeline_desc desc = {};
 		desc.shader = sg_make_shader(postBlurStep_prog_shader_desc(backend));
-		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		// Z off
@@ -76,7 +76,7 @@ void pipelines_init()
 	{
 		sg_pipeline_desc desc = {};
 		desc.shader = sg_make_shader(postToon_prog_shader_desc(backend));
-		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		// Z off
@@ -121,7 +121,7 @@ void pipelines_init()
 		desc.shader = sg_make_shader(overlay_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
-		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
+		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		// additive blend, no depth, no cull
 		desc.colors[0].blend.enabled = true;
 		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_ONE;

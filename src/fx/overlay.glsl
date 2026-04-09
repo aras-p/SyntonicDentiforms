@@ -2,15 +2,11 @@
 
 #pragma sokol @vs vs
 #pragma sokol @glsl_options flip_vert_y
-const vec2 pos[4] = {
-    vec2(-1.0, -1.0),
-    vec2(+1.0, -1.0),
-    vec2(-1.0, +1.0),
-    vec2(+1.0, +1.0),
-};
+#pragma sokol @include lib_post.glsl
 void main()
 {
-    gl_Position = vec4(pos[gl_VertexIndex], 0.0, 1.0);
+	vec2 uv;
+	gFullScreenTri(gl_Position, uv);
 }
 #pragma sokol @end
 

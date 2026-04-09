@@ -388,7 +388,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 
 		pipeline_apply(pip_postToon);
 		sg_apply_bindings(binds);
-		sg_draw(0, 4, 1);
+		sg_draw(0, 3, 1);
 
 		sg_end_pass();
 	}
@@ -484,7 +484,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 
 		pipeline_apply(pip_postComposeToon);
 		sg_apply_bindings(binds);
-		sg_draw(0, 4, 1);
+		sg_draw(0, 3, 1);
 	}
 
 	/*

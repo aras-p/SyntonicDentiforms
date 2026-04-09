@@ -37,7 +37,7 @@ void pingPongBlur(int passes)
 		sg_apply_uniforms(0, { &offset, sizeof(offset) });
 
 		sg_apply_bindings(binds);
-		sg_draw(0, 4, 1);
+		sg_draw(0, 3, 1);
 
 		sg_end_pass();
 	}
@@ -61,7 +61,7 @@ void renderBloom()
 
 		pipeline_apply(pip_blit);
 		sg_apply_bindings(binds);
-		sg_draw(0, 4, 1);
+		sg_draw(0, 3, 1);
 
 		sg_end_pass();
 	}
@@ -85,6 +85,6 @@ void renderBloom()
 
 		pipeline_apply(pip_postComposeBloom);
 		sg_apply_bindings(binds);
-		sg_draw(0, 4, 1);
+		sg_draw(0, 3, 1);
 	}
 }

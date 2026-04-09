@@ -117,7 +117,9 @@ endif ()
 
 function(add_sokol_shader target_name shader_file)
     set(SOKOL_SHDC "${CMAKE_SOURCE_DIR}/tools/sokol-shdc")
-    set(SHADER_OUTPUT "${CMAKE_SOURCE_DIR}/${shader_file}.h")
+    get_filename_component(shader_name "${shader_file}" NAME)
+    set(SHADER_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${shader_name}.h")
+    set(SHADER_DEPFILE "${CMAKE_CURRENT_BINARY_DIR}/${shader_name}.d")
     set(SHADER_ARGS "")
     if(WIN32)
         set(SHADER_BACKENDS "hlsl5")
@@ -135,8 +137,10 @@ function(add_sokol_shader target_name shader_file)
             --input ${CMAKE_SOURCE_DIR}/${shader_file}
             --output ${SHADER_OUTPUT}
             --slang ${SHADER_BACKENDS}
+            --dependency-file ${SHADER_DEPFILE}
             ${SHADER_ARGS}
         DEPENDS ${CMAKE_SOURCE_DIR}/${shader_file}
+        DEPFILE "${SHADER_DEPFILE}"
         COMMENT "Compiling shader ${shader_file} with sokol-shdc"
         VERBATIM
     )
@@ -161,4 +165,5 @@ set(SHADER_FILES
 foreach(shader ${SHADER_FILES})
     add_sokol_shader(Demo ${shader})
 endforeach()
+target_include_directories(Demo PRIVATE "${CMAKE_CURRENT_BINARY_DIR}") # enable including generated shader files
 

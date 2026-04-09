@@ -740,7 +740,7 @@ bool demo_update()
 		{
 			pipeline_apply(pip_overlay2);
 			sg_apply_uniforms(0, { &gOverlayColor2, sizeof(gOverlayColor2) });
-			sg_draw(0, 4, 1);
+			sg_draw(0, 3, 1);
 		}
 	}
 
@@ -779,7 +779,7 @@ bool demo_update()
 	if( gOverlayColor.w > 0.001f ) {
 		pipeline_apply(pip_overlay1);
 		sg_apply_uniforms(0, { &gOverlayColor, sizeof(gOverlayColor) });
-		sg_draw(0, 4, 1);
+		sg_draw(0, 3, 1);
 	}
 
 	sg_end_pass();
