@@ -4,9 +4,6 @@
 #include "external/sokol_gfx.h"
 #include <vector>
 
-struct SMatrix4x4;
-
-
 struct SOBillboard {
 public:
 	void	setWholeTexture() { tu1=tv1=0; tu2=tv2=1; }
@@ -17,23 +14,13 @@ public:
 	sg_view			texture;
 };
 
-
-/**
- *  Billboard renderer with order-preserving.
- *
- *  Renders billboards (aka sprites, or screen-aligned textured
- *  quads). Preserves billboard submitting order - this may be not very
- *  efficient if billboards use different textures.
- */
-class CRenderableOrderedBillboards {
+class CBillboards {
 public:
-	CRenderableOrderedBillboards(sg_buffer ib, sg_sampler sampler);
-	virtual ~CRenderableOrderedBillboards();
+	CBillboards(sg_buffer ib, sg_sampler sampler);
 	
 	SOBillboard& addBill() { mBills.push_back(SOBillboard()); return mBills.back(); };
 	void clear() { mBills.clear(); }
-
-	void render();
+	void renderBills();
 
 private:
 	struct TVertex {

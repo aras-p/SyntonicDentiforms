@@ -5,9 +5,9 @@
 
 #include <src/math/Vector4.h>
 #include <src/math/Matrix4x4.h>
-#include <src/gfx/RenderableOrderedBillboards.h>
 #include <src/gfx/Texture.h>
 
+#include "Billboards.h"
 
 // --------------------------------------------------------------------------
 // misc
@@ -15,8 +15,8 @@
 class CLineRenderer;
 extern CLineRenderer*	gLineRenderer;
 
-extern CRenderableOrderedBillboards*	gBillboardsNormal;
-extern CRenderableOrderedBillboards*	gBillboardsNoDestA;
+extern CBillboards*	gBillboardsNormal;
+extern CBillboards*	gBillboardsNoDestA;
 extern SVector4			gScreenFixUVs;
 
 extern sg_sampler s_smp_linear_repeat;

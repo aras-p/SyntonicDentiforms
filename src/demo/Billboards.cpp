@@ -1,11 +1,10 @@
-#include "RenderableOrderedBillboards.h"
-#include "DynamicVBManager.h"
+#include "Billboards.h"
+#include "../gfx/DynamicVBManager.h"
 
 #include <assert.h>
 
 
-CRenderableOrderedBillboards::CRenderableOrderedBillboards(
-	sg_buffer ib, sg_sampler sampler)
+CBillboards::CBillboards(sg_buffer ib, sg_sampler sampler)
 :	mIB( ib ),
 	mSampler(sampler)
 {
@@ -13,13 +12,9 @@ CRenderableOrderedBillboards::CRenderableOrderedBillboards(
     assert(sampler.id != 0);
 }
 
-CRenderableOrderedBillboards::~CRenderableOrderedBillboards()
+void CBillboards::renderBills()
 {
-}
-
-void CRenderableOrderedBillboards::render()
-{
-	if( mBills.empty() )
+	if (mBills.empty())
 		return;
 	
 	// render into VB

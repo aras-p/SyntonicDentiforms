@@ -10,6 +10,8 @@ set (SOURCES
     
     src/demo/Anim.cpp
     src/demo/Anim.h
+    src/demo/Billboards.cpp
+    src/demo/Billboards.h
     src/demo/Camera.cpp
     src/demo/Camera.h
     src/demo/DataFiles.cpp
@@ -42,8 +44,6 @@ set (SOURCES
     src/gfx/DynamicVBManager.h
     src/gfx/Mesh.cpp
     src/gfx/Mesh.h
-    src/gfx/RenderableOrderedBillboards.cpp
-    src/gfx/RenderableOrderedBillboards.h
     src/gfx/Texture.cpp
     src/gfx/Texture.h
     

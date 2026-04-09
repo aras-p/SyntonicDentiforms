@@ -79,8 +79,8 @@ SSceneCut	gCut;
 
 // line renderer, billboards
 CLineRenderer*	gLineRenderer;
-CRenderableOrderedBillboards*	gBillboardsNormal;
-CRenderableOrderedBillboards*	gBillboardsNoDestA;
+CBillboards*	gBillboardsNormal;
+CBillboards*	gBillboardsNoDestA;
 
 // camera
 CCameraEntity	gCamera;
@@ -281,8 +281,8 @@ bool demo_init()
         assert(sg_query_buffer_state(s_ib_quads) == SG_RESOURCESTATE_VALID);
 	}
 
-	gBillboardsNormal = new CRenderableOrderedBillboards(s_ib_quads, s_smp_linear_clamp);
-	gBillboardsNoDestA = new CRenderableOrderedBillboards(s_ib_quads, s_smp_linear_clamp);
+	gBillboardsNormal = new CBillboards(s_ib_quads, s_smp_linear_clamp);
+	gBillboardsNoDestA = new CBillboards(s_ib_quads, s_smp_linear_clamp);
 	gLineRenderer = new CLineRenderer();
 
 	// --------------------------------
@@ -479,7 +479,7 @@ static void gRenderCredits( float cutAlpha )
 	int i;
 	const bool outer = (gSceneMode==SC_OUTER);
 
-	CRenderableOrderedBillboards& bills = *gBillboardsNoDestA;
+	CBillboards& bills = *gBillboardsNoDestA;
 	bills.clear();
 
 	const float CENTER_X = outer ? -0.02f : -0.2f;
@@ -587,7 +587,7 @@ static void gRenderCredits( float cutAlpha )
 	}
 
 	effect_apply(fx_billboardsNoDestAlpha);
-	bills.render();
+	bills.renderBills();
 }
 
 bool demo_update()

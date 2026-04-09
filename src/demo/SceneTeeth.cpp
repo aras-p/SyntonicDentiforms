@@ -247,7 +247,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 	const float BEDGE = 0.12f;
 	const float MEDGE = 0.06f;
 
-	CRenderableOrderedBillboards& bills = *(masks ? gBillboardsNormal : gBillboardsNoDestA);
+	CBillboards& bills = *(masks ? gBillboardsNormal : gBillboardsNoDestA);
 	SOBillboard* bill;
 
 	if( pack != TEETHPACKS-1 ) {
@@ -327,7 +327,7 @@ void CSceneTeeth::renderTeethBills( int pack, float t, float relT, float cutAlph
 	}
 
 	effect_apply(masks ? fx_billboards : fx_billboardsNoDestAlpha);
-	bills.render();
+	bills.renderBills();
 }
 
 void CSceneTeeth::renderTeethLines(int pack, float t)
