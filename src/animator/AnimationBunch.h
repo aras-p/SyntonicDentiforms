@@ -11,16 +11,6 @@
 #include <assert.h>
 
 
-/**
- *  Named animation bunch.
- *
- *  Holds named, typed (eg. vector3, quat) animations. Permits animation
- *  lookup by name.
- *
- *  Also holds animations curve descriptors (names and parent indices). Hence
- *  all animations in particular bunch must have the same logical structure
- *  (that is, same internal hierarchy and curve names).
- */
 class CAnimationBunch : public noncopyable {
 public:
 	typedef IAnimation<SVector3>	TVector3Animation;
@@ -48,27 +38,11 @@ public:
 	//
 	// curve descriptors
 
-	/**
-	 *  Adds curve information - name, parent index
-	 *
-	 *  The curve's parent information must already be added. Names must be
-	 *  unique. After adding all curves, call endCurves() to compute children
-	 *  counts.
-	 *
-	 *  @param name Curve name.
-	 *  @param parentIndex Index of curve's parent, or -1 if root.
-	 */
-	void	addCurveDesc( const std::string& name, int parentIndex );
-	/// Finish adding curves, compute children counts.
-	void	endCurves();
+	void	addCurveDesc(const std::string& name);
 	/// Get curve count.
 	int		getCurveCount() const;
 	/// Get curve's name by index.
 	const std::string& getCurveName( int curveIdx ) const;
-	/// Gets curve's parent index, or -1 if curve is root.
-	int		getCurveParent( int curveIdx ) const;
-	/// Gets curve's children count.
-	int		getCurveChildrenCount( int curveIdx ) const;
 	/// Gets curve's index by it's name, or -1 if no such curve exists.
 	int		getCurveIndexByName( const std::string& name ) const;
 
@@ -77,14 +51,7 @@ private:
 	typedef std::map<std::string, TQuatAnimation*>		TQuatAnimMap;
 	typedef std::map<std::string, TFloatAnimation*>		TFloatAnimMap;
 
-	struct SCurveDesc {
-		SCurveDesc( const std::string& name, int parentIdx )
-			: mName(name), mParentIndex(parentIdx), mChildrenCount(0) { }
-		std::string mName;
-		int			mParentIndex;
-		int			mChildrenCount;
-	};
-	typedef std::vector<SCurveDesc>		TCurveDescVector;
+	typedef std::vector<std::string> TCurveDescVector;
 
 private:
 	TVector3AnimMap		mVector3Anims;
@@ -129,11 +96,10 @@ inline CAnimationBunch::TFloatAnimation* CAnimationBunch::findFloatAnim( const s
 	return (it!=mFloatAnims.end()) ? it->second : 0;
 }
 
-inline void CAnimationBunch::addCurveDesc( const std::string& name, int parentIndex )
+inline void CAnimationBunch::addCurveDesc(const std::string& name)
 {
-	assert( parentIndex == -1 || (parentIndex >= 0 && parentIndex < mCurveDescs.size() ) );
 	assert( getCurveIndexByName(name) == -1 );
-	mCurveDescs.push_back( SCurveDesc( name, parentIndex ) );
+	mCurveDescs.push_back(name);
 }
 inline int CAnimationBunch::getCurveCount() const
 {
@@ -142,17 +108,7 @@ inline int CAnimationBunch::getCurveCount() const
 inline const std::string& CAnimationBunch::getCurveName( int curveIdx ) const
 {
 	assert( curveIdx >= 0 && curveIdx < mCurveDescs.size() );
-	return mCurveDescs[curveIdx].mName;
-}
-inline int CAnimationBunch::getCurveParent( int curveIdx ) const
-{
-	assert( curveIdx >= 0 && curveIdx < mCurveDescs.size() );
-	return mCurveDescs[curveIdx].mParentIndex;
-}
-inline int CAnimationBunch::getCurveChildrenCount( int curveIdx ) const
-{
-	assert( curveIdx >= 0 && curveIdx < mCurveDescs.size() );
-	return mCurveDescs[curveIdx].mChildrenCount;
+	return mCurveDescs[curveIdx];
 }
 inline int	CAnimationBunch::getCurveIndexByName( const std::string& name ) const
 {

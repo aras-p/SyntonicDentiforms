@@ -12,22 +12,6 @@ CAnimationBunch::~CAnimationBunch()
 	stl_utils::wipe_map( mFloatAnims );
 }
 
-void CAnimationBunch::endCurves()
-{
-	int n = getCurveCount();
-	for( int i = 0; i < n; ++i ) {
-		int ipar = mCurveDescs[i].mParentIndex;
-		int j;
-		for( j = i; j < n; ++j ) {
-			if( mCurveDescs[j].mParentIndex == ipar )
-				break;
-		}
-		mCurveDescs[i].mChildrenCount = (j-i);
-	}
-}
-
-
-
 static inline std::string gReadString( FILE* f )
 {
     std::string str;
@@ -178,11 +162,10 @@ CAnimationBunch* load_animation(const char* path)
     // read curve infos
     for( int i = 0; i < curveCount; ++i ) {
         std::string name = gReadString( f );
-        int parent;
+        int parent; // unused
         fread( &parent, 1, 4, f );
-        bunch->addCurveDesc( name, parent );
+        bunch->addCurveDesc(name);
     }
-    bunch->endCurves();
     
     // read rest based on anim type
     switch( animType ) {
