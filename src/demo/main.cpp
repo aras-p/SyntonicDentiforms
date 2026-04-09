@@ -15,6 +15,8 @@
 #define SOKOL_GFX_UTILS_IMPL
 #include "external/sokol_gfx_utils.h"
 
+#include "external/stb_image.h"
+
 #include "Demo.h"
 
 static void init(void)
@@ -70,6 +72,18 @@ sapp_desc sokol_main(int argc, char* argv[])
     app_desc.fullscreen = true;
     app_desc.swap_interval = 1;
 #endif
+
+	// try to load icon
+	int icon_width, icon_height, icon_comp;
+	const char* icon_path = "data/tex/icon.png";
+	uint8_t* icon_image = stbi_load(icon_path, &icon_width, &icon_height, &icon_comp, 4);
+	if (icon_image != NULL) {
+		app_desc.icon.sokol_default = false;
+		app_desc.icon.images[0].width = icon_width;
+		app_desc.icon.images[0].height = icon_height;
+		app_desc.icon.images[0].pixels.ptr = icon_image;
+		app_desc.icon.images[0].pixels.size = icon_width * icon_height * 4;
+	}
 
     return app_desc;
 }
