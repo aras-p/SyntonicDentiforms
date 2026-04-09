@@ -12,8 +12,8 @@
  *  Each curve consists of the same number of samples (but can be collapsed
  *  into single value).
  */
-template<typename _V>
-class CSampledAnimation : public IAnimation<_V> {
+template<typename value_type>
+class CSampledAnimation : public IAnimation<value_type> {
 public:
 	/**
 	 *  Animation loop type.
@@ -32,7 +32,11 @@ public:
 	void	reserveSamples( int sampleCount ) { mSamples.reserve(sampleCount); }
 	void	resizeSamples( int sampleCount ) { mSamples.resize(sampleCount); }
 	int		getTotalSampleCount() const { return mSamples.size(); }
-	const value_type& getSample( int index ) const;
+	const value_type& getSample( int index ) const
+    {
+        assert( index>=0 && index < getTotalSampleCount() );
+        return mSamples[index];
+    }
 
 	void	addCurve( const curve_type& curve ) { mCurves.push_back(curve); }
 	void	reserveCurves( int curveCount ) { mCurves.reserve(curveCount); }
@@ -95,27 +99,20 @@ inline void CSampledAnimation<_V>::timeToIndex( float time, int& index1, int& in
 };
 
 template<typename _V>
-inline const _V& CSampledAnimation<_V>::getSample( int index ) const
-{
-	assert( index>=0 && index < getTotalSampleCount() );
-	return mSamples[index];
-};
-
-template<typename _V>
 inline const CAnimCurve<_V>& CSampledAnimation<_V>::getCurve( int index ) const
 {
 	assert( index>=0 && index < getCurveCount() );
 	return mCurves[index];
 };
 
-template<typename _V>
-void CSampledAnimation<_V>::sample( float time, int firstCurve, int numCurves, _V* dest, int destStride ) const
+template<typename value_type>
+void CSampledAnimation<value_type>::sample( float time, int firstCurve, int numCurves, value_type* dest, int destStride ) const
 {
 	assert( firstCurve >= 0 && firstCurve < getCurveCount() );
 	assert( numCurves > 0 && numCurves <= getCurveCount() );
 	assert( firstCurve+numCurves <= getCurveCount() );
 	assert( dest );
-	assert( destStride >= sizeof(_V) );
+	assert( destStride >= sizeof(value_type) );
 
 	// get sample indices and alpha
 	int sampleIdx1, sampleIdx2;
@@ -124,7 +121,7 @@ void CSampledAnimation<_V>::sample( float time, int firstCurve, int numCurves, _
 
 	for( int i = 0; i < numCurves; ++i ) {
 		const curve_type& curve = getCurve( firstCurve + i );
-		curve_type::eIpol ipol = curve.getIpol();
+		typename curve_type::eIpol ipol = curve.getIpol();
 
 		switch( ipol ) {
 		case curve_type::NONE:

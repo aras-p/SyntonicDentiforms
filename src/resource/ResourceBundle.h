@@ -4,7 +4,7 @@
 
 class IResourceBundle {
 public:
-	virtual ~IResourceBundle() = 0 {};
+	virtual ~IResourceBundle() {};
 };
 
 

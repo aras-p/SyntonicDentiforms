@@ -8,7 +8,7 @@
 class CAbstractEntity {
 public:
 	CAbstractEntity() { mMatrix.identify(); mWVPMatrix.identify(); }
-	virtual ~CAbstractEntity() = 0 { }
+	virtual ~CAbstractEntity() { }
 
 	/// Updates WV/WVP from current matrix and current render camera
 	void updateMatrices() {

@@ -6,7 +6,7 @@ namespace stl_utils {
 template<class T>
 void wipe( T& cont )
 {
-	for( T::iterator it = cont.begin(); it != cont.end(); ++it )
+	for( typename T::iterator it = cont.begin(); it != cont.end(); ++it )
 		delete *it;
 	cont.clear();
 };
@@ -15,7 +15,7 @@ void wipe( T& cont )
 template<class T>
 void wipe_map( T& cont )
 {
-	for( T::iterator it = cont.begin(); it != cont.end(); ++it )
+	for( typename T::iterator it = cont.begin(); it != cont.end(); ++it )
 		delete it->second;
 	cont.clear();
 };
@@ -24,7 +24,7 @@ void wipe_map( T& cont )
 template<typename _T, typename _O>
 void for_all( _T& cont, _O& op )
 {
-	for( _T::iterator it = cont.begin(); it != cont.end(); ++it )
+	for( typename _T::iterator it = cont.begin(); it != cont.end(); ++it )
 		op( *it );
 };
 
@@ -32,7 +32,7 @@ void for_all( _T& cont, _O& op )
 template<typename _T, typename _O>
 void for_all( _T const& cont, _O& op )
 {
-	for( _T::const_iterator it = cont.begin(); it != cont.end(); ++it )
+	for( typename _T::const_iterator it = cont.begin(); it != cont.end(); ++it )
 		op( *it );
 };
 

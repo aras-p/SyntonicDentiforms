@@ -13,7 +13,7 @@ private:
 	typedef std::map<CResourceId, T*>	TResourceMap;
 	
 public:
-	virtual ~CStorageResourceBundle() = 0 {}
+	virtual ~CStorageResourceBundle() {}
 
 	/**
 	 *  Gets or loads resource given it's name.
@@ -38,7 +38,7 @@ public:
 
 	// NOTE: deletes the resource, so make sure no one references it!
 	void clearResourceById( CResourceId const& id ) {
-		TResourceMap::iterator it = mResourceMap.find( id );
+		typename TResourceMap::iterator it = mResourceMap.find( id );
 		if( it != mResourceMap.end() ) {
 			assert( (*it).second );
 			deleteResource( *it->second );
@@ -47,7 +47,7 @@ public:
 	}
 
 	void clear() {
-		for( TResourceMap::iterator it = mResourceMap.begin(); it != mResourceMap.end(); ) {
+		for( typename TResourceMap::iterator it = mResourceMap.begin(); it != mResourceMap.end(); ) {
 			assert( (*it).second );
 			deleteResource( *it->second );
 			it = mResourceMap.erase( it );
@@ -60,7 +60,7 @@ protected:
 	CStorageResourceBundle( const std::string& preDir ) : mPreDir(preDir) { }
 
 	T* findResource( CResourceId const& id ) {
-		TResourceMap::const_iterator it = mResourceMap.find( id );
+        typename TResourceMap::const_iterator it = mResourceMap.find( id );
 		return ( ( it != mResourceMap.end() ) ? it->second : NULL );
 	}
 

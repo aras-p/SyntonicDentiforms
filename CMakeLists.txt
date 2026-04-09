@@ -1,11 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(SyntonicDentiforms)
 
-if(NOT WIN32)
-    message(FATAL_ERROR "Windows only for now")
-endif()
-
-add_executable(Demo WIN32
+add_executable(Demo
     src/animator/AnimationBunch.cpp
     src/gfx/DynamicVBManager.cpp
     src/gfx/Mesh.cpp
@@ -42,8 +38,6 @@ set_property(TARGET Demo PROPERTY CXX_STANDARD 17)
 set_property(TARGET Demo PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 target_compile_definitions(Demo PRIVATE
-    WIN32
-    _WINDOWS
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
     _CRT_SECURE_NO_WARNINGS
@@ -58,6 +52,17 @@ set_target_properties(Demo PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}"
     VS_DEBUGGER_WORKING_DIRECTORY    "${CMAKE_SOURCE_DIR}"
 )
+
+if (APPLE)
+    target_compile_options(Demo PRIVATE -x objective-c++)
+    target_link_libraries(Demo PRIVATE
+        "-framework Cocoa"
+        "-framework Metal"
+        "-framework MetalKit"
+        "-framework QuartzCore"
+        "-framework AudioToolbox"
+    )
+endif ()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
 	if (MSVC)

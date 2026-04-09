@@ -14,13 +14,10 @@
  *
  *  @param _V Value type.
  */
-template<typename _V>
+template<typename value_type>
 class IAnimation : public noncopyable {
 public:
-	typedef _V value_type;
-
-public:
-	virtual ~IAnimation() = 0 { };
+	virtual ~IAnimation() { };
 
 	/**
 	 *  @param time Relative time (zero is start, one is end).

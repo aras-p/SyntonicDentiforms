@@ -58,7 +58,7 @@ public:
 	
 	const CAABox& getTotalAABB() const { return mTotalAABB; }
 
-	int		getGroupCount() const { return mGroups.size(); }
+	int		getGroupCount() const { return (int)mGroups.size(); }
 	const CGroup& getGroup( int i ) const { assert(i>=0&&i<getGroupCount()); return mGroups[i]; }
 
 private:
