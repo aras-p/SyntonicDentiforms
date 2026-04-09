@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(SyntonicDentiforms)
 
+set(USE_WINDOWS_OPENGL OFF)
+
 set (SOURCES
     src/animator/AnimationBunch.cpp
     src/animator/AnimationBunch.h
@@ -79,6 +81,9 @@ target_compile_definitions(Demo PRIVATE
     _CRT_SECURE_NO_WARNINGS
     NOMINMAX
 )
+if(USE_WINDOWS_OPENGL)
+    target_compile_definitions(Demo PRIVATE USE_WINDOWS_OPENGL=1)
+endif()
 
 set_target_properties(Demo PROPERTIES
     OUTPUT_NAME_DEBUG   "Demo_d"
@@ -120,15 +125,20 @@ function(add_sokol_shader target_name shader_file)
     get_filename_component(shader_name "${shader_file}" NAME)
     set(SHADER_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${shader_name}.h")
     set(SHADER_DEPFILE "${CMAKE_CURRENT_BINARY_DIR}/${shader_name}.d")
-    set(SHADER_ARGS "")
     if(WIN32)
-        set(SHADER_BACKENDS "hlsl5")
-        set(SHADER_ARGS "--bytecode")
+        if(USE_WINDOWS_OPENGL)
+            set(SHADER_BACKENDS "glsl430")
+            set(SHADER_ARGS "")
+        else()
+            set(SHADER_BACKENDS "hlsl5")
+            set(SHADER_ARGS "--bytecode")
+        endif()
     elseif(APPLE)
         set(SHADER_BACKENDS "metal_macos")
         set(SHADER_ARGS "--bytecode")
     else()
         set(SHADER_BACKENDS "glsl430")
+        set(SHADER_ARGS "")
     endif()
 
     add_custom_command(

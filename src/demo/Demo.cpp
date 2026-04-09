@@ -23,8 +23,11 @@
 #include "external/sokol_app.h"
 #include "external/sokol_glue.h"
 #include "external/sokol_time.h"
-#include "external/sokol_gfx_utils.h"
 #include "external/sokol_debugtext.h"
+
+#if !USE_WINDOWS_OPENGL
+#include "external/sokol_gfx_utils.h"
+#endif
 
 #ifndef _DEBUG
 #define WITHMUSIC
@@ -950,6 +953,7 @@ void demo_event(const sapp_event* evt)
 			gDebugTime += 1.0f;
 			spaceDown = true;
 		}
+		#if !USE_WINDOWS_OPENGL
 		if (evt->key_code == SAPP_KEYCODE_F9) {
 			sg_image image = rt_main_resolved.image;
 			int width = sg_query_image_width(image);
@@ -969,6 +973,7 @@ void demo_event(const sapp_event* evt)
 			delete[] data;
 			sg_readback_destroy(readback);
 		}
+		#endif
 #endif
 		if (evt->key_code == SAPP_KEYCODE_ESCAPE) {
 			sapp_quit();

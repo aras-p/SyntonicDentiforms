@@ -28,7 +28,11 @@ in vec4 uvRefl;
 out vec4 frag_color;
 void main()
 {
-	vec4 refl = textureProj(sampler2D(texRefl, smpRefl), uvRefl);
+	vec2 uv = uvRefl.xy / uvRefl.w;
+	#if SOKOL_GLSL
+	uv.y = 1.0 - uv.y;
+	#endif
+	vec4 refl = texture(sampler2D(texRefl, smpRefl), uv);
 	refl.a = 0.25;
 	frag_color = refl;
 }

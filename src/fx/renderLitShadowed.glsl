@@ -90,6 +90,9 @@ void main()
 {
 	vec3 uv;
 	uv.xyz = uvShadow.xyz / uvShadow.w;
+	#if SOKOL_GLSL
+	uv.y = 1.0 - uv.y;
+	#endif
 
 	float shadow = sampleShadow(uv);
 	
