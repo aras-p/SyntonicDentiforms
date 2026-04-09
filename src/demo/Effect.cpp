@@ -146,7 +146,7 @@ void effects_init()
 		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.index_type = SG_INDEXTYPE_UINT16;
-		desc.layout.buffers[0].stride = 24;
+		desc.layout.buffers[0].stride = 16;
 		desc.layout.attrs[0].format = SG_VERTEXFORMAT_FLOAT3;
 		desc.layout.attrs[0].offset = 0;
 		desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
@@ -198,10 +198,10 @@ void effects_init()
 		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.index_type = SG_INDEXTYPE_UINT16;
-		desc.layout.buffers[0].stride = 24;
+		desc.layout.buffers[0].stride = 16;
 		desc.layout.attrs[0].format = SG_VERTEXFORMAT_FLOAT3;
 		desc.layout.attrs[0].offset = 0;
-		desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT3;
+		desc.layout.attrs[1].format = SG_VERTEXFORMAT_SHORT2N;
 		desc.layout.attrs[1].offset = 12;
 		desc.sample_count = kMainAA;
 		desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
@@ -220,10 +220,10 @@ void effects_init()
 		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.index_type = SG_INDEXTYPE_UINT16;
-		desc.layout.buffers[0].stride = 24;
+		desc.layout.buffers[0].stride = 16;
 		desc.layout.attrs[0].format = SG_VERTEXFORMAT_FLOAT3;
 		desc.layout.attrs[0].offset = 0;
-		desc.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT3;
+		desc.layout.attrs[1].format = SG_VERTEXFORMAT_SHORT2N;
 		desc.layout.attrs[1].offset = 12;
 		desc.sample_count = kMainAA;
 		desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
@@ -239,7 +239,7 @@ void effects_init()
 		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.index_type = SG_INDEXTYPE_UINT16;
-		desc.layout.buffers[0].stride = 24;
+		desc.layout.buffers[0].stride = 16;
 		desc.layout.attrs[0].format = SG_VERTEXFORMAT_FLOAT3;
 		desc.layout.attrs[0].offset = 0;
 		desc.sample_count = kMainAA;

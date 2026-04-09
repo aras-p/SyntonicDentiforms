@@ -106,7 +106,10 @@ CAnim*	gAnimSynch;
 static bool gPreload()
 {
 	if (!load_data_files())
+	{
+		assert(false);
 		return false;
+	}
 	effects_init();
 	return true;
 }

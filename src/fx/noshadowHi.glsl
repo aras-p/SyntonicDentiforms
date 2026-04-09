@@ -7,7 +7,7 @@
 #pragma sokol @vs vs
 #pragma sokol @include_block commonlib
 layout(location=0) in vec3 va_position;
-layout(location=1) in vec3 va_normal;
+layout(location=1) in vec2 va_normal;
 
 out vec3 hlf;
 out vec3 normal;

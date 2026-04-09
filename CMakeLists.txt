@@ -46,8 +46,6 @@ set (SOURCES
     src/gfx/RenderableOrderedBillboards.h
     src/gfx/Texture.cpp
     src/gfx/Texture.h
-    src/gfx/VertexFormat.cpp
-    src/gfx/VertexFormat.h
     src/gfx/Vertices.h
     
     src/math/AABox.h

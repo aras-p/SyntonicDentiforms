@@ -1,37 +1,23 @@
 #include "Mesh.h"
+
 #include <assert.h>
+#include <stdio.h>
 #include <vector>
 
-
-CMesh::CMesh(int vertCount, int idxCount, const CVertexFormat& vertFormat, int indexStride, const void* vbData, const void* ibData, int groupCount, const CGroup* groups)
-	: mGroups(groups, groups + groupCount)
+CMesh::CMesh(int vertCount, int idxCount, const Vertex* vbData, const uint16_t* ibData)
 {
     assert(vertCount > 0);
     assert(idxCount > 0);
-    assert(indexStride == 2 || indexStride == 4);
-    assert(groupCount >= 1 && groups != nullptr);
 	mVertexCount = vertCount;
 	mIndexCount = idxCount;
-	mVertexFormat = vertFormat;
-	mVertexStride = vertFormat.calcVertexSize();
-    assert(mVertexStride > 0);
-	mIndexStride = indexStride;
 
 	// vertex buffer
 	{
 		sg_buffer_desc desc = {};
 		desc.usage.vertex_buffer = true;
-		if (vbData)
-		{
-			desc.data.ptr = vbData;
-			desc.data.size = mVertexCount * mVertexStride;
-			desc.usage.immutable = true;
-		}
-		else
-		{
-			desc.size = mVertexCount * mVertexStride;
-			desc.usage.immutable = false;
-		}
+		desc.data.ptr = vbData;
+		desc.data.size = mVertexCount * sizeof(Vertex);
+		desc.usage.immutable = true;
 		mVB = sg_make_buffer(&desc);
         assert(sg_query_buffer_state(mVB) == SG_RESOURCESTATE_VALID);
 	}
@@ -40,47 +26,22 @@ CMesh::CMesh(int vertCount, int idxCount, const CVertexFormat& vertFormat, int i
 	{
 		sg_buffer_desc desc = {};
 		desc.usage.index_buffer = true;
-		if (ibData)
-		{
-			desc.data.ptr = ibData;
-			desc.data.size = mIndexCount * mIndexStride;
-			desc.usage.immutable = true;
-		}
-		else
-		{
-			desc.size = mIndexCount * mIndexStride;
-			desc.usage.immutable = false;
-		}
+		desc.data.ptr = ibData;
+		desc.data.size = mIndexCount * sizeof(uint16_t);
+		desc.usage.immutable = true;
 		mIB = sg_make_buffer(&desc);
         assert(sg_query_buffer_state(mIB) == SG_RESOURCESTATE_VALID);
 	}
 
-	// AABBs
+	// AABB
 	mTotalAABB.setNull();
-	if (mVertexFormat.hasPosition() && vbData != nullptr)
+	const char* vb = reinterpret_cast<const char*>(vbData);
+	mTotalAABB.setNull();
+	for (int v = 0; v < mVertexCount; ++v)
 	{
-		const char* vb = reinterpret_cast<const char*>(vbData);
-		for (int i = 0; i < mGroups.size(); ++i)
-		{
-			CGroup& g = mGroups[i];
-			g.getAABB().setNull();
-			for (int v = 0; v < g.getVertexCount(); ++v) {
-				const char* vtx = vb + mVertexStride * (v + g.getFirstVertex());
-				const SVector3& pos = *reinterpret_cast<const SVector3*>(vtx);
-				g.getAABB().extend(pos);
-			}
-			mTotalAABB.extend(g.getAABB());
-		}
-
-		// kind of HACK: if we're skinned, inflate total AABB by some amount
-		if (mVertexFormat.getSkinMode() != CVertexFormat::SKIN_NONE)
-		{
-			SVector3 aabbSize = mTotalAABB.getMax() - mTotalAABB.getMin();
-			if (aabbSize.x < aabbSize.y) aabbSize.x = aabbSize.y;
-			if (aabbSize.z < aabbSize.y) aabbSize.z = aabbSize.y;
-			mTotalAABB.getMin() -= aabbSize;
-			mTotalAABB.getMax() += aabbSize;
-		}
+		const Vertex& vert = vbData[v];
+		const SVector3 pos(vert.x, vert.y, vert.z);
+		mTotalAABB.extend(pos);
 	}
 }
 
@@ -92,82 +53,39 @@ CMesh::~CMesh()
 	mIB = {};
 }
 
-
-#define READ_4BYTE(var) fread(&var,1,4,f)
-#define READ_2BYTE(var) fread(&var,1,2,f)
-
+// file format:
+// - 4 bytes "dmsh"
+// - 4 bytes nverts
+// - 4 bytes ntris
+// - 16*nverts vertex data (3x float position, 2xSNorm16 octahedral normal)
+// - 2*3*ntris index data (16 bit)
 CMesh* load_mesh(const char* fileName)
 {
 	// open file
 	FILE* f = fopen(fileName, "rb");
 	if (!f) return nullptr;
 
-	//
-	// read header
-
 	// magic
 	char magic[4];
-	READ_4BYTE(magic);
-	if (magic[0] != 'D' || magic[1] != 'M' || magic[2] != 'S' || magic[3] != 'H') {
+	fread(magic, 4, 1, f);
+	if (magic[0] != 'd' || magic[1] != 'm' || magic[2] != 's' || magic[3] != 'h') {
 		fclose(f);
 		return nullptr;
 	}
-	// header
-	int nverts, ntris, ngroups, vstride, istride, vformat;
-	READ_4BYTE(nverts);
-	READ_4BYTE(ntris);
-	READ_4BYTE(ngroups);
-	READ_4BYTE(vstride);
-	READ_4BYTE(vformat);
-	READ_4BYTE(istride);
+	int nverts, ntris;
+	fread(&nverts, 4, 1, f);
+	fread(&ntris, 4, 1, f);
 	assert(nverts > 0);
 	assert(ntris > 0);
-	assert(ngroups > 0);
-	assert(vstride > 0);
-	assert(istride == 2 || istride == 4);
-	assert(vformat != 0);
 
-	// read data
-	std::vector<uint8_t> vbData(vstride * nverts);
-	fread(vbData.data(), vstride, nverts, f);
+	std::vector<CMesh::Vertex> vbData(nverts);
+	fread(vbData.data(), sizeof(CMesh::Vertex), nverts, f);
 
-	std::vector<uint8_t> ibData(istride * ntris * 3);
-	fread(ibData.data(), istride, ntris * 3, f);
+	std::vector<uint16_t> ibData(ntris * 3);
+	fread(ibData.data(), 2, ntris * 3, f);
 
-	std::vector<CMesh::CGroup> groups;
-	for (int i = 0; i < ngroups; ++i) {
-		int vstart, vcount, fstart, fcount;
-		READ_4BYTE(vstart);
-		READ_4BYTE(vcount);
-		READ_4BYTE(fstart);
-		READ_4BYTE(fcount);
-		// HACK: TBD: for null groups
-		if (ngroups == 1 && vcount == 0 && fcount == 0) {
-			vstart = 0;
-			vcount = nverts;
-			fstart = 0;
-			fcount = ntris;
-		}
-		groups.emplace_back(CMesh::CGroup(vstart, vcount, fstart, fcount));
-	}
-
-	// close file
 	fclose(f);
-	// HACK: some of demo meshes have position + normal + UV but we don't need the UVs.
-	// Discard them to simplify pipeline management.
-	if (vstride == 32 && vformat == 4099)
-	{
-		for (int i = 0; i < nverts; ++i)
-		{
-			memmove(vbData.data() + i * 24, vbData.data() + i * 32, 24);
-		}
-		vstride = 24;
-		vformat = 3;
-	}
 
-	// init mesh
-	CVertexFormat format(vformat);
-	assert(format.calcVertexSize() == vstride);
-	CMesh* mesh = new CMesh(nverts, ntris * 3, format, istride, vbData.data(), ibData.data(), ngroups, groups.data());
-	return mesh;
+	// create mesh
+	return new CMesh(nverts, ntris * 3, vbData.data(), ibData.data());
 }

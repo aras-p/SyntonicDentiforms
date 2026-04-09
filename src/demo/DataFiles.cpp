@@ -122,4 +122,3 @@ bool load_data_files()
     }
 	return true;
 }
-
