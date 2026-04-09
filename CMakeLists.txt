@@ -23,6 +23,7 @@ set (SOURCES
     src/demo/DynamicVB.h
     src/demo/Effect.cpp
     src/demo/Effect.h
+    src/demo/ExternalsImpl.cpp
     src/demo/Glare.cpp
     src/demo/Glare.h
     src/demo/LineRenderer.cpp
