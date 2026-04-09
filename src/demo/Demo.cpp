@@ -22,7 +22,9 @@
 
 #include "external/sokol_app.h"
 #include "external/sokol_glue.h"
+#include "external/sokol_time.h"
 #include "external/sokol_gfx_utils.h"
+#include "external/sokol_debugtext.h"
 
 #ifndef _DEBUG
 #define WITHMUSIC
@@ -257,7 +259,8 @@ bool demo_init()
 	// --------------------------------
 	// preload
 
-	gPreload();
+	if (!gPreload())
+		return false;
 
 	// --------------------------------
 	// synch
@@ -553,8 +556,14 @@ static void gRenderCredits( float cutAlpha )
 	billboards_render();
 }
 
+static bool s_display_stats = false;
+static uint64_t s_time_frame_accum, s_time_cpu_accum, s_time_frame_prev;
+static int s_time_frame_count;
+static float s_time_frame_avg_ms, s_time_cpu_avg_ms;
+
 bool demo_update()
 {
+	uint64_t time0 = stm_now();
 	ensure_render_targets();
 
 	double t = GET_TIME;
@@ -801,7 +810,41 @@ bool demo_update()
 		gCut.reset();
 	}
 
+	// show stats 
+	if (s_display_stats)
+	{
+		sg_stats stats = sg_query_stats();
+
+		sdtx_canvas(sapp_width() / 2.0f, sapp_height() / 2.0f);
+		sdtx_font(0);
+		sdtx_pos(1, 1);
+		sdtx_printf("Perf: %.2fms frame, %.2fms cpu", s_time_frame_avg_ms, s_time_cpu_avg_ms);
+		sdtx_pos(1, 2);
+		sdtx_printf("Draw: %i passes, %i draws, %.1fKB uniforms, %ix%i", stats.prev_frame.num_passes, stats.prev_frame.num_draw, stats.prev_frame.size_apply_uniforms / 1024.0f, sapp_width(), sapp_height());
+		sdtx_draw();
+	}
+
+	sg_end_pass();
 	sg_commit();
+
+	uint64_t time1 = stm_now();
+	if (s_time_frame_prev != 0)
+	{
+		uint64_t frame_dur = time0 - s_time_frame_prev;
+		uint64_t cpu_dur = time1 - time0;
+		s_time_frame_accum += frame_dur;
+		s_time_cpu_accum += cpu_dur;
+		s_time_frame_count++;
+		if (stm_sec(s_time_frame_accum) > 0.5)
+		{
+			s_time_frame_avg_ms = stm_ms(s_time_frame_accum) / s_time_frame_count;
+			s_time_cpu_avg_ms = stm_ms(s_time_cpu_accum) / s_time_frame_count;
+			s_time_frame_accum = s_time_cpu_accum = 0;
+			s_time_frame_count = 0;
+		}
+	}
+	s_time_frame_prev = time0;
+
 
 	return continue_exec;
 }
@@ -929,6 +972,13 @@ void demo_event(const sapp_event* evt)
 #endif
 		if (evt->key_code == SAPP_KEYCODE_ESCAPE) {
 			sapp_quit();
+		}
+		if (evt->key_code == SAPP_KEYCODE_SLASH) {
+			s_display_stats = !s_display_stats;
+			if (s_display_stats)
+				sg_enable_stats();
+			else
+				sg_disable_stats();
 		}
 	}
 	if (evt->type == SAPP_EVENTTYPE_KEY_UP)

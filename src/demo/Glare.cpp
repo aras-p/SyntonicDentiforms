@@ -86,7 +86,5 @@ void renderBloom()
 		effect_apply(fx_compositeAdd);
 		sg_apply_bindings(binds);
 		sg_draw(0, 4, 1);
-
-		sg_end_pass();
 	}
 }

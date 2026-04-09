@@ -12,6 +12,8 @@
 #include "external/sokol_gfx.h"
 #include "external/sokol_log.h"
 #include "external/sokol_glue.h"
+#include "external/sokol_time.h"
+#include "external/sokol_debugtext.h"
 #define SOKOL_GFX_UTILS_IMPL
 #include "external/sokol_gfx_utils.h"
 
@@ -21,12 +23,21 @@
 
 static void init(void)
 {
-    {
-        sg_desc desc = {};
-        desc.environment = sglue_environment();
-        desc.logger.func = slog_func;
-        sg_setup(&desc);
-    }
+	{
+		sg_desc desc = {};
+		desc.environment = sglue_environment();
+		desc.logger.func = slog_func;
+		sg_setup(&desc);
+	}
+
+	{
+		sdtx_desc_t desc = {};
+		desc.logger.func = slog_func;
+		desc.fonts[0] = sdtx_font_cpc();
+		sdtx_setup(&desc);
+	}
+
+	stm_setup();
 
     if (!demo_init()) {
         sapp_quit();
