@@ -58,7 +58,6 @@ void CMeshEntity::render(eRenderMode renderMode, sg_bindings* binds)
 
 	EntityUniformsVS uboVS = {};
 	uboVS.mat = mMatrix;
-	uboVS.matWVP = mWVPMatrix;
 	sg_apply_uniforms(1, {&uboVS, sizeof(uboVS)});
 
 	binds->vertex_buffers[0] = mMesh->getVB();

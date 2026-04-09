@@ -15,7 +15,6 @@ layout(binding=0) uniform global_uniforms {
 // Match EntityUniforms in C++
 layout(binding=1) uniform entity_uniforms_vs {
 	mat4 mWorld;
-	mat4 mWVP;
 };
 
 const float	fLightDiffuse = 0.5;

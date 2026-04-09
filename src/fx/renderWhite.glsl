@@ -10,7 +10,8 @@
 layout(location=0) in vec3 va_position;
 void main()
 {
-	gl_Position = mWVP * vec4(va_position, 1.0);
+    vec4 worldPos = mWorld * vec4(va_position, 1.0);
+    gl_Position = mViewProj * worldPos;
 }
 #pragma sokol @end
 

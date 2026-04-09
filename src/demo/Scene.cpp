@@ -138,7 +138,6 @@ void CScene::render(eRenderMode renderMode, sg_bindings* binds)
 	if (n == 0)
 		return;
 
-	bool ubo0 = true;
 	switch (renderMode) {
 	case RM_RECV_HI:
 		pipeline_apply(pip_renderLitShadowed);
@@ -148,7 +147,6 @@ void CScene::render(eRenderMode renderMode, sg_bindings* binds)
 		break;
 	case RM_SHADOW:
 		pipeline_apply(pip_shadowCaster);
-		ubo0 = false;
 		break;
 	case RM_REFLECTIVE:
 		pipeline_apply(pip_renderReflective);
@@ -160,8 +158,7 @@ void CScene::render(eRenderMode renderMode, sg_bindings* binds)
         assert(false);
 	}
 
-	if (ubo0)
-		sg_apply_uniforms(0, { &g_global_u, sizeof(g_global_u) });
+	sg_apply_uniforms(0, { &g_global_u, sizeof(g_global_u) });
 
 	for( int i = 0; i < n; ++i )
 		mMeshes[i].mesh->render(renderMode, binds);

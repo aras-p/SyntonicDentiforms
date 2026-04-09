@@ -416,8 +416,8 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 	}
 
 	pipeline_apply(pip_renderWhite);
+	sg_apply_uniforms(0, { &g_global_u, sizeof(g_global_u) });
 	EntityUniformsVS uboVS = {};
-	uboVS.mat.identify(); // not really used
 
 	sg_bindings binds = {};
 
@@ -430,13 +430,10 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 		if( pack != TEETHPACKS-1 ) {
 			for( i = 0; i < nteeth; ++i ) {
 				SMesh& mesh = mMeshes[ ta.mTeethIdx[i] ];
-				mMaskMeshWVP = mesh.mesh->mMatrix;
-				mMaskMeshWVP.getAxisX() *= toothMaskScale;
-				mMaskMeshWVP.getAxisY() *= toothMaskScale * toothMaskScale*0.5f;
-				mMaskMeshWVP.getAxisZ() *= toothMaskScale;
-				mMaskMeshWVP = mMaskMeshWVP * gRenderCam.getViewProjMatrix();
-
-				uboVS.matWVP = mMaskMeshWVP;
+				uboVS.mat = mesh.mesh->mMatrix;
+				uboVS.mat.getAxisX() *= toothMaskScale;
+				uboVS.mat.getAxisY() *= toothMaskScale * toothMaskScale*0.5f;
+				uboVS.mat.getAxisZ() *= toothMaskScale;
 				sg_apply_uniforms(1, { &uboVS, sizeof(uboVS) });
 				sg_apply_bindings(binds);
 				sg_draw(0, toothMaskMesh->getIndexCount(), 1);
@@ -446,13 +443,10 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 				int ntth = mAnimTeeth[pk]->getCount();
 				for( i = 0; i < ntth; ++i ) {
 					SMesh& mesh = mMeshes[ mAnimTeeth[pk]->mTeethIdx[i] ];
-					mMaskMeshWVP = mesh.mesh->mMatrix;
-					mMaskMeshWVP.getAxisX() *= toothMaskScale;
-					mMaskMeshWVP.getAxisY() *= toothMaskScale * toothMaskScale*0.5f;
-					mMaskMeshWVP.getAxisZ() *= toothMaskScale;
-					mMaskMeshWVP = mMaskMeshWVP * gRenderCam.getViewProjMatrix();
-
-					uboVS.matWVP = mMaskMeshWVP;
+					uboVS.mat = mesh.mesh->mMatrix;
+					uboVS.mat.getAxisX() *= toothMaskScale;
+					uboVS.mat.getAxisY() *= toothMaskScale * toothMaskScale*0.5f;
+					uboVS.mat.getAxisZ() *= toothMaskScale;
 					sg_apply_uniforms(1, { &uboVS, sizeof(uboVS) });
 					sg_apply_bindings(binds);
 					sg_draw(0, toothMaskMesh->getIndexCount(), 1);

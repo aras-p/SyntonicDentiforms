@@ -15,7 +15,8 @@ out vec3 tolight;
 
 void main()
 {
-	gl_Position = mWVP * vec4(va_position, 1.0);
+    vec4 worldPos = mWorld * vec4(va_position, 1.0);
+    gl_Position = mViewProj * worldPos;
 	gVSLightTerms(va_position, va_normal, mWorld, normal, tolight, hlf);
 }
 #pragma sokol @end
