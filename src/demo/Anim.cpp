@@ -1,5 +1,4 @@
 #include "Anim.h"
-#include "Globals.h"
 
 CAnim::CAnim(DataAnim animation, const std::string& curve, int anims )
 :	mDefaultPos(0,0,0),

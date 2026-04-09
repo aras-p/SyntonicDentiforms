@@ -1,9 +1,6 @@
 #pragma once
 
 #include <src/math/Matrix4x4.h>
-#include "Globals.h"
-
-// --------------------------------------------------------------------------
 
 class CCameraEntity {
 public:
@@ -40,7 +37,6 @@ public:
     SMatrix4x4    mMatrix;
 
 private:
-
 	// projection params
 	SMatrix4x4	mProjectionMatrix;
 	bool	mOrtho;
@@ -50,3 +46,30 @@ private:
 	float	mViewHalfWidth; // at distance 1
 	float	mViewHalfHeight; // at distance 1
 };
+
+
+class CRenderCamera {
+public:
+	CRenderCamera();
+	
+	void setCameraMatrix( const SMatrix4x4& matrix );
+	void setProjectionMatrix( const SMatrix4x4& matrix );
+	
+	const SMatrix4x4& getCameraMatrix() const { return mCameraMatrix; }
+	const SMatrix4x4& getCameraRotMatrix() const { return mCameraRotMatrix; }
+	const SMatrix4x4& getViewMatrix() const { return mViewMatrix; }
+	const SMatrix4x4& getViewProjMatrix() const { return mViewProjMatrix; }
+	const SMatrix4x4& getProjectionMatrix() const { return mProjectionMatrix; };
+	const SVector3& getEye3() const { return mCameraMatrix.getOrigin(); }
+	
+private:
+	SMatrix4x4		mCameraMatrix;	
+	SMatrix4x4		mProjectionMatrix;
+
+	// calculated basing on camera matrix
+	SMatrix4x4		mViewMatrix;
+	SMatrix4x4		mViewProjMatrix;
+	SMatrix4x4		mCameraRotMatrix;
+};
+
+extern CRenderCamera gRenderCam;

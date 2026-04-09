@@ -10,6 +10,8 @@ set (SOURCES
     
     src/demo/Anim.cpp
     src/demo/Anim.h
+    src/demo/Camera.cpp
+    src/demo/Camera.h
     src/demo/DataFiles.cpp
     src/demo/DataFiles.h
     src/demo/Demo.cpp
@@ -17,11 +19,8 @@ set (SOURCES
     src/demo/DemoResources.h
     src/demo/Effect.cpp
     src/demo/Effect.h
-    src/demo/Entity.cpp
-    src/demo/Entity.h
     src/demo/Glare.cpp
     src/demo/Glare.h
-    src/demo/Globals.h
     src/demo/LineRenderer.cpp
     src/demo/LineRenderer.h
     src/demo/main.cpp
@@ -29,8 +28,6 @@ set (SOURCES
     src/demo/MeshEntity.h
     src/demo/MusicPlayer.cpp
     src/demo/MusicPlayer.h
-    src/demo/RenderCamera.cpp
-    src/demo/RenderCamera.h
     src/demo/Scene.cpp
     src/demo/Scene.h
     src/demo/SceneOut.cpp

@@ -1,7 +1,7 @@
-#include "Entity.h"
+#include "Camera.h"
+#include "DemoResources.h"
 
-
-// --------------------------------------------------------------------------
+CRenderCamera gRenderCam;
 
 CCameraEntity::CCameraEntity()
 {
@@ -59,4 +59,40 @@ SVector3 CCameraEntity::getWorldRay( float x, float y ) const
 SVector3 CCameraEntity::getCameraRay( float x, float y ) const
 {
 	return SVector3( x*mViewHalfWidth, -y*mViewHalfHeight, 1.0f );
+}
+
+
+CRenderCamera::CRenderCamera()
+{
+	mCameraMatrix.identify();
+	mProjectionMatrix.identify();
+	mCameraRotMatrix.identify();
+	mViewMatrix.identify();
+	mViewMatrix.identify();
+}
+
+
+void CRenderCamera::setCameraMatrix( SMatrix4x4 const& matrix )
+{
+	mCameraMatrix = matrix;
+	mCameraRotMatrix = matrix;
+	mCameraRotMatrix.getOrigin().set(0,0,0);
+
+	mViewMatrix = mCameraMatrix;
+	mViewMatrix.invert();
+	mViewProjMatrix = mViewMatrix * mProjectionMatrix;
+
+	g_global_u.matProjection = mProjectionMatrix;
+	g_global_u.matView = mViewMatrix;
+	g_global_u.matViewProj = mViewProjMatrix;
+	g_global_u.eyePos = mCameraMatrix.getOrigin();
+}
+
+void CRenderCamera::setProjectionMatrix( SMatrix4x4 const& matrix )
+{
+	mProjectionMatrix = matrix;
+	mViewProjMatrix = mViewMatrix * mProjectionMatrix;
+
+	g_global_u.matProjection = mProjectionMatrix;
+	g_global_u.matViewProj = mViewProjMatrix;
 }

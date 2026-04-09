@@ -1,7 +1,8 @@
 #include "LineRenderer.h"
+
+#include "Camera.h"
 #include "DemoResources.h"
 #include "Effect.h"
-#include "Globals.h"
 #include "DataFiles.h"
 #include <src/gfx/DynamicVBManager.h>
 #include <src/utils/AssertHelper.h>

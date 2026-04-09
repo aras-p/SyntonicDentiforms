@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Entity.h"
+#include "Camera.h"
 #include "DataFiles.h"
 
 // --------------------------------------------------------------------------
