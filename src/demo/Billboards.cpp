@@ -1,6 +1,6 @@
 #include "Billboards.h"
 #include "DemoResources.h"
-#include "../gfx/DynamicVBManager.h"
+#include "DynamicVB.h"
 #include "../math/Vector3.h"
 #include <vector>
 #include <assert.h>

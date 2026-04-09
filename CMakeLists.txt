@@ -19,6 +19,8 @@ set (SOURCES
     src/demo/Demo.cpp
     src/demo/Demo.h
     src/demo/DemoResources.h
+    src/demo/DynamicVB.cpp
+    src/demo/DynamicVB.h
     src/demo/Effect.cpp
     src/demo/Effect.h
     src/demo/Glare.cpp
@@ -40,8 +42,6 @@ set (SOURCES
     src/demo/TextureProjector.cpp
     src/demo/TextureProjector.h
 
-    src/gfx/DynamicVBManager.cpp
-    src/gfx/DynamicVBManager.h
     src/gfx/Mesh.cpp
     src/gfx/Mesh.h
     src/gfx/Texture.cpp

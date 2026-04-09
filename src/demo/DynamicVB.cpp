@@ -1,4 +1,4 @@
-#include "DynamicVBManager.h"
+#include "DynamicVB.h"
 #include <assert.h>
 
 static sg_buffer s_dynamic_buffer;

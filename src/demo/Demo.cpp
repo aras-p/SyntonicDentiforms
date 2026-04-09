@@ -2,11 +2,11 @@
 #include <src/math/Plane.h>
 #include <src/math/MathUtils.h>
 
-#include <src/gfx/DynamicVBManager.h>
 
 #include "Billboards.h"
 #include "Demo.h"
 #include "DemoResources.h"
+#include "DynamicVB.h"
 #include "Effect.h"
 #include "Scene.h"
 #include "SceneTeeth.h"

@@ -4,7 +4,7 @@
 #include "DemoResources.h"
 #include "Effect.h"
 #include "DataFiles.h"
-#include <src/gfx/DynamicVBManager.h>
+#include "DynamicVB.h"
 #include <assert.h>
 
 CLineRenderer::CLineRenderer()
