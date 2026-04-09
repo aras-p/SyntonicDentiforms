@@ -3,6 +3,8 @@
 #define SOKOL_METAL
 #elif defined(_WIN32) && !USE_WINDOWS_OPENGL
 #define SOKOL_D3D11
+#elif defined(__EMSCRIPTEN__)
+#define SOKOL_GLES3
 #else
 #define SOKOL_GLCORE
 #endif

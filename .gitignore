@@ -2,5 +2,6 @@
 .idea/
 .DS_Store
 /build
+/emsdk
 tools/sokol-shdc*
 /Demo*

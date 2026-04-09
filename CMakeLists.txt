@@ -3,6 +3,20 @@ project(SyntonicDentiforms)
 
 set(USE_WINDOWS_OPENGL OFF)
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+	set(EMSCRIPTEN TRUE)
+	if(NOT DEFINED ENV{EMSDK})
+		message(FATAL_ERROR "Emscripten SDK is not set up; set ENV value EMSDK")
+	endif()	
+else()
+	set(EMSCRIPTEN FALSE)
+endif()
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(LINUX TRUE)
+else()
+	set(LINUX FALSE)
+endif()
+
 set (SOURCES
     src/animator/AnimationBunch.cpp
     src/animator/AnimationBunch.h
@@ -102,10 +116,24 @@ if (APPLE)
         "-framework QuartzCore"
         "-framework AudioToolbox"
     )
-endif ()
-if (LINUX)
+elseif (LINUX)
     find_package(Threads REQUIRED)
     target_link_libraries(Demo PRIVATE X11 Xi Xcursor GL asound dl m Threads::Threads)
+elseif (EMSCRIPTEN)
+	set(CMAKE_EXECUTABLE_SUFFIX .html)
+	target_link_options(Demo PRIVATE
+		-sMIN_WEBGL_VERSION=2
+		-sMAX_WEBGL_VERSION=2
+        -sFULL_ES3=1
+		-sALLOW_MEMORY_GROWTH=1
+		-sMALLOC=emmalloc
+		--embed-file ../../data
+		--shell-file=../../src/webshell.html
+    )
+	if (CMAKE_BUILD_TYPE STREQUAL "Release")
+		target_compile_options(Demo PRIVATE -flto)
+		target_link_options(Demo PRIVATE -flto --closure 1)
+	endif()
 endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -135,6 +163,9 @@ function(add_sokol_shader target_name shader_file)
     elseif(APPLE)
         set(SHADER_BACKENDS "metal_macos")
         set(SHADER_ARGS "--bytecode")
+    elseif(EMSCRIPTEN)
+        set(SHADER_BACKENDS "glsl300es")
+        set(SHADER_ARGS "")
     else()
         set(SHADER_BACKENDS "glsl430")
         set(SHADER_ARGS "")

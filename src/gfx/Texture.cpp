@@ -37,6 +37,7 @@ void sokol_texture::create(const sg_image_desc& desc)
         assert(sg_query_view_state(view_resolve) == SG_RESOURCESTATE_VALID);
 	}
 
+	if (desc.sample_count <= 1) // only allow sampling it if not MSAA'd (mostly WebGL2 limitation)
 	{
 		sg_view_desc vdesc = {};
 		vdesc.texture.image = image;
