@@ -30,9 +30,9 @@ private:
 	SQuaternion	mDefaultRot;
 	float		mDefaultScale;
 
-	CAnimationBunch::TVector3Animation* mPosAnim;
-	CAnimationBunch::TQuatAnimation*	mRotAnim;
-	CAnimationBunch::TFloatAnimation*	mScaleAnim;
+	const CAnimationBunch::TVector3Animation* mPosAnim;
+	const CAnimationBunch::TQuatAnimation*	mRotAnim;
+	const CAnimationBunch::TFloatAnimation*	mScaleAnim;
 	int mCurve;
 };
 

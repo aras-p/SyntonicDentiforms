@@ -2,6 +2,7 @@
 
 #include "AnimCurve.h"
 #include "../math/TypeTraits.h"
+#include <string>
 #include <vector>
 #include <assert.h>
 
@@ -26,7 +27,15 @@ public:
 	typedef CAnimCurve<value_type>	curve_type;
 
 public:
-	CSampledAnimation( int samplesInCurve, eLoopType loopType ) : mSamplesInCurve(samplesInCurve), mLoopType(loopType) { };
+	CSampledAnimation() { };
+    
+    void init(const std::string& name, int samplesInCurve, eLoopType loopType)
+    {
+        mName = name;
+        mSamplesInCurve = samplesInCurve;
+        mLoopType = loopType;
+    }
+    const std::string& getName() const { return mName; }
 
 	void	resizeSamples( int sampleCount ) { mSamples.resize(sampleCount); }
 	const value_type& getSample( int index ) const
@@ -55,6 +64,7 @@ private:
 	typedef std::vector<curve_type> TCurveVector;
 
 private:
+    std::string     mName;
 	TSampleVector	mSamples;
 	TCurveVector	mCurves;
 	int				mSamplesInCurve;

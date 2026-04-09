@@ -4,7 +4,6 @@
 #include "../math/Vector3.h"
 #include "../math/Quaternion.h"
 #include <string>
-#include <map>
 #include <vector>
 #include <assert.h>
 
@@ -19,99 +18,86 @@ public:
 	CAnimationBunch() { };
 	~CAnimationBunch();
 
-	/// Adds named Vector3 animation.
-	void addVector3Anim( const std::string& name, TVector3Animation& anim );
-	/// Adds named Quaternion animation.
-	void addQuatAnim( const std::string& name, TQuatAnimation& anim );
-	/// Adds named Float animation.
-	void addFloatAnim( const std::string& name, TFloatAnimation& anim );
+    TVector3Animation& addVector3Anim()
+    {
+        mVector3Anims.emplace_back(TVector3Animation());
+        return mVector3Anims.back();
+    }
+    TQuatAnimation& addQuatAnim()
+    {
+        mQuatAnims.emplace_back(TQuatAnimation());
+        return mQuatAnims.back();
+    }
+    TFloatAnimation& addFloatAnim()
+    {
+        mFloatAnims.emplace_back(TFloatAnimation());
+        return mFloatAnims.back();
+    }
 
-	/// Finds Vector3 animation by name, or returns NULL.
-	TVector3Animation* findVector3Anim( const std::string& name );
-	/// Finds Quaternion animation by name, or returns NULL.
-	TQuatAnimation* findQuatAnim( const std::string& name );
-	/// Finds Float animation by name, or returns NULL.
-	TFloatAnimation* findFloatAnim( const std::string& name );
+	const TVector3Animation* findVector3Anim(const std::string& name)
+    {
+        for(const TVector3Animation& anim : mVector3Anims)
+        {
+            if (anim.getName() == name)
+                return &anim;
+        }
+        return nullptr;
+    }
+	const TQuatAnimation* findQuatAnim(const std::string& name)
+    {
+        for(const TQuatAnimation& anim : mQuatAnims)
+        {
+            if (anim.getName() == name)
+                return &anim;
+        }
+        return nullptr;
+    }
+	const TFloatAnimation* findFloatAnim(const std::string& name)
+    {
+        for(const TFloatAnimation& anim : mFloatAnims)
+        {
+            if (anim.getName() == name)
+                return &anim;
+        }
+        return nullptr;
+    }
 
 	//
 	// curve descriptors
 
 	void	addCurveDesc(const std::string& name);
 	/// Get curve count.
-	int		getCurveCount() const;
+    int     getCurveCount() const { return (int)mCurveNames.size(); }
 	/// Get curve's name by index.
 	const std::string& getCurveName( int curveIdx ) const;
 	/// Gets curve's index by it's name, or -1 if no such curve exists.
 	int		getCurveIndexByName( const std::string& name ) const;
 
 private:
-	typedef std::map<std::string, TVector3Animation*>	TVector3AnimMap;
-	typedef std::map<std::string, TQuatAnimation*>		TQuatAnimMap;
-	typedef std::map<std::string, TFloatAnimation*>		TFloatAnimMap;
-
-	typedef std::vector<std::string> TCurveDescVector;
-
-private:
-	TVector3AnimMap		mVector3Anims;
-	TQuatAnimMap		mQuatAnims;
-	TFloatAnimMap		mFloatAnims;
-
-	TCurveDescVector	mCurveDescs;
+	std::vector<TVector3Animation>	mVector3Anims;
+    std::vector<TQuatAnimation>		mQuatAnims;
+    std::vector<TFloatAnimation>	mFloatAnims;
+    std::vector<std::string>        mCurveNames;
 };
 
 
 // --------------------------------------------------------------------------
 
-inline void CAnimationBunch::addVector3Anim( const std::string& name, TVector3Animation& anim )
-{
-	bool unique = mVector3Anims.insert( std::make_pair( name, &anim ) ).second;
-	assert( unique );
-}
-inline void CAnimationBunch::addQuatAnim( const std::string& name, TQuatAnimation& anim )
-{
-	bool unique = mQuatAnims.insert( std::make_pair( name, &anim ) ).second;
-	assert( unique );
-}
-inline void CAnimationBunch::addFloatAnim( const std::string& name, TFloatAnimation& anim )
-{
-	bool unique = mFloatAnims.insert( std::make_pair( name, &anim ) ).second;
-	assert( unique );
-}
-
-inline CAnimationBunch::TVector3Animation* CAnimationBunch::findVector3Anim( const std::string& name )
-{
-	TVector3AnimMap::const_iterator it = mVector3Anims.find( name );
-	return (it!=mVector3Anims.end()) ? it->second : 0;
-}
-inline CAnimationBunch::TQuatAnimation* CAnimationBunch::findQuatAnim( const std::string& name )
-{
-	TQuatAnimMap::const_iterator it = mQuatAnims.find( name );
-	return (it!=mQuatAnims.end()) ? it->second : 0;
-}
-inline CAnimationBunch::TFloatAnimation* CAnimationBunch::findFloatAnim( const std::string& name )
-{
-	TFloatAnimMap::const_iterator it = mFloatAnims.find( name );
-	return (it!=mFloatAnims.end()) ? it->second : 0;
-}
-
 inline void CAnimationBunch::addCurveDesc(const std::string& name)
 {
 	assert( getCurveIndexByName(name) == -1 );
-	mCurveDescs.push_back(name);
-}
-inline int CAnimationBunch::getCurveCount() const
-{
-	return mCurveDescs.size();
+    mCurveNames.push_back(name);
 }
 inline const std::string& CAnimationBunch::getCurveName( int curveIdx ) const
 {
-	assert( curveIdx >= 0 && curveIdx < mCurveDescs.size() );
-	return mCurveDescs[curveIdx];
+    assert( curveIdx >= 0 && curveIdx < mCurveNames.size() );
+	return mCurveNames[curveIdx];
 }
-inline int	CAnimationBunch::getCurveIndexByName( const std::string& name ) const
+inline int CAnimationBunch::getCurveIndexByName( const std::string& name ) const
 {
-	for( int i = 0; i < mCurveDescs.size(); ++i ) {
-		if( getCurveName(i) == name )
+	for (int i = 0; i < mCurveNames.size(); ++i)
+    {
+        if (mCurveNames[i] == name)
 			return i;
 	}
 	return -1;
