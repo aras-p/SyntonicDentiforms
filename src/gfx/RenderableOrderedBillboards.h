@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../math/Vector3.h"
 #include "external/sokol_gfx.h"
 #include <vector>
 
-struct SVertexXyzDiffuseTex1;
 struct SMatrix4x4;
 
 
@@ -36,7 +36,11 @@ public:
 	void render();
 
 private:
-	typedef SVertexXyzDiffuseTex1		TVertex;
+	struct TVertex {
+		SVector3	p;
+		uint32_t	diffuse;
+		float		tu, tv;
+	};
 	typedef std::vector<SOBillboard>	TBillVector;
 
 private:
@@ -44,5 +48,3 @@ private:
 	sg_sampler mSampler;
 	TBillVector mBills;
 };
-
-

@@ -1,8 +1,6 @@
 #include "RenderableOrderedBillboards.h"
 #include "DynamicVBManager.h"
 
-#include "Vertices.h"
-
 #include <assert.h>
 
 

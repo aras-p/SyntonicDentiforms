@@ -1,7 +1,7 @@
 #pragma once
 
-#include <src/gfx/Vertices.h>
 #include <stdint.h>
+#include "../math/Vector3.h"
 #include "external/sokol_gfx.h"
 
 
@@ -18,6 +18,10 @@ public:
 	void	renderStrip(int npoints, const SLinePoint* points, float halfWidth);
 
 private:
-	typedef SVertexXyzDiffuseTex1	TVertex;
+	struct TVertex {
+		SVector3	p;
+		uint32_t	diffuse;
+		float		tu, tv;
+	};
 	sg_buffer mIB;
 };

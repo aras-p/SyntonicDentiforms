@@ -46,7 +46,6 @@ set (SOURCES
     src/gfx/RenderableOrderedBillboards.h
     src/gfx/Texture.cpp
     src/gfx/Texture.h
-    src/gfx/Vertices.h
     
     src/math/AABox.h
     src/math/Constants.h
