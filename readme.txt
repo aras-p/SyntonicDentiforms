@@ -8,26 +8,8 @@
 
     ______________________________________________________________
 
-    A demo for Breakpoint'04
+    A demo for Breakpoint'04 ---------------------- rebuilt in '26
 
-
-
-
-    R e q u i r e m e n t s :
-      
-          DirectX......9.0b runtime...............................
-          Video card...with 64MB RAM and pixel shader version:....
-          ................* 2.0........................(all ok) or
-          ................* 1.4..................(ugly shadows) or
-          ................* 1.1....(ugly shadows, vertex lighting)
-          .............Yes, pixel shaders are required  (no, GF4MX
-          .............won't run it).............................. 
-          .............For slow "DX9" cards, see tech. note below.
-          Drivers......somewhat recent drivers....................
-          Tested.......and seems to work on R9800Pro, R9600XT/Pro,
-          .............FX5900XT, FX5700U, FX5200, R9200, R9000Pro, 
-          .............GF4Ti, GF3.................................
-  
 
 
     C r e d i t s :
@@ -49,26 +31,29 @@
 
 
 
-    C o n t a c t :
+    L i n k s :
 
-          Nesnausk!.......................http://www.nesnausk.org/
-          DemoSCENE [LT].....................http://demo.scene.lt/
-          NeARAZ............http://www.gim.ktu.lt/nesnausk/nearaz/
-          txd...............................http://txd.kung-fu.lt/
-          by_Max.................http://www.architektai.tinkle.lt/
-
+          Live.........https://aras-p.github.io/SyntonicDentiforms
+          Source......https://github.com/aras-p/SyntonicDentiforms
+          Nesnausk!.......................https://www.nesnausk.org
+          NeARAZ...............................https://aras-p.info
 
 
-    T e c h   n o t e s :
+    C o n c e p t :
 
-          (<R9600XT)...For slower (<R9600XT) cards better use.....
-          .............800x600 or something.......................
-          VSync........VSync setting is in startup dialog (present
-          .............interval)..................................
-          Bugs.........We had some weird driver bugs on DX8.......
-          .............Radeons that occured when using hardware...
-          .............vertex processing. So, for all DX8 cards we
-          .............just force software vertex processing =]...
+          stambiu planu kadre sukasi du dantračiai.    galbūt kaip
+          vilkeliai.  artėja vienas prie kito ir susiliečia.  DŽYR
+          DŽARGT OBANA!  išsimuša keli dantys.  dantračiai atšoka,
+          sukasi  aplink  ir  vėl  susiliečia.  DŽYR DŽARGT POKŠT!
+          dantračių desperacija didėja. procesas kartojasi. DŽYYYR
+          DŽŽŽAAR  BAARKŠT!   nebelieka dantų.   dantračiai (buvę)
+          susiglaudžia ir sukasi kartu.
+
+          fade out. fade in.
+
+          namelis gūdžiam lietuviškam kaimely.  senukų porelė sėdi
+          ant suolelio ir stambiu  planu  šypsosi  į  kamerą  savo
+          bedantėmis šypsenomis.
 
 
 
