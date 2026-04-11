@@ -95,11 +95,15 @@ void main()
 	uv.y = 1.0 - uv.y;
 	#endif
 
-	float shadow = sampleShadow(uv);
-	
-	float cookie = texture(sampler2D(texCookie, smpCookie), uv.xy).r;
-	shadow *= cookie;
-
+    float shadow = 0.0;
+    if (uv.z > 0.0)
+    {
+        float cookie = texture(sampler2D(texCookie, smpCookie), uv.xy).r;
+        if (cookie > 0.0)
+        {
+            shadow = cookie * sampleShadow(uv);
+        }
+    }
 	// lighting
 	frag_color = gPSLight(normalize(normal), normalize(tolight), normalize(hlf), shadow);
 }
