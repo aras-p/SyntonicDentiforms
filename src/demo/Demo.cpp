@@ -418,13 +418,9 @@ void gRenderShadowMap()
 	pass.action.depth.clear_value = 1.0f;
 
 	sg_begin_pass(&pass);
-	sg_apply_viewport(1, 1, SZ_SHADOWMAP-2, SZ_SHADOWMAP-2, true);
-
 	sg_bindings binds = {};
 	gScenes[gSceneIndex]->render(RM_SHADOW_CASTER, &binds);
-
 	sg_end_pass();
-
 }
 
 static float gGetSceneDur()
