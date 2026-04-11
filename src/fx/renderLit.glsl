@@ -30,7 +30,7 @@ in vec3 tolight;
 out vec4 frag_color;
 void main()
 {
-	frag_color = gPSLight(normal, tolight, normalize(hlf), 1.0);
+	frag_color = gPSLight(normalize(normal), normalize(tolight), normalize(hlf), 1.0);
 }
 #pragma sokol @end
 

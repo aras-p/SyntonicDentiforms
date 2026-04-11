@@ -101,7 +101,7 @@ void main()
 	shadow *= cookie;
 
 	// lighting
-	frag_color = gPSLight(normal, tolight, normalize(hlf), shadow);
+	frag_color = gPSLight(normalize(normal), normalize(tolight), normalize(hlf), shadow);
 }
 #pragma sokol @end
 
