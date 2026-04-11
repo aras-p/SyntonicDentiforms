@@ -21,6 +21,7 @@ void pingPongBlur(int passes)
 		SVector4 offset(pixDist / swidth, pixDist / sheight, 0, 0);
 
 		sg_pass pass = {};
+        pass.label = "blur step";
 		pass.attachments.colors[0] = pingPong[i&1]->view_rt;
 		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
 		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
@@ -48,6 +49,7 @@ void renderBloom()
 	// downsample main into smaller RT
 	{
 		sg_pass pass = {};
+        pass.label = "downsample";
 		pass.attachments.colors[0] = rt_4th_1.view_rt;
 		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
 		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
@@ -72,6 +74,7 @@ void renderBloom()
 	// composite into backbuffer
 	{
 		sg_pass pass = {};
+        pass.label = "compose bloom";
 		pass.swapchain = sglue_swapchain();
 		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
 		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;

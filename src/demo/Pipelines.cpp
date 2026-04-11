@@ -23,18 +23,18 @@ static sg_pipeline s_fx_pipes[pipCount] = {};
 void pipelines_init()
 {
 	sg_backend backend = sg_query_backend();
-	// blit
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "blit";
 		desc.shader = sg_make_shader(blit_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		s_fx_pipes[pip_blit] = sg_make_pipeline(desc);
 	}
-	// postComposeBloom
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "postComposeBloom";
 		desc.shader = sg_make_shader(postComposeBloom_prog_shader_desc(backend));
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		// Z off
@@ -42,9 +42,9 @@ void pipelines_init()
 		desc.depth.write_enabled = false;
 		s_fx_pipes[pip_postComposeBloom] = sg_make_pipeline(desc);
 	}
-	// postComposeToon
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "postComposeToon";
 		desc.shader = sg_make_shader(postComposeToon_prog_shader_desc(backend));
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
@@ -60,9 +60,9 @@ void pipelines_init()
 		desc.cull_mode = SG_CULLMODE_NONE;
 		s_fx_pipes[pip_postComposeToon] = sg_make_pipeline(desc);
 	}
-	// postBlurStep
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "postBlurStep";
 		desc.shader = sg_make_shader(postBlurStep_prog_shader_desc(backend));
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
@@ -72,9 +72,9 @@ void pipelines_init()
 		desc.depth.write_enabled = false;
 		s_fx_pipes[pip_postBlurStep] = sg_make_pipeline(desc);
 	}
-	// postToon
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "postToon";
 		desc.shader = sg_make_shader(postToon_prog_shader_desc(backend));
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
@@ -84,9 +84,9 @@ void pipelines_init()
 		desc.depth.write_enabled = false;
 		s_fx_pipes[pip_postToon] = sg_make_pipeline(desc);
 	}
-	// billboards
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "billboards";
 		desc.shader = sg_make_shader(billboards_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
@@ -109,15 +109,16 @@ void pipelines_init()
 		desc.cull_mode = SG_CULLMODE_NONE;
 		s_fx_pipes[pip_billboards] = sg_make_pipeline(desc);
 
+        desc.label = "billboardsClearDestAlpha";
 		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA;
 		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
 		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
 		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_SRC_ALPHA;
 		s_fx_pipes[pip_billboardsClearDestAlpha] = sg_make_pipeline(desc);
 	}
-	// overlay /2
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "overlay1";
 		desc.shader = sg_make_shader(overlay_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
@@ -133,15 +134,16 @@ void pipelines_init()
 		desc.cull_mode = SG_CULLMODE_NONE;
 		s_fx_pipes[pip_overlay1] = sg_make_pipeline(desc);
 
+        desc.label = "overlay2";
 		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_DST_COLOR;
 		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_DST_ALPHA;
 		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE;
 		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE;
 		s_fx_pipes[pip_overlay2] = sg_make_pipeline(desc);
 	}
-	// render white
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "renderWhite";
 		desc.shader = sg_make_shader(renderWhite_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
@@ -156,9 +158,9 @@ void pipelines_init()
 		desc.depth.write_enabled = false;
 		s_fx_pipes[pip_renderWhite] = sg_make_pipeline(desc);
 	}
-	// caster
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "shadowCaster";
 		desc.shader = sg_make_shader(shadowCaster_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_NONE;
 		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
@@ -173,9 +175,9 @@ void pipelines_init()
 		s_fx_pipes[pip_shadowCaster] = sg_make_pipeline(desc);
 
 	}
-	// lines
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "lines";
 		desc.shader = sg_make_shader(lines_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
@@ -199,14 +201,15 @@ void pipelines_init()
 		desc.cull_mode = SG_CULLMODE_NONE;
 		s_fx_pipes[pip_lines] = sg_make_pipeline(desc);
 
+        desc.label = "linesNoAA";
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		desc.sample_count = 1;
 		s_fx_pipes[pip_linesNoAA] = sg_make_pipeline(desc);
 	}
-	// receiver Hi/Lo
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "renderLitShadowed";
 		desc.shader = sg_make_shader(renderLitShadowed_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
@@ -222,12 +225,13 @@ void pipelines_init()
 		desc.depth.write_enabled = true;
 		desc.cull_mode = SG_CULLMODE_FRONT;
 		s_fx_pipes[pip_renderLitShadowed] = sg_make_pipeline(desc);
+        desc.label = "renderLitShadowedFlip";
 		desc.cull_mode = SG_CULLMODE_BACK; // reflection; inverted culling
 		s_fx_pipes[pip_renderLitShadowedFlip] = sg_make_pipeline(desc);
 	}
-	// noshadow Hi
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "renderLit";
 		desc.shader = sg_make_shader(renderLit_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;
@@ -244,9 +248,9 @@ void pipelines_init()
 		desc.cull_mode = SG_CULLMODE_FRONT;
 		s_fx_pipes[pip_renderLit] = sg_make_pipeline(desc);
 	}
-	// renderReflective
 	{
 		sg_pipeline_desc desc = {};
+        desc.label = "renderReflective";
 		desc.shader = sg_make_shader(renderReflective_prog_shader_desc(backend));
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_DEPTH;

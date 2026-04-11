@@ -371,6 +371,7 @@ void gRenderWallReflections()
 		gComputeTextureProjection(gRenderCam.getCameraMatrix(), gLightViewProjMatrix, g_global_u.matShadowProj);
 
 		sg_pass pass = {};
+        pass.label = "reflection";
 		pass.attachments.depth_stencil = rt_refl_z.view_z;
         sg_view resolve_views[CFACE_COUNT] = {
             rt_refl_px.view_resolve, rt_refl_nx.view_resolve,
@@ -392,7 +393,7 @@ void gRenderWallReflections()
 		binds.views[1] = g_data_tex[DataTexSpotLight]->view_tex;
 		binds.samplers[0] = s_smp_shadow;
 		binds.samplers[1] = s_smp_linear_clamp;
-		gScenes[gSceneIndex]->render(RM_RECV_LO, &binds);
+		gScenes[gSceneIndex]->render(RM_LIT_SHADOWED_FLIP, &binds);
 
 		sg_end_pass();
 	}
@@ -407,6 +408,7 @@ void gRenderShadowMap()
 	gLightViewProjMatrix = gRenderCam.getViewProjMatrix();
 
 	sg_pass pass = {};
+    pass.label = "shadow caster";
 	pass.attachments.colors[0] = {};
 	pass.attachments.depth_stencil = rt_shadow_z.view_z;
 	pass.action.colors[0].store_action = SG_STOREACTION_DONTCARE;
@@ -419,7 +421,7 @@ void gRenderShadowMap()
 	sg_apply_viewport(1, 1, SZ_SHADOWMAP-2, SZ_SHADOWMAP-2, true);
 
 	sg_bindings binds = {};
-	gScenes[gSceneIndex]->render(RM_SHADOW, &binds);
+	gScenes[gSceneIndex]->render(RM_SHADOW_CASTER, &binds);
 
 	sg_end_pass();
 
@@ -673,6 +675,7 @@ bool demo_update()
 	// Begin main MSAA 3D rendering pass
 	{
 		sg_pass pass = {};
+        pass.label = "main";
 		pass.attachments.colors[0] = rt_main_aa.view_rt;
 		pass.attachments.depth_stencil = rt_main_z.view_z;
 		pass.attachments.resolves[0] = rt_main_resolved.view_resolve;
@@ -690,7 +693,7 @@ bool demo_update()
 		binds.views[1] = g_data_tex[DataTexSpotLight]->view_tex;
 		binds.samplers[0] = s_smp_shadow;
 		binds.samplers[1] = s_smp_linear_clamp;
-		gScenes[gSceneIndex]->render(RM_RECV_HI, &binds);
+		gScenes[gSceneIndex]->render(RM_LIT_SHADOWED, &binds);
 
 		binds.samplers[0] = s_smp_linear_clamp;
 		gScenes[gSceneIndex]->render(RM_REFLECTIVE, &binds);
@@ -704,7 +707,7 @@ bool demo_update()
 	}
 	else
 	{
-		gSceneOut->render(RM_HI, &binds);
+		gSceneOut->render(RM_LIT, &binds);
 	}
 
 	// End main 3D MSAA rendering; resolves into rt_main_resolved.
@@ -712,6 +715,7 @@ bool demo_update()
 	sg_end_pass();
 	{
 		sg_pass pass = {};
+        pass.label = "main resolved";
 		pass.attachments.colors[0] = rt_main_resolved.view_rt;
 		pass.attachments.depth_stencil = {};
 		pass.action.colors[0].load_action = SG_LOADACTION_LOAD;

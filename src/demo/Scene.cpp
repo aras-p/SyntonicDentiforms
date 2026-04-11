@@ -139,19 +139,19 @@ void CScene::render(eRenderMode renderMode, sg_bindings* binds)
 		return;
 
 	switch (renderMode) {
-	case RM_RECV_HI:
+	case RM_LIT_SHADOWED:
 		pipeline_apply(pip_renderLitShadowed);
 		break;
-	case RM_RECV_LO:
+	case RM_LIT_SHADOWED_FLIP:
 		pipeline_apply(pip_renderLitShadowedFlip);
 		break;
-	case RM_SHADOW:
+	case RM_SHADOW_CASTER:
 		pipeline_apply(pip_shadowCaster);
 		break;
 	case RM_REFLECTIVE:
 		pipeline_apply(pip_renderReflective);
 		break;
-	case RM_HI:
+	case RM_LIT:
 		pipeline_apply(pip_renderLit);
 		break;
 	default:

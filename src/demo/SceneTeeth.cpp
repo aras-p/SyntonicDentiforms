@@ -375,6 +375,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 	sg_end_pass();
 	{
 		sg_pass pass = {};
+        pass.label = "toon fx";
 		pass.attachments.colors[0] = rt_full_toon.view_rt;
 		pass.attachments.depth_stencil = {};
 		pass.action.colors[0].load_action = SG_LOADACTION_DONTCARE;
@@ -396,6 +397,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 	// render teeth masks into 1/4th mask RT, to be blurred
 	{
 		sg_pass pass = {};
+        pass.label = "toon masks";
 		pass.attachments.colors[0] = rt_4th_1.view_rt;
 		pass.attachments.depth_stencil = {};
 		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
@@ -463,6 +465,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 	// composite
 	{
 		sg_pass pass = {};
+        pass.label = "toon compose";
 		pass.attachments.colors[0] = rt_main_resolved.view_rt;
 		pass.attachments.depth_stencil = {};
 		pass.action.colors[0].load_action = SG_LOADACTION_LOAD;

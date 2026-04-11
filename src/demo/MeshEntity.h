@@ -6,11 +6,11 @@
 // --------------------------------------------------------------------------
 
 enum eRenderMode {
-	RM_RECV_HI,		// full-detail (maybe per-pixel lights), receive other shadows
-	RM_RECV_LO,		// low-detail (maybe per-vertex lights), receive other shadows
-	RM_SHADOW,		// shadow casting
-	RM_REFLECTIVE,	// receive reflection
-	RM_HI,			// just full-detail (no shadows)
+	RM_LIT_SHADOWED,
+	RM_LIT_SHADOWED_FLIP,
+	RM_SHADOW_CASTER,
+	RM_REFLECTIVE,
+	RM_LIT,
 };
 enum eCubeFaces {
 	CFACE_PX = 0, CFACE_NX, CFACE_PY, CFACE_NY, CFACE_PZ, CFACE_NZ, CFACE_COUNT };

@@ -11,11 +11,11 @@ CMeshEntity::CMeshEntity(DataMesh type)
     assert(type < DataMeshCOUNT);
 	if (type == DataMeshBox)
 	{
-		mRenderModesMask = 1 << RM_HI;
+		mRenderModesMask = 1 << RM_LIT;
 	}
 	else if (type >= DataMeshCube && type <= DataMeshCubePZ)
 	{
-		mRenderModesMask = (1<<RM_RECV_HI) | (1<<RM_RECV_LO);
+		mRenderModesMask = (1<<RM_LIT_SHADOWED) | (1<<RM_LIT_SHADOWED_FLIP);
 		if (type != DataMeshCube)
 		{
 			mRenderModesMask |= 1<<RM_REFLECTIVE;
@@ -27,7 +27,7 @@ CMeshEntity::CMeshEntity(DataMesh type)
 			else if(type == DataMeshCubeNZ) mCubeFace = CFACE_NZ;
 		}
 	} else {
-		mRenderModesMask = (1<<RM_RECV_HI) | (1<<RM_RECV_LO) | (1<<RM_SHADOW);
+		mRenderModesMask = (1<<RM_LIT_SHADOWED) | (1<<RM_LIT_SHADOWED_FLIP) | (1<<RM_SHADOW_CASTER);
 	}
 
 	mMesh = g_data_mesh[type];
