@@ -59,6 +59,7 @@ sapp_desc sokol_main(int argc, char* argv[])
 	app_desc.cleanup_cb = cleanup;
 	app_desc.width = 640;
 	app_desc.height = 500;
+    app_desc.high_dpi = false;
 	app_desc.sample_count = 1;
 	app_desc.window_title = "Syntonic Dentiforms";
     app_desc.icon.sokol_default = true;
