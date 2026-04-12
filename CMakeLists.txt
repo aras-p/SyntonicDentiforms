@@ -59,6 +59,10 @@ set (SOURCES
 add_executable(Demo ${SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
+if (WIN32)
+    target_sources(Demo PRIVATE src/app.rc)
+endif()
+
 set_property(TARGET Demo PROPERTY CXX_STANDARD 17)
 set_property(TARGET Demo PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
