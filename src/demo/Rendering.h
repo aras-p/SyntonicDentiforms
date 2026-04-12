@@ -5,9 +5,23 @@
 
 #include <stdint.h>
 
+#include "Pipelines.h"
 #include "../gfx/Texture.h"
 #include "../math/Maths.h"
 #include "../../external/sokol_gfx.h"
+
+enum render_pass_flags {
+	RPF_None = 0,
+	RPF_LoadRenderTarget = (1 << 0),
+	RPF_DoNotEndPass = (1 << 1),
+};
+
+void render_fullscreen_pass(
+	Pipeline pipe, const char* debugLabel,
+	sokol_texture& renderTarget,
+	sg_view* inputTextures, size_t inputTexturesCount,
+	sg_range uniforms,
+	render_pass_flags flags = RPF_None);
 
 // --------------------------------------------------------
 

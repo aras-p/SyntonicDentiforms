@@ -371,24 +371,8 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 	// end previous pass, apply toon post-processing
 	sg_end_pass();
 	{
-		sg_pass pass = {};
-        pass.label = "toon fx";
-		pass.attachments.colors[0] = rt_full_toon.view_rt;
-		pass.attachments.depth_stencil = {};
-		pass.action.colors[0].load_action = SG_LOADACTION_DONTCARE;
-		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
-		sg_begin_pass(&pass);
-
-		sg_bindings binds = {};
-		binds.views[0] = rt_main_resolved.view_tex;
-		binds.views[1] = g_data_tex[DataTexColorLuts]->view_tex;
-		binds.samplers[0] = s_smp_linear_clamp;
-
-		pipeline_apply(pip_postToon);
-		sg_apply_bindings(binds);
-		sg_draw(0, 3, 1);
-
-		sg_end_pass();
+		sg_view inputs[] = { rt_main_resolved.view_tex, g_data_tex[DataTexColorLuts]->view_tex };
+		render_fullscreen_pass(pip_postToon, "toon fx", rt_full_toon, inputs, 2, {});
 	}
 
 	// render teeth masks into 1/4th mask RT, to be blurred
@@ -461,23 +445,8 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 
 	// composite
 	{
-		sg_pass pass = {};
-        pass.label = "toon compose";
-		pass.attachments.colors[0] = rt_main_resolved.view_rt;
-		pass.attachments.depth_stencil = {};
-		pass.action.colors[0].load_action = SG_LOADACTION_LOAD;
-		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
-		sg_begin_pass(&pass);
-
-		sg_bindings binds = {};
-		binds.views[0] = rt_full_toon.view_tex;
-		binds.views[1] = !(BLOB_BLUR_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex;
-		binds.views[2] = g_data_tex[DataTexAlphaEdge]->view_tex;
-		binds.samplers[0] = s_smp_linear_clamp;
-
-		pipeline_apply(pip_postComposeToon);
-		sg_apply_bindings(binds);
-		sg_draw(0, 3, 1);
+		sg_view inputs[] = { rt_full_toon.view_tex, !(BLOB_BLUR_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex, g_data_tex[DataTexAlphaEdge]->view_tex };
+		render_fullscreen_pass(pip_postComposeToon, "toon compose", rt_main_resolved, inputs, 3, {}, (render_pass_flags)(RPF_LoadRenderTarget | RPF_DoNotEndPass));
 	}
 
 	/*

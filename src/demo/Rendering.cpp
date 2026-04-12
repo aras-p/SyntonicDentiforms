@@ -132,6 +132,41 @@ void gComputeTextureProjection(const SMatrix4x4& renderCameraMatrix, const SMatr
 	dest = renderCameraMatrix * projectorMatrix * matTexScale;
 }
 
+void render_fullscreen_pass(
+	Pipeline pipe, const char* debugLabel,
+	sokol_texture& renderTarget,
+	sg_view* inputTextures, size_t inputTexturesCount,
+	sg_range uniforms,
+	render_pass_flags flags)
+{
+	sg_pass pass = {};
+	pass.label = debugLabel;
+	if (renderTarget.view_rt.id != 0)
+		pass.attachments.colors[0] = renderTarget.view_rt;
+	else
+		pass.swapchain = sglue_swapchain();
+	pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+	pass.action.colors[0].load_action = (flags & RPF_LoadRenderTarget) ? SG_LOADACTION_LOAD : SG_LOADACTION_DONTCARE;
+	pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
+	sg_begin_pass(&pass);
+
+	sg_bindings binds = {};
+	for (size_t i = 0; i < inputTexturesCount; ++i)
+		binds.views[i] = inputTextures[i];
+	binds.samplers[0] = s_smp_linear_clamp;
+
+	pipeline_apply(pipe);
+
+	if (uniforms.ptr)
+		sg_apply_uniforms(0, uniforms);
+
+	sg_apply_bindings(binds);
+	sg_draw(0, 3, 1);
+
+	if (!(flags & RPF_DoNotEndPass))
+		sg_end_pass();
+}
+
 const int BLOOM_PASSES = 4;
 
 void pingPongBlur(int passes)
@@ -143,97 +178,28 @@ void pingPongBlur(int passes)
 
 	const SVector4 offsetX(1, 1, -1, -1);
 	const SVector4 offsetY(1, -1, -1, 1);
-	for (int i = 0; i < passes; ++i) {
+	for (int i = 0; i < passes; ++i)
+	{
 		const float pixDist = i + 0.5f;
 		SVector4 offset(pixDist / swidth, pixDist / sheight, 0, 0);
-
-		sg_pass pass = {};
-		pass.label = "blur step";
-		pass.attachments.colors[0] = pingPong[i & 1]->view_rt;
-		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
-		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
-		pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
-		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
-		sg_begin_pass(&pass);
-
-		sg_bindings binds = {};
-		binds.views[0] = pingPong[(i + 1) & 1]->view_tex;
-		binds.samplers[0] = s_smp_linear_clamp;
-
-		pipeline_apply(pip_postBlurStep);
-
-		sg_apply_uniforms(0, { &offset, sizeof(offset) });
-
-		sg_apply_bindings(binds);
-		sg_draw(0, 3, 1);
-
-		sg_end_pass();
+		render_fullscreen_pass(pip_postBlurStep, "blur step", *pingPong[i & 1], &pingPong[(i + 1) & 1]->view_tex, 1, { &offset, sizeof(offset) });
 	}
 }
 
 void renderBloom()
 {
 	// downsample main into smaller RT
-	{
-		sg_pass pass = {};
-		pass.label = "downsample";
-		pass.attachments.colors[0] = rt_4th_1.view_rt;
-		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
-		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
-		pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
-		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
-		sg_begin_pass(&pass);
-
-		sg_bindings binds = {};
-		binds.views[0] = rt_main_resolved.view_tex;
-		binds.samplers[0] = s_smp_linear_clamp;
-
-		pipeline_apply(pip_blit);
-		sg_apply_bindings(binds);
-		sg_draw(0, 3, 1);
-
-		sg_end_pass();
-	}
+	render_fullscreen_pass(pip_blit, "downsample", rt_4th_1, &rt_main_resolved.view_tex, 1, {});
 
 	// blur
 	pingPongBlur(BLOOM_PASSES);
 
 	// add back into resolved
-	{
-		sg_pass pass = {};
-		pass.label = "compose bloom";
-		pass.attachments.colors[0] = rt_main_resolved.view_rt;
-		pass.attachments.depth_stencil = {};
-		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
-		pass.action.colors[0].load_action = SG_LOADACTION_LOAD;
-		sg_begin_pass(&pass);
-
-		sg_bindings binds = {};
-		binds.views[0] = !(BLOOM_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex;
-		binds.samplers[0] = s_smp_linear_clamp;
-
-		pipeline_apply(pip_postComposeBloom);
-		sg_apply_bindings(binds);
-		sg_draw(0, 3, 1);
-		sg_end_pass();
-	}
+	render_fullscreen_pass(pip_postComposeBloom, "compose bloom", rt_main_resolved, !(BLOOM_PASSES & 1) ? &rt_4th_1.view_tex : &rt_4th_2.view_tex, 1, {}, RPF_LoadRenderTarget);
 
 	// blit into swapchain backbuffer
-	{
-		sg_pass pass = {};
-		pass.swapchain = sglue_swapchain();
-		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
-		pass.action.colors[0].load_action = SG_LOADACTION_DONTCARE;
-		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
-		sg_begin_pass(&pass);
-		sg_bindings binds = {};
-		binds.views[0] = rt_main_resolved.view_tex;
-		binds.samplers[0] = s_smp_linear_clamp;
-		pipeline_apply(pip_blitToSwap);
-		sg_apply_bindings(binds);
-		sg_draw(0, 3, 1);
-		// do not end pass; debug text will continue rendering
-	}
+	// do not end pass; debug text will continue rendering
+	render_fullscreen_pass(pip_blitToSwap, "blit to swapchain", sokol_texture(), &rt_main_resolved.view_tex, 1, {}, RPF_DoNotEndPass);
 }
 
 struct TVertex {
