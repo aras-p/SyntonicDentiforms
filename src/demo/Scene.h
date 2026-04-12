@@ -13,9 +13,6 @@ public:
 		SVector3		rotVel; // over all animation
 		int				parentIdx;
 	};
-	typedef std::vector<SMesh>	TMeshVector;
-	typedef std::vector<int>	TIntVector;
-	typedef std::vector<float>	TFloatVector;
 
 public:
 	CScene( int number );
@@ -45,12 +42,12 @@ protected:
 	
 protected:
 	int			mNumber;
-	TMeshVector	mMeshes;	// owns meshes
-	TIntVector	mEvalOrder;	// depth-first order for hierarchy
+	std::vector<SMesh>	mMeshes;	// owns meshes
+	std::vector<int>	mEvalOrder;	// depth-first order for hierarchy
 	CAnim*		mAnimLight;
 	CAnim*		mAnimCamera;
 	int			mLength;	// in max frames
 
-	TFloatVector	mCutTimes; // 0..1
+	std::vector<float>	mCutTimes; // 0..1
 };
 
