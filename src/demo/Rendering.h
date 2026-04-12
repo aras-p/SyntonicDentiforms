@@ -19,7 +19,7 @@ enum render_pass_flags
 
 void render_fullscreen_pass(
     Pipeline pipe, const char *debugLabel,
-    sokol_texture &renderTarget,
+    sg_view renderTarget,
     sg_view *inputTextures, size_t inputTexturesCount,
     sg_range uniforms,
     render_pass_flags flags = RPF_None);

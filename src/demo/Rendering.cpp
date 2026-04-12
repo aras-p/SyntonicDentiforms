@@ -137,15 +137,15 @@ void gComputeTextureProjection(const Matrix4x4 &renderCameraMatrix, const Matrix
 
 void render_fullscreen_pass(
     Pipeline pipe, const char *debugLabel,
-    sokol_texture &renderTarget,
+    sg_view renderTarget,
     sg_view *inputTextures, size_t inputTexturesCount,
     sg_range uniforms,
     render_pass_flags flags)
 {
     sg_pass pass = {};
     pass.label = debugLabel;
-    if (renderTarget.view_rt.id != 0)
-        pass.attachments.colors[0] = renderTarget.view_rt;
+    if (renderTarget.id != 0)
+        pass.attachments.colors[0] = renderTarget;
     else
         pass.swapchain = sglue_swapchain();
     pass.action.colors[0].store_action = SG_STOREACTION_STORE;
@@ -185,24 +185,24 @@ void pingPongBlur(int passes)
     {
         const float pixDist = i + 0.5f;
         Vector4 offset(pixDist / swidth, pixDist / sheight, 0, 0);
-        render_fullscreen_pass(pip_postBlurStep, "blur step", *pingPong[i & 1], &pingPong[(i + 1) & 1]->view_tex, 1, {&offset, sizeof(offset)});
+        render_fullscreen_pass(pip_postBlurStep, "blur step", pingPong[i & 1]->view_rt, &pingPong[(i + 1) & 1]->view_tex, 1, {&offset, sizeof(offset)});
     }
 }
 
 void renderBloom()
 {
     // downsample main into smaller RT
-    render_fullscreen_pass(pip_blit, "downsample", rt_4th_1, &rt_main_resolved.view_tex, 1, {});
+    render_fullscreen_pass(pip_blit, "downsample", rt_4th_1.view_rt, &rt_main_resolved.view_tex, 1, {});
 
     // blur
     pingPongBlur(BLOOM_PASSES);
 
     // add back into resolved
-    render_fullscreen_pass(pip_postComposeBloom, "compose bloom", rt_main_resolved, !(BLOOM_PASSES & 1) ? &rt_4th_1.view_tex : &rt_4th_2.view_tex, 1, {}, RPF_LoadRenderTarget);
+    render_fullscreen_pass(pip_postComposeBloom, "compose bloom", rt_main_resolved.view_rt, !(BLOOM_PASSES & 1) ? &rt_4th_1.view_tex : &rt_4th_2.view_tex, 1, {}, RPF_LoadRenderTarget);
 
     // blit into swapchain backbuffer
     // do not end pass; debug text will continue rendering
-    render_fullscreen_pass(pip_blitToSwap, "blit to swapchain", sokol_texture(), &rt_main_resolved.view_tex, 1, {}, RPF_DoNotEndPass);
+    render_fullscreen_pass(pip_blitToSwap, "blit to swapchain", {}, &rt_main_resolved.view_tex, 1, {}, RPF_DoNotEndPass);
 }
 
 struct TVertex

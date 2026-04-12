@@ -400,7 +400,7 @@ void SceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspec
     sg_end_pass();
     {
         sg_view inputs[] = {rt_main_resolved.view_tex, g_data_tex[DataTexColorLuts]->view_tex};
-        render_fullscreen_pass(pip_postToon, "toon fx", rt_full_toon, inputs, 2, {});
+        render_fullscreen_pass(pip_postToon, "toon fx", rt_full_toon.view_rt, inputs, 2, {});
     }
 
     // render teeth masks into 1/4th mask RT, to be blurred
@@ -484,7 +484,7 @@ void SceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspec
     // composite
     {
         sg_view inputs[] = {rt_full_toon.view_tex, !(BLOB_BLUR_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex, g_data_tex[DataTexAlphaEdge]->view_tex};
-        render_fullscreen_pass(pip_postComposeToon, "toon compose", rt_main_resolved, inputs, 3, {}, (render_pass_flags)(RPF_LoadRenderTarget | RPF_DoNotEndPass));
+        render_fullscreen_pass(pip_postComposeToon, "toon compose", rt_main_resolved.view_rt, inputs, 3, {}, (render_pass_flags)(RPF_LoadRenderTarget | RPF_DoNotEndPass));
     }
 
     /*
