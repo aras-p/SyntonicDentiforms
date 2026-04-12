@@ -6,7 +6,7 @@
 
 #include <assert.h>
 
-class CMesh
+class Mesh
 {
   public:
     struct Vertex
@@ -17,8 +17,8 @@ class CMesh
     static_assert(sizeof(Vertex) == 16, "Mesh Vertex needs to be 16 bytes");
 
   public:
-    CMesh(int vertCount, int idxCount, const Vertex *vbData, const uint16_t *ibData);
-    ~CMesh();
+    Mesh(int vertCount, int idxCount, const Vertex *vbData, const uint16_t *ibData);
+    ~Mesh();
 
     int getVertexCount() const { return mVertexCount; }
     int getIndexCount() const { return mIndexCount; }
@@ -26,14 +26,14 @@ class CMesh
     sg_buffer getVB() { return mVB; }
     sg_buffer getIB() { return mIB; }
 
-    const CAABox &getTotalAABB() const { return mTotalAABB; }
+    const AABox &getTotalAABB() const { return mTotalAABB; }
 
   private:
     int mVertexCount = 0;
     int mIndexCount = 0;
     sg_buffer mVB = {};
     sg_buffer mIB = {};
-    CAABox mTotalAABB = {};
+    AABox mTotalAABB = {};
 };
 
-CMesh *load_mesh(const char *fileName);
+Mesh *load_mesh(const char *fileName);

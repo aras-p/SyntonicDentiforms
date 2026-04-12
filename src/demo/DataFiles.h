@@ -103,7 +103,7 @@ enum DataAnim
 };
 
 extern sokol_texture *g_data_tex[DataTexCOUNT];
-extern CMesh *g_data_mesh[DataMeshCOUNT];
-extern CAnimationBunch *g_data_anim[DataAnimCOUNT];
+extern Mesh *g_data_mesh[DataMeshCOUNT];
+extern AnimationBunch *g_data_anim[DataAnimCOUNT];
 
 bool load_data_files();

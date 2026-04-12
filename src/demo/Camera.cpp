@@ -1,14 +1,14 @@
 #include "Camera.h"
 #include "Rendering.h"
 
-CRenderCamera gRenderCam;
+RenderCamera gRenderCam;
 
-CCameraEntity::CCameraEntity()
+CameraEntity::CameraEntity()
 {
     mMatrix.identify();
 }
 
-void CCameraEntity::setProjectionParams(float fov, float aspect, float znear, float zfar)
+void CameraEntity::setProjectionParams(float fov, float aspect, float znear, float zfar)
 {
     mOrtho = false;
     mProjectionMatrix.perspectiveFovLH(fov, aspect, znear, zfar);
@@ -19,7 +19,7 @@ void CCameraEntity::setProjectionParams(float fov, float aspect, float znear, fl
     mViewHalfHeight = 1.0f / mProjectionMatrix._22;
 }
 
-void CCameraEntity::setOrthoParams(float width, float height, float znear, float zfar)
+void CameraEntity::setOrthoParams(float width, float height, float znear, float zfar)
 {
     mOrtho = true;
     mProjectionMatrix.orthoLH(width, height, znear, zfar);
@@ -29,7 +29,7 @@ void CCameraEntity::setOrthoParams(float width, float height, float znear, float
     mViewHalfHeight = height * 0.5f;
 }
 
-void CCameraEntity::setProjFrom(const CCameraEntity &c)
+void CameraEntity::setProjFrom(const CameraEntity &c)
 {
     mOrtho = c.mOrtho;
     mFOV = c.mFOV;
@@ -40,28 +40,28 @@ void CCameraEntity::setProjFrom(const CCameraEntity &c)
     mProjectionMatrix = c.mProjectionMatrix;
 }
 
-void CCameraEntity::setOntoRenderContext() const
+void CameraEntity::setOntoRenderContext() const
 {
     // set camera params
     gRenderCam.setCameraMatrix(mMatrix);
     gRenderCam.setProjectionMatrix(mProjectionMatrix);
 }
 
-SVector3 CCameraEntity::getWorldRay(float x, float y) const
+Vector3 CameraEntity::getWorldRay(float x, float y) const
 {
-    SMatrix4x4 m = mMatrix;
+    Matrix4x4 m = mMatrix;
     m.getOrigin().set(0, 0, 0);
-    SVector3 r = getCameraRay(x, y);
+    Vector3 r = getCameraRay(x, y);
     r = r.transformCoord(m);
     return r;
 }
 
-SVector3 CCameraEntity::getCameraRay(float x, float y) const
+Vector3 CameraEntity::getCameraRay(float x, float y) const
 {
-    return SVector3(x * mViewHalfWidth, -y * mViewHalfHeight, 1.0f);
+    return Vector3(x * mViewHalfWidth, -y * mViewHalfHeight, 1.0f);
 }
 
-CRenderCamera::CRenderCamera()
+RenderCamera::RenderCamera()
 {
     mCameraMatrix.identify();
     mProjectionMatrix.identify();
@@ -70,7 +70,7 @@ CRenderCamera::CRenderCamera()
     mViewMatrix.identify();
 }
 
-void CRenderCamera::setCameraMatrix(SMatrix4x4 const &matrix)
+void RenderCamera::setCameraMatrix(Matrix4x4 const &matrix)
 {
     mCameraMatrix = matrix;
     mCameraRotMatrix = matrix;
@@ -86,7 +86,7 @@ void CRenderCamera::setCameraMatrix(SMatrix4x4 const &matrix)
     g_global_u.eyePos = mCameraMatrix.getOrigin();
 }
 
-void CRenderCamera::setProjectionMatrix(SMatrix4x4 const &matrix)
+void RenderCamera::setProjectionMatrix(Matrix4x4 const &matrix)
 {
     mProjectionMatrix = matrix;
     mViewProjMatrix = mViewMatrix * mProjectionMatrix;

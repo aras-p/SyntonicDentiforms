@@ -14,7 +14,7 @@ const int BLOB_BLUR_PASSES = 5;
 
 // --------------------------------------------------------------------------
 
-CTeethAnim::CTeethAnim(DataAnim animation, int startFrame, int endFrame)
+TeethAnim::TeethAnim(DataAnim animation, int startFrame, int endFrame)
 {
     int i;
     mAnim = g_data_anim[animation];
@@ -27,8 +27,8 @@ CTeethAnim::CTeethAnim(DataAnim animation, int startFrame, int endFrame)
     mTeethIdx = new int[ncurves];
     for (i = 0; i < ncurves; ++i)
         mTeethIdx[i] = -1;
-    mVectors = new SVector3[ncurves];
-    mQuats = new SQuaternion[ncurves];
+    mVectors = new Vector3[ncurves];
+    mQuats = new Quaternion[ncurves];
 
     mPaths = new TVec3Vector[ncurves];
 
@@ -53,7 +53,7 @@ CTeethAnim::CTeethAnim(DataAnim animation, int startFrame, int endFrame)
     }
 }
 
-CTeethAnim::~CTeethAnim()
+TeethAnim::~TeethAnim()
 {
     delete[] mTeethIdx;
     delete[] mQuats;
@@ -61,7 +61,7 @@ CTeethAnim::~CTeethAnim()
     delete[] mPaths;
 }
 
-bool CTeethAnim::evaluate(float t)
+bool TeethAnim::evaluate(float t)
 {
     float reltime = getRelTime(t);
     bool before = (reltime < 0.0f);
@@ -71,14 +71,14 @@ bool CTeethAnim::evaluate(float t)
     return before;
 }
 
-float CTeethAnim::getRelTime(float t) const
+float TeethAnim::getRelTime(float t) const
 {
     float tframe = t * mTotalFrames;
     float reltime = (tframe - mStartFrame) / (mEndFrame - mStartFrame);
     return reltime;
 }
 
-bool CTeethAnim::possiblyAddTooth(const std::string &name, int index)
+bool TeethAnim::possiblyAddTooth(const std::string &name, int index)
 {
     int idx = mAnim->getCurveIndexByName(name);
     if (idx < 0)
@@ -90,18 +90,18 @@ bool CTeethAnim::possiblyAddTooth(const std::string &name, int index)
 
 // --------------------------------------------------------------------------
 
-CSceneTeeth::CSceneTeeth(int number)
-    : CScene(number)
+SceneTeeth::SceneTeeth(int number)
+    : Scene(number)
 {
-    mAnimTeeth[0] = new CTeethAnim(DataAnim6TeethA, 350, 480);
-    mAnimTeeth[1] = new CTeethAnim(DataAnim6TeethB, 490, 590);
-    mAnimTeeth[2] = new CTeethAnim(DataAnim6TeethC, 745, 860);
-    mAnimTeeth[3] = new CTeethAnim(DataAnim6TeethD, 860, 965);
-    mAnimAxes[0] = new CAnim(DataAnim6Axes, "Axis1");
-    mAnimAxes[1] = new CAnim(DataAnim6Axes, "Axis2");
+    mAnimTeeth[0] = new TeethAnim(DataAnim6TeethA, 350, 480);
+    mAnimTeeth[1] = new TeethAnim(DataAnim6TeethB, 490, 590);
+    mAnimTeeth[2] = new TeethAnim(DataAnim6TeethC, 745, 860);
+    mAnimTeeth[3] = new TeethAnim(DataAnim6TeethD, 860, 965);
+    mAnimAxes[0] = new Anim(DataAnim6Axes, "Axis1");
+    mAnimAxes[1] = new Anim(DataAnim6Axes, "Axis2");
 }
 
-CSceneTeeth::~CSceneTeeth()
+SceneTeeth::~SceneTeeth()
 {
     for (int i = 0; i < TEETHPACKS; ++i)
         delete mAnimTeeth[i];
@@ -109,7 +109,7 @@ CSceneTeeth::~CSceneTeeth()
     delete mAnimAxes[1];
 }
 
-void CSceneTeeth::initialize()
+void SceneTeeth::initialize()
 {
     const SceneData &sd = kScene6;
     mLength = sd.length;
@@ -129,11 +129,11 @@ void CSceneTeeth::initialize()
     for (int i = 0; i < sd.count; ++i)
     {
         const SceneEntityData &e = sd.entities[i];
-        SVector3 rot0(e.rot0[0], e.rot0[1], e.rot0[2]);
-        SVector3 rot1(e.rot1[0], e.rot1[1], e.rot1[2]);
-        SMesh mesh;
+        Vector3 rot0(e.rot0[0], e.rot0[1], e.rot0[2]);
+        Vector3 rot1(e.rot1[0], e.rot1[1], e.rot1[2]);
+        SceneMesh mesh;
         mesh.parentIdx = e.parentIdx;
-        mesh.pos = SVector3(e.pos[0], e.pos[1], e.pos[2]);
+        mesh.pos = Vector3(e.pos[0], e.pos[1], e.pos[2]);
         mesh.rot = rot0 * (M_PI / 180.0f);
         mesh.rotVel = (rot1 - rot0) * (mLength * M_PI / 180.0f);
 
@@ -164,13 +164,13 @@ void CSceneTeeth::initialize()
             mGearsIdx[1] = mMeshes.size();
         }
 
-        mesh.mesh = new CMeshEntity(e.mesh);
+        mesh.mesh = new MeshEntity(e.mesh);
         mMeshes.push_back(mesh);
         toMatrix(mesh.pos, mesh.rot, mesh.mesh->mMatrix);
     }
 }
 
-void CSceneTeeth::evaluateMeshes(float t)
+void SceneTeeth::evaluateMeshes(float t)
 {
     const float AXES_FRAMES = 1100.0f;
     float axest = t * (TOTAL_FRAMES / AXES_FRAMES);
@@ -185,10 +185,10 @@ void CSceneTeeth::evaluateMeshes(float t)
 
         // gear...
         int idx = mGearsIdx[i];
-        SMesh &mesh = mMeshes[idx];
+        SceneMesh &mesh = mMeshes[idx];
         // local transform
-        SVector3 rot = mesh.rot + mesh.rotVel * t;
-        SMatrix4x4 &m = mesh.mesh->mMatrix;
+        Vector3 rot = mesh.rot + mesh.rotVel * t;
+        Matrix4x4 &m = mesh.mesh->mMatrix;
         toMatrix(mesh.pos, rot, m);
         // into world space
         m = m * mMeshes[mAxesIdx[i]].mesh->mMatrix;
@@ -197,13 +197,13 @@ void CSceneTeeth::evaluateMeshes(float t)
     // eval teeth...
     for (i = 0; i < TEETHPACKS; ++i)
     {
-        CTeethAnim &ta = *mAnimTeeth[i];
+        TeethAnim &ta = *mAnimTeeth[i];
         bool before = ta.evaluate(t);
         int n = ta.getCount();
         for (int j = 0; j < n; ++j)
         {
-            SMesh &mesh = mMeshes[ta.mTeethIdx[j]];
-            SMatrix4x4 &m = mesh.mesh->mMatrix;
+            SceneMesh &mesh = mMeshes[ta.mTeethIdx[j]];
+            Matrix4x4 &m = mesh.mesh->mMatrix;
             if (before)
             {
                 // attach to parent
@@ -213,13 +213,13 @@ void CSceneTeeth::evaluateMeshes(float t)
             else
             {
                 // animate
-                m = SMatrix4x4(ta.mVectors[j], ta.mQuats[j]);
+                m = Matrix4x4(ta.mVectors[j], ta.mQuats[j]);
             }
         }
     }
 }
 
-void CSceneTeeth::renderTeethBills(int pack, float t, float relT, float cutAlpha, bool masks, float aspect)
+void SceneTeeth::renderTeethBills(int pack, float t, float relT, float cutAlpha, bool masks, float aspect)
 {
     const int BILLSPERPACK = 3;
     static DataTexture texnames[TEETHPACKS][BILLSPERPACK] = {
@@ -259,7 +259,7 @@ void CSceneTeeth::renderTeethBills(int pack, float t, float relT, float cutAlpha
     const float BEDGE = 0.12f;
     const float MEDGE = 0.06f;
 
-    SOBillboard *bill;
+    Billboard *bill;
 
     if (pack != TEETHPACKS - 1)
     {
@@ -278,7 +278,7 @@ void CSceneTeeth::renderTeethBills(int pack, float t, float relT, float cutAlpha
             bill->x2 = bill->x1 + BSIZE;
             const float toothY = bill->y2 = bill->y1 + BSIZE * aspect / (ratios[pack][i]);
             bill->texture = g_data_tex[texnames[pack][i]]->view_tex;
-            uint32_t c = SVector4(1, 1, 1, billAlpha).toRGBA();
+            uint32_t c = Vector4(1, 1, 1, billAlpha).toRGBA();
             if (masks)
             {
                 bill->x1 -= MEDGE;
@@ -325,7 +325,7 @@ void CSceneTeeth::renderTeethBills(int pack, float t, float relT, float cutAlpha
         bill->y1 = -GRP_HEIGHT / 2;
         bill->x2 = GRP_WIDTH / 2;
         bill->y2 = GRP_HEIGHT / 2;
-        SVector4 c = SVector4(1, 1, 1, 0.0f);
+        Vector4 c = Vector4(1, 1, 1, 0.0f);
         if (masks)
         {
             bill->x1 -= MEDGE * 5;
@@ -353,16 +353,16 @@ void CSceneTeeth::renderTeethBills(int pack, float t, float relT, float cutAlpha
     billboards_clear();
 }
 
-void CSceneTeeth::renderTeethLines(int pack, float t)
+void SceneTeeth::renderTeethLines(int pack, float t)
 {
     assert(pack >= 0 && pack < TEETHPACKS);
-    CTeethAnim &ta = *mAnimTeeth[pack];
+    TeethAnim &ta = *mAnimTeeth[pack];
     int nteeth = ta.getCount();
 
     float relT = ta.getRelTime(t);
 
     const int PATH_SIZE = PATH_FRAMES;
-    SLinePoint path[PATH_SIZE];
+    LinePoint path[PATH_SIZE];
     for (int i = 0; i < nteeth; ++i)
     {
         float a = 0.0f;
@@ -370,7 +370,7 @@ void CSceneTeeth::renderTeethLines(int pack, float t)
         for (int j = 0; j < PATH_SIZE; ++j, a += da)
         {
             path[j].pos = ta.mPaths[i][j];
-            SVector4 c;
+            Vector4 c;
             c.x = 1.0f;
             c.y = 0.0f;
             c.z = 0.0f;
@@ -387,10 +387,10 @@ void CSceneTeeth::renderTeethLines(int pack, float t)
     }
 }
 
-void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspect)
+void SceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspect)
 {
     assert(pack >= 0 && pack < TEETHPACKS);
-    CTeethAnim &ta = *mAnimTeeth[pack];
+    TeethAnim &ta = *mAnimTeeth[pack];
     int nteeth = ta.getCount();
     int i;
 
@@ -435,7 +435,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
 
     sg_bindings binds = {};
 
-    CMesh *toothMaskMesh = g_data_mesh[DataMesh6Tooth1];
+    Mesh *toothMaskMesh = g_data_mesh[DataMesh6Tooth1];
 
     binds.vertex_buffers[0] = toothMaskMesh->getVB();
     binds.index_buffer = toothMaskMesh->getIB();
@@ -446,7 +446,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
         {
             for (i = 0; i < nteeth; ++i)
             {
-                SMesh &mesh = mMeshes[ta.mTeethIdx[i]];
+                SceneMesh &mesh = mMeshes[ta.mTeethIdx[i]];
                 uboVS.mat = mesh.mesh->mMatrix;
                 uboVS.mat.getAxisX() *= toothMaskScale;
                 uboVS.mat.getAxisY() *= toothMaskScale * toothMaskScale * 0.5f;
@@ -463,7 +463,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
                 int ntth = mAnimTeeth[pk]->getCount();
                 for (i = 0; i < ntth; ++i)
                 {
-                    SMesh &mesh = mMeshes[mAnimTeeth[pk]->mTeethIdx[i]];
+                    SceneMesh &mesh = mMeshes[mAnimTeeth[pk]->mTeethIdx[i]];
                     uboVS.mat = mesh.mesh->mMatrix;
                     uboVS.mat.getAxisX() *= toothMaskScale;
                     uboVS.mat.getAxisY() *= toothMaskScale * toothMaskScale * 0.5f;
@@ -490,7 +490,7 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
     /*
     // render paths
     const int PATH_SIZE = PATH_FRAMES;
-    SLinePoint path[PATH_SIZE];
+    LinePoint path[PATH_SIZE];
     for( i = 0; i < nteeth; ++i ) {
             float a = 0.0f;
             float da = 1.0f / PATH_SIZE;
@@ -510,10 +510,10 @@ void CSceneTeeth::renderTeethStuff(int pack, float t, float cutAlpha, float aspe
     */
 }
 
-void CSceneTeeth::renderTeethUI(int pack, float t, float cutAlpha, float aspect)
+void SceneTeeth::renderTeethUI(int pack, float t, float cutAlpha, float aspect)
 {
     assert(pack >= 0 && pack < TEETHPACKS);
-    CTeethAnim &ta = *mAnimTeeth[pack];
+    TeethAnim &ta = *mAnimTeeth[pack];
     float relT = ta.getRelTime(t);
     int nteeth = ta.getCount();
     renderTeethBills(pack, t, relT, cutAlpha, false, aspect);

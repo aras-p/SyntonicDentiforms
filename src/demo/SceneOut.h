@@ -2,10 +2,10 @@
 
 #include "Scene.h"
 
-class CSceneOut : public CScene
+class SceneOut : public Scene
 {
   public:
-    CSceneOut(int number) : CScene(number) {};
+    SceneOut(int number) : Scene(number) {};
 
     virtual void initialize();
 

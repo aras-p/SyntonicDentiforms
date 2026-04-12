@@ -5,14 +5,14 @@
 
 #include <assert.h>
 
-CScene::CScene(int number)
+Scene::Scene(int number)
     : mNumber(number)
 {
-    mAnimLight = new CAnim((DataAnim)(DataAnimAnim0 + number), "Light");
-    mAnimCamera = new CAnim((DataAnim)(DataAnimAnim0 + number), "Camera");
+    mAnimLight = new Anim((DataAnim)(DataAnimAnim0 + number), "Light");
+    mAnimCamera = new Anim((DataAnim)(DataAnimAnim0 + number), "Camera");
 }
 
-CScene::~CScene()
+Scene::~Scene()
 {
     int n = mMeshes.size();
     for (int i = 0; i < n; ++i)
@@ -21,7 +21,7 @@ CScene::~CScene()
 
 static const SceneData *kSceneDatas[] = {nullptr, &kScene1, &kScene2, &kScene3, &kScene4, &kScene5, &kScene6};
 
-void CScene::initialize()
+void Scene::initialize()
 {
     const SceneData &sd = *kSceneDatas[mNumber];
     mLength = sd.length;
@@ -29,14 +29,14 @@ void CScene::initialize()
     for (int i = 0; i < sd.count; ++i)
     {
         const SceneEntityData &e = sd.entities[i];
-        SVector3 rot0(e.rot0[0], e.rot0[1], e.rot0[2]);
-        SVector3 rot1(e.rot1[0], e.rot1[1], e.rot1[2]);
-        SMesh mesh;
+        Vector3 rot0(e.rot0[0], e.rot0[1], e.rot0[2]);
+        Vector3 rot1(e.rot1[0], e.rot1[1], e.rot1[2]);
+        SceneMesh mesh;
         mesh.parentIdx = e.parentIdx;
-        mesh.pos = SVector3(e.pos[0], e.pos[1], e.pos[2]);
+        mesh.pos = Vector3(e.pos[0], e.pos[1], e.pos[2]);
         mesh.rot = rot0 * (M_PI / 180.0f);
         mesh.rotVel = (rot1 - rot0) * (mLength * M_PI / 180.0f);
-        mesh.mesh = new CMeshEntity(e.mesh);
+        mesh.mesh = new MeshEntity(e.mesh);
         mMeshes.push_back(mesh);
 
         toMatrix(mesh.pos, mesh.rot, mesh.mesh->mMatrix);
@@ -54,7 +54,7 @@ void CScene::initialize()
     }
 }
 
-void CScene::recurseAdd(int idx)
+void Scene::recurseAdd(int idx)
 {
     mEvalOrder.push_back(idx);
     int n = mMeshes.size();
@@ -67,10 +67,10 @@ void CScene::recurseAdd(int idx)
     }
 }
 
-CMeshEntity *CScene::addStaticMesh(DataMesh data)
+MeshEntity *Scene::addStaticMesh(DataMesh data)
 {
-    SMesh mesh;
-    mesh.mesh = new CMeshEntity(data);
+    SceneMesh mesh;
+    mesh.mesh = new MeshEntity(data);
     mesh.pos.set(0, 0, 0);
     mesh.rot.set(0, 0, 0);
     mesh.rotVel.set(0, 0, 0);
@@ -80,9 +80,9 @@ CMeshEntity *CScene::addStaticMesh(DataMesh data)
     return mesh.mesh;
 }
 
-void CScene::toMatrix(const SVector3 &pos, const SVector3 &rot, SMatrix4x4 &m)
+void Scene::toMatrix(const Vector3 &pos, const Vector3 &rot, Matrix4x4 &m)
 {
-    SMatrix4x4 mrx, mry, mrz;
+    Matrix4x4 mrx, mry, mrz;
     mrx.rotationX(-rot.x);
     mry.rotationY(-rot.z);
     mrz.rotationZ(-rot.y);
@@ -90,7 +90,7 @@ void CScene::toMatrix(const SVector3 &pos, const SVector3 &rot, SMatrix4x4 &m)
     m.getOrigin() = pos;
 }
 
-void CScene::evaluate(float t, SMatrix4x4 &light, SMatrix4x4 &camera)
+void Scene::evaluate(float t, Matrix4x4 &light, Matrix4x4 &camera)
 {
     // eval light/camera
     evaluateLight(t, light);
@@ -100,33 +100,33 @@ void CScene::evaluate(float t, SMatrix4x4 &light, SMatrix4x4 &camera)
     evaluateMeshes(t);
 }
 
-void CScene::evaluateCamera(float t, SMatrix4x4 &camera) const
+void Scene::evaluateCamera(float t, Matrix4x4 &camera) const
 {
-    SMatrix4x4 mr;
+    Matrix4x4 mr;
     mAnimCamera->sample(t, camera);
     mr.rotationX(M_PI / 2);
     camera = mr * camera;
 }
 
-void CScene::evaluateLight(float t, SMatrix4x4 &light) const
+void Scene::evaluateLight(float t, Matrix4x4 &light) const
 {
-    SMatrix4x4 mr;
+    Matrix4x4 mr;
     mAnimLight->sample(t, light);
     mr.rotationX(M_PI / 2);
     light = mr * light;
 }
 
-void CScene::evaluateMeshes(float t)
+void Scene::evaluateMeshes(float t)
 {
     // eval mesh transforms
     int n = mMeshes.size();
     for (int i = 0; i < n; ++i)
     {
         int idx = mEvalOrder[i];
-        SMesh &mesh = mMeshes[idx];
+        SceneMesh &mesh = mMeshes[idx];
         // local transform
-        SVector3 rot = mesh.rot + mesh.rotVel * t;
-        SMatrix4x4 &m = mesh.mesh->mMatrix;
+        Vector3 rot = mesh.rot + mesh.rotVel * t;
+        Matrix4x4 &m = mesh.mesh->mMatrix;
         toMatrix(mesh.pos, rot, m);
         // into world space
         if (mesh.parentIdx >= 0)
@@ -136,7 +136,7 @@ void CScene::evaluateMeshes(float t)
     }
 }
 
-void CScene::render(eRenderMode renderMode, sg_bindings *binds)
+void Scene::render(eRenderMode renderMode, sg_bindings *binds)
 {
     int n = mMeshes.size();
     if (n == 0)
@@ -165,18 +165,18 @@ void CScene::render(eRenderMode renderMode, sg_bindings *binds)
 
     sg_apply_uniforms(0, {&g_global_u, sizeof(g_global_u)});
 
-    SPlane planes[6];
+    Plane planes[6];
     extractFrustumPlanes(gRenderCam.getViewProjMatrix(), planes);
     for (int i = 0; i < n; ++i)
         mMeshes[i].mesh->render(renderMode, binds, planes);
 }
 
-void CScene::addCut(float frame)
+void Scene::addCut(float frame)
 {
     mCutTimes.push_back(frame / getLength());
 }
 
-float CScene::getPastCut(float t) const
+float Scene::getPastCut(float t) const
 {
     int n = mCutTimes.size();
     int i;

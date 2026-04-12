@@ -2,7 +2,7 @@
 #include "Rendering.h"
 #include <assert.h>
 
-CMeshEntity::CMeshEntity(DataMesh type)
+MeshEntity::MeshEntity(DataMesh type)
     : mMesh(nullptr),
       mCubeFace(CFACE_PX)
 {
@@ -41,11 +41,11 @@ CMeshEntity::CMeshEntity(DataMesh type)
     mMesh = g_data_mesh[type];
 }
 
-CMeshEntity::~CMeshEntity()
+MeshEntity::~MeshEntity()
 {
 }
 
-void CMeshEntity::render(eRenderMode renderMode, sg_bindings *binds, const SPlane planes[6])
+void MeshEntity::render(eRenderMode renderMode, sg_bindings *binds, const Plane planes[6])
 {
     if (!(mRenderModesMask & (1 << renderMode)))
         return;

@@ -11,7 +11,7 @@
 #include "../../external/sokol_app.h"
 #include "../../external/sokol_glue.h"
 
-CLineRenderer::CLineRenderer()
+LineRenderer::LineRenderer()
 {
     constexpr int kSegments = 1000;
     constexpr int kQuadSize = 6;
@@ -45,20 +45,20 @@ CLineRenderer::CLineRenderer()
     delete[] ib;
 }
 
-CLineRenderer::~CLineRenderer()
+LineRenderer::~LineRenderer()
 {
     sg_destroy_buffer(mIB);
 }
 
-void CLineRenderer::renderStrip(int npoints, const SLinePoint *points, float halfWidth)
+void LineRenderer::renderStrip(int npoints, const LinePoint *points, float halfWidth)
 {
     if (npoints < 2)
         return;
     assert(points);
 
-    const SMatrix4x4 &camRotMat = gRenderCam.getCameraRotMatrix();
-    const SMatrix4x4 &camViewMat = gRenderCam.getViewMatrix();
-    const SVector3 &camPos = gRenderCam.getEye3();
+    const Matrix4x4 &camRotMat = gRenderCam.getCameraRotMatrix();
+    const Matrix4x4 &camViewMat = gRenderCam.getViewMatrix();
+    const Vector3 &camPos = gRenderCam.getEye3();
 
     int nverts = npoints * 2;
     int ntris = (npoints - 1) * 2;
@@ -69,14 +69,14 @@ void CLineRenderer::renderStrip(int npoints, const SLinePoint *points, float hal
     // fill VB with lines
     for (int i = 1; i < npoints; ++i)
     {
-        const SLinePoint &ptA = points[i - 1];
-        const SLinePoint &ptB = points[i];
-        SVector3 segDir = ptB.pos - ptA.pos;
-        SVector3 side = segDir.cross(ptB.pos - camPos);
+        const LinePoint &ptA = points[i - 1];
+        const LinePoint &ptB = points[i];
+        Vector3 segDir = ptB.pos - ptA.pos;
+        Vector3 side = segDir.cross(ptB.pos - camPos);
         side.normalize();
         side *= halfWidth;
-        SVector3 c1 = side;
-        SVector3 c2 = -side;
+        Vector3 c1 = side;
+        Vector3 c2 = -side;
 
         // 2 or 4 line corners
         if (i == 1)
@@ -120,13 +120,13 @@ void CLineRenderer::renderStrip(int npoints, const SLinePoint *points, float hal
     sg_draw(0, ntris * 3, 1);
 }
 
-void gComputeTextureProjection(const SMatrix4x4 &renderCameraMatrix, const SMatrix4x4 &projectorMatrix, SMatrix4x4 &dest)
+void gComputeTextureProjection(const Matrix4x4 &renderCameraMatrix, const Matrix4x4 &projectorMatrix, Matrix4x4 &dest)
 {
     // | -0.5     0        0        0 |
     // | 0        0.5      0        0 |
     // | 0        0        1        0 |
     // | 0.5      0.5      0        1 |
-    SMatrix4x4 matTexScale;
+    Matrix4x4 matTexScale;
     matTexScale.identify();
     matTexScale._11 = 0.5f;
     matTexScale._22 = -0.5f;
@@ -179,12 +179,12 @@ void pingPongBlur(int passes)
     int swidth = sapp_width() / 4;
     int sheight = sapp_height() / 4;
 
-    const SVector4 offsetX(1, 1, -1, -1);
-    const SVector4 offsetY(1, -1, -1, 1);
+    const Vector4 offsetX(1, 1, -1, -1);
+    const Vector4 offsetY(1, -1, -1, 1);
     for (int i = 0; i < passes; ++i)
     {
         const float pixDist = i + 0.5f;
-        SVector4 offset(pixDist / swidth, pixDist / sheight, 0, 0);
+        Vector4 offset(pixDist / swidth, pixDist / sheight, 0, 0);
         render_fullscreen_pass(pip_postBlurStep, "blur step", *pingPong[i & 1], &pingPong[(i + 1) & 1]->view_tex, 1, {&offset, sizeof(offset)});
     }
 }
@@ -207,18 +207,18 @@ void renderBloom()
 
 struct TVertex
 {
-    SVector3 p;
+    Vector3 p;
     uint32_t diffuse;
     float tu, tv;
 };
 
-static std::vector<SOBillboard> s_bills;
+static std::vector<Billboard> s_bills;
 static std::vector<TVertex> s_vertices;
 static sg_buffer s_ib_quads;
 
-SOBillboard &billboards_add()
+Billboard &billboards_add()
 {
-    s_bills.emplace_back(SOBillboard());
+    s_bills.emplace_back(Billboard());
     return s_bills.back();
 }
 
@@ -251,7 +251,7 @@ void billboards_render()
         s_vertices.resize(vertsNeeded);
     }
     TVertex *vb = s_vertices.data();
-    for (const SOBillboard &bill : s_bills)
+    for (const Billboard &bill : s_bills)
     {
         const float z = 0.1f;
         vb->p.x = bill.x1;
@@ -296,7 +296,7 @@ void billboards_render()
 
     for (int i = 0; i < s_bills.size(); ++i)
     {
-        const SOBillboard &b = s_bills[i];
+        const Billboard &b = s_bills[i];
         bind.views[0] = b.texture;
         bind.vertex_buffer_offsets[0] = vbOffset + i * sizeof(TVertex) * 4;
         sg_apply_bindings(&bind);

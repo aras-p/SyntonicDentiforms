@@ -3,32 +3,32 @@
 #include "Anim.h"
 #include "MeshEntity.h"
 
-class CScene
+class Scene
 {
   public:
-    struct SMesh
+    struct SceneMesh
     {
-        CMeshEntity *mesh;
-        SVector3 pos;
-        SVector3 rot;
-        SVector3 rotVel; // over all animation
+        MeshEntity *mesh;
+        Vector3 pos;
+        Vector3 rot;
+        Vector3 rotVel; // over all animation
         int parentIdx;
     };
 
   public:
-    CScene(int number);
-    virtual ~CScene();
+    Scene(int number);
+    virtual ~Scene();
 
     virtual void initialize();
 
-    void evaluate(float t, SMatrix4x4 &light, SMatrix4x4 &camera);
-    void evaluateCamera(float t, SMatrix4x4 &camera) const;
-    void evaluateLight(float t, SMatrix4x4 &light) const;
+    void evaluate(float t, Matrix4x4 &light, Matrix4x4 &camera);
+    void evaluateCamera(float t, Matrix4x4 &camera) const;
+    void evaluateLight(float t, Matrix4x4 &light) const;
     void render(eRenderMode renderMode, sg_bindings *binds);
 
     int getLength() const { return mLength; }
 
-    CMeshEntity *addStaticMesh(DataMesh data);
+    MeshEntity *addStaticMesh(DataMesh data);
 
     void addCut(float frame);
     float getPastCut(float t) const;
@@ -36,17 +36,17 @@ class CScene
 
   protected:
     virtual void evaluateMeshes(float t);
-    static void toMatrix(const SVector3 &pos, const SVector3 &rot, SMatrix4x4 &m);
+    static void toMatrix(const Vector3 &pos, const Vector3 &rot, Matrix4x4 &m);
 
   protected:
     void recurseAdd(int idx);
 
   protected:
     int mNumber;
-    std::vector<SMesh> mMeshes;  // owns meshes
+    std::vector<SceneMesh> mMeshes; // owns meshes
     std::vector<int> mEvalOrder; // depth-first order for hierarchy
-    CAnim *mAnimLight;
-    CAnim *mAnimCamera;
+    Anim *mAnimLight;
+    Anim *mAnimCamera;
     int mLength; // in max frames
 
     std::vector<float> mCutTimes; // 0..1

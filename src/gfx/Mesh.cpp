@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <vector>
 
-CMesh::CMesh(int vertCount, int idxCount, const Vertex *vbData, const uint16_t *ibData)
+Mesh::Mesh(int vertCount, int idxCount, const Vertex *vbData, const uint16_t *ibData)
 {
     assert(vertCount > 0);
     assert(idxCount > 0);
@@ -40,12 +40,12 @@ CMesh::CMesh(int vertCount, int idxCount, const Vertex *vbData, const uint16_t *
     for (int v = 0; v < mVertexCount; ++v)
     {
         const Vertex &vert = vbData[v];
-        const SVector3 pos(vert.x, vert.y, vert.z);
+        const Vector3 pos(vert.x, vert.y, vert.z);
         mTotalAABB.extend(pos);
     }
 }
 
-CMesh::~CMesh()
+Mesh::~Mesh()
 {
     sg_destroy_buffer(mVB);
     mVB = {};
@@ -59,7 +59,7 @@ CMesh::~CMesh()
 // - 4 bytes ntris
 // - 16*nverts vertex data (3x float position, 2xSNorm16 octahedral normal)
 // - 2*3*ntris index data (16 bit)
-CMesh *load_mesh(const char *fileName)
+Mesh *load_mesh(const char *fileName)
 {
     // open file
     FILE *f = fopen(fileName, "rb");
@@ -80,8 +80,8 @@ CMesh *load_mesh(const char *fileName)
     assert(nverts > 0);
     assert(ntris > 0);
 
-    std::vector<CMesh::Vertex> vbData(nverts);
-    fread(vbData.data(), sizeof(CMesh::Vertex), nverts, f);
+    std::vector<Mesh::Vertex> vbData(nverts);
+    fread(vbData.data(), sizeof(Mesh::Vertex), nverts, f);
 
     std::vector<uint16_t> ibData(ntris * 3);
     fread(ibData.data(), 2, ntris * 3, f);
@@ -89,5 +89,5 @@ CMesh *load_mesh(const char *fileName)
     fclose(f);
 
     // create mesh
-    return new CMesh(nverts, ntris * 3, vbData.data(), ibData.data());
+    return new Mesh(nverts, ntris * 3, vbData.data(), ibData.data());
 }

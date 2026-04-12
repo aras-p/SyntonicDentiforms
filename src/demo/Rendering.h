@@ -26,24 +26,24 @@ void render_fullscreen_pass(
 
 // --------------------------------------------------------
 
-struct SLinePoint
+struct LinePoint
 {
-    SVector3 pos;
+    Vector3 pos;
     uint32_t color;
 };
 
-class CLineRenderer
+class LineRenderer
 {
   public:
-    CLineRenderer();
-    ~CLineRenderer();
+    LineRenderer();
+    ~LineRenderer();
 
-    void renderStrip(int npoints, const SLinePoint *points, float halfWidth);
+    void renderStrip(int npoints, const LinePoint *points, float halfWidth);
 
   private:
     struct TVertex
     {
-        SVector3 p;
+        Vector3 p;
         uint32_t diffuse;
         float tu, tv;
     };
@@ -53,16 +53,16 @@ class CLineRenderer
 // --------------------------------------------------------
 
 void gComputeTextureProjection(
-    const SMatrix4x4 &renderCameraMatrix,
-    const SMatrix4x4 &projectorMatrix,
-    SMatrix4x4 &dest);
+    const Matrix4x4 &renderCameraMatrix,
+    const Matrix4x4 &projectorMatrix,
+    Matrix4x4 &dest);
 
 void renderBloom();
 void pingPongBlur(int passes);
 
 // --------------------------------------------------------
 
-struct SOBillboard
+struct Billboard
 {
   public:
     void setWholeTexture()
@@ -78,7 +78,7 @@ struct SOBillboard
     sg_view texture;
 };
 
-SOBillboard &billboards_add();
+Billboard &billboards_add();
 void billboards_clear();
 void billboards_render();
 
@@ -101,8 +101,8 @@ constexpr bool kReflectionsDepthBias = true;
 constexpr bool kReflectionsDepthBias = false;
 #endif
 
-class CLineRenderer;
-extern CLineRenderer *gLineRenderer;
+class LineRenderer;
+extern LineRenderer *gLineRenderer;
 
 extern sg_sampler s_smp_linear_repeat;
 extern sg_sampler s_smp_linear_clamp;
@@ -124,15 +124,15 @@ extern sokol_texture rt_shadow_z;
 // match global_uniforms in shaders
 struct GlobalUniforms
 {
-    SMatrix4x4 matView;
-    SMatrix4x4 matProjection;
-    SMatrix4x4 matViewProj;
-    SMatrix4x4 matViewTexProj;
-    SMatrix4x4 matShadowProj;
-    SVector4 eyePos;
-    SVector4 lightPos;
-    SVector4 lightDir;
-    SVector4 _pad0;
+    Matrix4x4 matView;
+    Matrix4x4 matProjection;
+    Matrix4x4 matViewProj;
+    Matrix4x4 matViewTexProj;
+    Matrix4x4 matShadowProj;
+    Vector4 eyePos;
+    Vector4 lightPos;
+    Vector4 lightDir;
+    Vector4 _pad0;
 };
 
 extern GlobalUniforms g_global_u;
@@ -140,5 +140,5 @@ extern GlobalUniforms g_global_u;
 // match entity_uniforms in shaders
 struct EntityUniformsVS
 {
-    SMatrix4x4 mat;
+    Matrix4x4 mat;
 };

@@ -3,7 +3,7 @@
 #include "../math/Maths.h"
 #include "DataFiles.h"
 
-class CAnim
+class Anim
 {
   public:
     enum eAnims
@@ -14,16 +14,16 @@ class CAnim
     };
 
   public:
-    CAnim(DataAnim animation, const std::string &curve, int anims = ALL);
+    Anim(DataAnim animation, const std::string &curve, int anims = ALL);
 
-    void sample(float t, SMatrix4x4 &dest) const;
-    void samplePos(float t, SVector3 &dest) const;
+    void sample(float t, Matrix4x4 &dest) const;
+    void samplePos(float t, Vector3 &dest) const;
 
   private:
-    SVector3 mDefaultPos;
-    SQuaternion mDefaultRot;
+    Vector3 mDefaultPos;
+    Quaternion mDefaultRot;
 
-    const CSampledAnimation *mPosAnim;
-    const CSampledAnimation *mRotAnim;
+    const SampledAnimation *mPosAnim;
+    const SampledAnimation *mRotAnim;
     int mCurve;
 };

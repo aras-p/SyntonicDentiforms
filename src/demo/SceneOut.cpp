@@ -1,6 +1,6 @@
 #include "SceneOut.h"
 
-void CSceneOut::initialize()
+void SceneOut::initialize()
 {
     mLength = 1350;
 
@@ -11,8 +11,8 @@ void CSceneOut::initialize()
         {
             for (int iz = -1; iz <= 1; ++iz)
             {
-                CMeshEntity *m = addStaticMesh(DataMeshBox);
-                SVector3 &o = m->mMatrix.getOrigin();
+                MeshEntity *m = addStaticMesh(DataMeshBox);
+                Vector3 &o = m->mMatrix.getOrigin();
                 o.x = ix * 25;
                 o.y = iy * 25;
                 o.z = iz * 25;

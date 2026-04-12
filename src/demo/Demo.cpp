@@ -23,12 +23,12 @@
 #endif
 
 #if DEMO_PLAY_MODE == PLAY_MODE_MUSIC
-CMusicPlayer *gMusicPlayer;
+MusicPlayer *gMusicPlayer;
 #define DELAY_ACTION (0.25)
 #define GET_TIME (gMusicPlayer->getTime() + DELAY_ACTION)
 #elif DEMO_PLAY_MODE == PLAY_MODE_CAPTURE
 static int gCapturedFrames = 0;
-CMusicPlayer *gMusicPlayer;
+MusicPlayer *gMusicPlayer;
 #define DELAY_ACTION (0.25)
 #define GET_TIME (double(gCapturedFrames) / 60.0 + DELAY_ACTION)
 #elif DEMO_PLAY_MODE == PLAY_MODE_DEBUG
@@ -50,17 +50,17 @@ enum eSceneMode
 };
 
 const int SCENES = 6;
-CScene *gScenes[SCENES];
+Scene *gScenes[SCENES];
 
 const float gOutSections[SCENES + 1] = {0, 255, 473, 653, 939, 1150, 1350};
-CSceneOut *gSceneOut;
+SceneOut *gSceneOut;
 
 eSceneMode gSceneMode;
 int gSceneIndex;       // scene/section
 float gSceneStartTime; // start time of current scene/section
 
 // current scene cuts
-struct SSceneCut
+struct SceneCut
 {
     void reset()
     {
@@ -80,21 +80,21 @@ struct SSceneCut
     double sceneStartTime;
     float duration; // current cut dutaion, or -1 if no cut
 };
-SSceneCut gCut;
+SceneCut gCut;
 
 // --------------------------------------------------------------------------
 
 // line renderer
-CLineRenderer *gLineRenderer;
+LineRenderer *gLineRenderer;
 
 // camera
-CCameraEntity gCamera;
-SMatrix4x4 gCameraViewProjMatrix;
+CameraEntity gCamera;
+Matrix4x4 gCameraViewProjMatrix;
 // light
-SMatrix4x4 gLightViewProjMatrix;
-CCameraEntity gLightCamera;
+Matrix4x4 gLightViewProjMatrix;
+CameraEntity gLightCamera;
 // reflective wals
-CMeshEntity *gWallMeshes[CFACE_COUNT];
+MeshEntity *gWallMeshes[CFACE_COUNT];
 DataMesh gWallData[CFACE_COUNT] = {
     DataMeshCubePX,
     DataMeshCubeNX,
@@ -103,14 +103,14 @@ DataMesh gWallData[CFACE_COUNT] = {
     DataMeshCubePZ,
     DataMeshCubeNZ,
 };
-CCameraEntity gWallCamera;
+CameraEntity gWallCamera;
 
 // post-processing fx
-SVector4 gOverlayColor;
-SVector4 gOverlayColor2;
+Vector4 gOverlayColor;
+Vector4 gOverlayColor2;
 
 // synch anim
-CAnim *gAnimSynch;
+Anim *gAnimSynch;
 
 // --------------------------------------------------------------------------
 
@@ -258,7 +258,7 @@ bool demo_init()
 
     dynamic_vb_init(2 * 1024 * 1024);
 
-    gLineRenderer = new CLineRenderer();
+    gLineRenderer = new LineRenderer();
 
     // --------------------------------
     // RTs
@@ -274,19 +274,19 @@ bool demo_init()
     // --------------------------------
     // synch
 
-    gAnimSynch = new CAnim(DataAnimSynch, "BeatBox", CAnim::POSITION);
+    gAnimSynch = new Anim(DataAnimSynch, "BeatBox", Anim::POSITION);
 
     // --------------------------------
     // scenes
 
-    gSceneOut = new CSceneOut(0);
+    gSceneOut = new SceneOut(0);
     gSceneOut->initialize();
     for (int s = 0; s < SCENES; ++s)
     {
         if (s == SCENES - 1)
-            gScenes[s] = new CSceneTeeth(s + 1);
+            gScenes[s] = new SceneTeeth(s + 1);
         else
-            gScenes[s] = new CScene(s + 1);
+            gScenes[s] = new Scene(s + 1);
         gScenes[s]->initialize();
         gScenes[s]->addStaticMesh(DataMeshCube);
         for (int i = 0; i < CFACE_COUNT; ++i)
@@ -312,7 +312,7 @@ bool demo_init()
     gSceneIndex = 0;
 
 #if DEMO_PLAY_MODE == PLAY_MODE_MUSIC
-    gMusicPlayer = new CMusicPlayer();
+    gMusicPlayer = new MusicPlayer();
     gMusicPlayer->play("data/music.ogg");
     gSceneStartTime = float(GET_TIME - DELAY_ACTION);
 #elif DEMO_PLAY_MODE == PLAY_MODE_CAPTURE
@@ -329,9 +329,9 @@ bool demo_init()
     return true;
 }
 
-static void ReflectMatrix(SMatrix4x4 &out, const SPlane &plane)
+static void ReflectMatrix(Matrix4x4 &out, const Plane &plane)
 {
-    SPlane nplane = plane.normalize();
+    Plane nplane = plane.normalize();
 
     out.identify();
     out.m[0][0] = 1.0f - 2.0f * nplane.a * nplane.a;
@@ -351,24 +351,24 @@ static void ReflectMatrix(SMatrix4x4 &out, const SPlane &plane)
 void gRenderWallReflections()
 {
     assert(gSceneMode == SC_SCENE);
-    SVector3 planePos[CFACE_COUNT] = {
-        SVector3(10, 0, 0),
-        SVector3(-10, 0, 0),
-        SVector3(0, 10, 0),
-        SVector3(0, -10, 0),
-        SVector3(0, 0, 10),
-        SVector3(0, 0, -10),
+    Vector3 planePos[CFACE_COUNT] = {
+        Vector3(10, 0, 0),
+        Vector3(-10, 0, 0),
+        Vector3(0, 10, 0),
+        Vector3(0, -10, 0),
+        Vector3(0, 0, 10),
+        Vector3(0, 0, -10),
     };
-    SVector3 planeNrm[CFACE_COUNT] = {
-        SVector3(-1, 0, 0),
-        SVector3(1, 0, 0),
-        SVector3(0, -1, 0),
-        SVector3(0, 1, 0),
-        SVector3(0, 0, -1),
-        SVector3(0, 0, 1),
+    Vector3 planeNrm[CFACE_COUNT] = {
+        Vector3(-1, 0, 0),
+        Vector3(1, 0, 0),
+        Vector3(0, -1, 0),
+        Vector3(0, 1, 0),
+        Vector3(0, 0, -1),
+        Vector3(0, 0, 1),
     };
 
-    SPlane frustumPlanes[6];
+    Plane frustumPlanes[6];
     extractFrustumPlanes(gCameraViewProjMatrix, frustumPlanes);
 
     for (int currWall = 0; currWall < CFACE_COUNT; ++currWall)
@@ -376,8 +376,8 @@ void gRenderWallReflections()
         if (gWallMeshes[currWall]->frustumCull(frustumPlanes))
             continue;
 
-        SPlane reflPlane(planePos[currWall] + planeNrm[currWall] * 0.05f, planeNrm[currWall]);
-        SMatrix4x4 reflectMat;
+        Plane reflPlane(planePos[currWall] + planeNrm[currWall] * 0.05f, planeNrm[currWall]);
+        Matrix4x4 reflectMat;
         ReflectMatrix(reflectMat, reflPlane);
 
         gWallCamera.mMatrix = gCamera.mMatrix * reflectMat;
@@ -512,7 +512,7 @@ static void gRenderCredits(float cutAlpha)
     const float RISE_Y = HEIGHT * 22.0f / 96.0f;
     const float LINE_Y = TOP_Y + HEIGHT * (outer ? (61.0f / 80.0f) : (59.0f / 96.0f));
     const float LINEFLY_ALPHA = FLY_ALPHA * 0.7f;
-    SLinePoint linepts[LINE_PTS];
+    LinePoint linepts[LINE_PTS];
     for (i = 0; i < LINE_PTS; ++i)
     {
         float ptX = (float)i / (LINE_PTS - 1) * 2 - 1;
@@ -541,7 +541,7 @@ static void gRenderCredits(float cutAlpha)
             if (dist > 0.6f)
                 ptA = 1.0f - (dist - 0.6f) * 3;
         }
-        linepts[i].color = SVector4(1, 0, 0, ptA).toRGBA();
+        linepts[i].color = Vector4(1, 0, 0, ptA).toRGBA();
     }
     pipeline_apply(pip_linesNoAA);
     gLineRenderer->renderStrip(LINE_PTS, linepts, lineWidth);
@@ -556,7 +556,7 @@ static void gRenderCredits(float cutAlpha)
     for (i = 0; i < BILLCOUNT; ++i)
     {
         const float edgeBill = edgeDistX * (1.0f + (float)i / BILLCOUNT * 0.5f);
-        SOBillboard *b;
+        Billboard *b;
         // left...
         b = &billboards_add();
         b->x1 = CENTER_X - edgeBill - WIDTH;
@@ -667,7 +667,7 @@ bool demo_update()
     //
     // current scene and scene's alpha
 
-    CScene *scene = NULL;
+    Scene *scene = NULL;
     float sceneAlpha = 0.0f;
     if (gSceneMode == SC_OUTER)
     {
@@ -740,7 +740,7 @@ bool demo_update()
     if (gSceneMode == SC_OUTER)
     {
         const float ext = 100.0f;
-        const SVector3 &camo = gCamera.mMatrix.getOrigin();
+        const Vector3 &camo = gCamera.mMatrix.getOrigin();
         float camDist = camo.length();
         znear = (camDist < ext + 0.1f) ? 0.1f : (camDist - ext);
         zfar = camDist + ext;
@@ -792,7 +792,7 @@ bool demo_update()
         // last scene teeth lines
         if (gCut.isInCut() && gSceneIndex == SCENES - 1)
         {
-            CSceneTeeth *steeth = (CSceneTeeth *)gScenes[gSceneIndex];
+            SceneTeeth *steeth = (SceneTeeth *)gScenes[gSceneIndex];
             steeth->renderTeethLines(gCut.doneCount, sceneAlpha);
         }
     }
@@ -831,7 +831,7 @@ bool demo_update()
         const double SYNCH_LEN = 6361.0;
         const double OVERSAMPLE = 1.0 / SYNCH_LEN;
         double synt = musicTime / (SYNCH_LEN / 30.0);
-        SVector3 beatPos0, beatPos1, beatPos2;
+        Vector3 beatPos0, beatPos1, beatPos2;
         gAnimSynch->samplePos(float(synt - OVERSAMPLE), beatPos0);
         gAnimSynch->samplePos(float(synt), beatPos1);
         gAnimSynch->samplePos(float(synt + OVERSAMPLE), beatPos2);
@@ -868,7 +868,7 @@ bool demo_update()
         float cutTime = float(t - gCut.startTime);
         if (gSceneIndex == SCENES - 1)
         {
-            CSceneTeeth *steeth = (CSceneTeeth *)gScenes[gSceneIndex];
+            SceneTeeth *steeth = (SceneTeeth *)gScenes[gSceneIndex];
             float aspect = sapp_widthf() / sapp_heightf();
             steeth->renderTeethStuff(gCut.doneCount, sceneAlpha, cutTime / gCut.duration, aspect);
             steeth->renderTeethUI(gCut.doneCount, sceneAlpha, cutTime / gCut.duration, aspect);
@@ -898,7 +898,7 @@ bool demo_update()
     if (saudio_suspended())
     {
         billboards_clear();
-        SOBillboard &bill = billboards_add();
+        Billboard &bill = billboards_add();
 
         sokol_texture *tex = g_data_tex[DataTexStart];
         bill.texture = tex->view_tex;
@@ -910,7 +910,7 @@ bool demo_update()
         bill.x2 = ww / scw;
         bill.y1 = -hh / sch;
         bill.y2 = hh / sch;
-        bill.color = SVector4(1, 1, 1, 0.3f + (cosf(stm_sec(time0) * 2.4f) * 0.5f + 0.5f) * 0.7f).toRGBA();
+        bill.color = Vector4(1, 1, 1, 0.3f + (cosf(stm_sec(time0) * 2.4f) * 0.5f + 0.5f) * 0.7f).toRGBA();
         bill.setWholeTexture();
         pipeline_apply(pip_billboardsClearDestAlpha);
         billboards_render();

@@ -6,11 +6,11 @@
 
 // ------------------------------------
 
-class CTeethAnim
+class TeethAnim
 {
   public:
-    CTeethAnim(DataAnim animation, int startFrame, int endFrame);
-    ~CTeethAnim();
+    TeethAnim(DataAnim animation, int startFrame, int endFrame);
+    ~TeethAnim();
 
     bool evaluate(float t);
     float getRelTime(float t) const;
@@ -19,14 +19,14 @@ class CTeethAnim
 
   private:
     int mTotalFrames, mStartFrame, mEndFrame;
-    CAnimationBunch *mAnim;
-    const CSampledAnimation *mPosAnim;
-    const CSampledAnimation *mRotAnim;
-    typedef std::vector<SVector3> TVec3Vector;
+    AnimationBunch *mAnim;
+    const SampledAnimation *mPosAnim;
+    const SampledAnimation *mRotAnim;
+    typedef std::vector<Vector3> TVec3Vector;
 
   public:
-    SVector3 *mVectors;
-    SQuaternion *mQuats;
+    Vector3 *mVectors;
+    Quaternion *mQuats;
     int *mTeethIdx;
 
     TVec3Vector *mPaths;
@@ -34,7 +34,7 @@ class CTeethAnim
 
 // ------------------------------------
 
-class CSceneTeeth : public CScene
+class SceneTeeth : public Scene
 {
   public:
     enum
@@ -47,8 +47,8 @@ class CSceneTeeth : public CScene
     };
 
   public:
-    CSceneTeeth(int number);
-    virtual ~CSceneTeeth();
+    SceneTeeth(int number);
+    virtual ~SceneTeeth();
 
     virtual void initialize();
 
@@ -62,8 +62,8 @@ class CSceneTeeth : public CScene
     static void renderTeethBills(int pack, float t, float relT, float cutAlpha, bool masks, float aspect);
 
   private:
-    CAnim *mAnimAxes[GEARS];
+    Anim *mAnimAxes[GEARS];
     int mAxesIdx[GEARS];
     int mGearsIdx[GEARS];
-    CTeethAnim *mAnimTeeth[TEETHPACKS];
+    TeethAnim *mAnimTeeth[TEETHPACKS];
 };

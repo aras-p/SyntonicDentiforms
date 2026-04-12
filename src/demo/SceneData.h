@@ -101,7 +101,7 @@ static const SceneEntityData kScene5Entities[] = {
 static const SceneData kScene5 = {200.0f, 8, kScene5Entities};
 
 // --------------------------------------------------------------------------
-// Scene 6 (used by CSceneTeeth; parentIdx for teeth is 0 or 1 indexing mGearsIdx)
+// Scene 6 (used by SceneTeeth; parentIdx for teeth is 0 or 1 indexing mGearsIdx)
 
 static const SceneEntityData kScene6Entities[] = {
     // mesh                 parentIdx  pos                                          rot0                              rot1

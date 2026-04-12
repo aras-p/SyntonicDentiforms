@@ -75,7 +75,7 @@ static const char *kMeshPaths[DataMeshCOUNT] = {
     "data/mesh/scene6/Tooth2.dmesh",
 };
 
-CMesh *g_data_mesh[DataMeshCOUNT];
+Mesh *g_data_mesh[DataMeshCOUNT];
 
 static const char *kAnimPaths[DataAnimCOUNT] = {
     "data/anim/Anim0.danim",
@@ -93,7 +93,7 @@ static const char *kAnimPaths[DataAnimCOUNT] = {
     "data/anim/6/TeethD.danim",
 };
 
-CAnimationBunch *g_data_anim[DataAnimCOUNT];
+AnimationBunch *g_data_anim[DataAnimCOUNT];
 
 bool load_data_files()
 {

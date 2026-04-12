@@ -1,8 +1,8 @@
 #include "Maths.h"
 
-SVector3 SVector3::transformCoord(const SMatrix4x4 &pm) const
+Vector3 Vector3::transformCoord(const Matrix4x4 &pm) const
 {
-    SVector3 out;
+    Vector3 out;
     float norm = pm.m[0][3] * x + pm.m[1][3] * y + pm.m[2][3] * z + pm.m[3][3];
 
     out.x = (pm.m[0][0] * x + pm.m[1][0] * y + pm.m[2][0] * z + pm.m[3][0]) / norm;
@@ -11,7 +11,7 @@ SVector3 SVector3::transformCoord(const SMatrix4x4 &pm) const
     return out;
 }
 
-SMatrix4x4::SMatrix4x4(const SVector3 &pos, const SQuaternion &rot)
+Matrix4x4::Matrix4x4(const Vector3 &pos, const Quaternion &rot)
 {
     identify();
     m[0][0] = 1.0f - 2.0f * (rot.y * rot.y + rot.z * rot.z);
@@ -26,9 +26,9 @@ SMatrix4x4::SMatrix4x4(const SVector3 &pos, const SQuaternion &rot)
     getOrigin() = pos;
 }
 
-SMatrix4x4 operator*(const SMatrix4x4 &a, const SMatrix4x4 &b)
+Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b)
 {
-    SMatrix4x4 out;
+    Matrix4x4 out;
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
@@ -39,7 +39,7 @@ SMatrix4x4 operator*(const SMatrix4x4 &a, const SMatrix4x4 &b)
     return out;
 }
 
-void SMatrix4x4::perspectiveFovLH(float fovy, float aspect, float zn, float zf)
+void Matrix4x4::perspectiveFovLH(float fovy, float aspect, float zn, float zf)
 {
     identify();
     m[0][0] = 1.0f / (aspect * tanf(fovy / 2.0f));
@@ -50,7 +50,7 @@ void SMatrix4x4::perspectiveFovLH(float fovy, float aspect, float zn, float zf)
     m[3][3] = 0.0f;
 }
 
-void SMatrix4x4::orthoLH(float w, float h, float zn, float zf)
+void Matrix4x4::orthoLH(float w, float h, float zn, float zf)
 {
     identify();
     m[0][0] = 2.0f / w;
@@ -59,7 +59,7 @@ void SMatrix4x4::orthoLH(float w, float h, float zn, float zf)
     m[3][2] = zn / (zn - zf);
 }
 
-void SMatrix4x4::invert()
+void Matrix4x4::invert()
 {
     float det, t[3], v[16];
 
@@ -124,17 +124,17 @@ void SMatrix4x4::invert()
             m[i][j] = v[4 * i + j] * det;
 }
 
-void extractFrustumPlanes(const SMatrix4x4 &viewProj, SPlane planes[6])
+void extractFrustumPlanes(const Matrix4x4 &viewProj, Plane planes[6])
 {
-    planes[0] = SPlane(viewProj.m[0][0] + viewProj.m[0][3], viewProj.m[1][0] + viewProj.m[1][3], viewProj.m[2][0] + viewProj.m[2][3], viewProj.m[3][0] + viewProj.m[3][3]); // left
-    planes[1] = SPlane(viewProj.m[0][3] - viewProj.m[0][0], viewProj.m[1][3] - viewProj.m[1][0], viewProj.m[2][3] - viewProj.m[2][0], viewProj.m[3][3] - viewProj.m[3][0]); // right
-    planes[2] = SPlane(viewProj.m[0][1] + viewProj.m[0][3], viewProj.m[1][1] + viewProj.m[1][3], viewProj.m[2][1] + viewProj.m[2][3], viewProj.m[3][1] + viewProj.m[3][3]); // bottom
-    planes[3] = SPlane(viewProj.m[0][3] - viewProj.m[0][1], viewProj.m[1][3] - viewProj.m[1][1], viewProj.m[2][3] - viewProj.m[2][1], viewProj.m[3][3] - viewProj.m[3][1]); // top
-    planes[4] = SPlane(viewProj.m[0][2], viewProj.m[1][2], viewProj.m[2][2], viewProj.m[3][2]);                                                                             // near
-    planes[5] = SPlane(viewProj.m[0][3] - viewProj.m[0][2], viewProj.m[1][3] - viewProj.m[1][2], viewProj.m[2][3] - viewProj.m[2][2], viewProj.m[3][3] - viewProj.m[3][2]); // far
+    planes[0] = Plane(viewProj.m[0][0] + viewProj.m[0][3], viewProj.m[1][0] + viewProj.m[1][3], viewProj.m[2][0] + viewProj.m[2][3], viewProj.m[3][0] + viewProj.m[3][3]); // left
+    planes[1] = Plane(viewProj.m[0][3] - viewProj.m[0][0], viewProj.m[1][3] - viewProj.m[1][0], viewProj.m[2][3] - viewProj.m[2][0], viewProj.m[3][3] - viewProj.m[3][0]); // right
+    planes[2] = Plane(viewProj.m[0][1] + viewProj.m[0][3], viewProj.m[1][1] + viewProj.m[1][3], viewProj.m[2][1] + viewProj.m[2][3], viewProj.m[3][1] + viewProj.m[3][3]); // bottom
+    planes[3] = Plane(viewProj.m[0][3] - viewProj.m[0][1], viewProj.m[1][3] - viewProj.m[1][1], viewProj.m[2][3] - viewProj.m[2][1], viewProj.m[3][3] - viewProj.m[3][1]); // top
+    planes[4] = Plane(viewProj.m[0][2], viewProj.m[1][2], viewProj.m[2][2], viewProj.m[3][2]);                                                                             // near
+    planes[5] = Plane(viewProj.m[0][3] - viewProj.m[0][2], viewProj.m[1][3] - viewProj.m[1][2], viewProj.m[2][3] - viewProj.m[2][2], viewProj.m[3][3] - viewProj.m[3][2]); // far
 }
 
-void SQuaternion::slerp(const SQuaternion &a, const SQuaternion &b, float t)
+void Quaternion::slerp(const Quaternion &a, const Quaternion &b, float t)
 {
     float temp = 1.0f - t;
     float dot = a.dot(b);
@@ -157,24 +157,24 @@ void SQuaternion::slerp(const SQuaternion &a, const SQuaternion &b, float t)
     w = temp * a.w + t * b.w;
 }
 
-bool CAABox::frustumCull(const SMatrix4x4 &world, const SPlane planes[6]) const
+bool AABox::frustumCull(const Matrix4x4 &world, const Plane planes[6]) const
 {
     // calculate OBB center in world space
-    SVector3 center = (mMin + mMax) * 0.5f;
-    SVector3 cw(
+    Vector3 center = (mMin + mMax) * 0.5f;
+    Vector3 cw(
         center.x * world.m[0][0] + center.y * world.m[1][0] + center.z * world.m[2][0] + world.m[3][0],
         center.x * world.m[0][1] + center.y * world.m[1][1] + center.z * world.m[2][1] + world.m[3][1],
         center.x * world.m[0][2] + center.y * world.m[1][2] + center.z * world.m[2][2] + world.m[3][2]);
     // calculate OBB half extents
-    SVector3 h = (mMax - mMin) * 0.5f;
-    const SVector3 &axX = world.getAxisX();
-    const SVector3 &axY = world.getAxisY();
-    const SVector3 &axZ = world.getAxisZ();
+    Vector3 h = (mMax - mMin) * 0.5f;
+    const Vector3 &axX = world.getAxisX();
+    const Vector3 &axY = world.getAxisY();
+    const Vector3 &axZ = world.getAxisZ();
 
     for (int i = 0; i < 6; ++i)
     {
-        const SPlane &p = planes[i];
-        SVector3 n(p.a, p.b, p.c);
+        const Plane &p = planes[i];
+        Vector3 n(p.a, p.b, p.c);
         float dc = n.dot(cw) + p.d;
         // OBB support radius along n
         float r = h.x * fabsf(n.dot(axX)) + h.y * fabsf(n.dot(axY)) + h.z * fabsf(n.dot(axZ));

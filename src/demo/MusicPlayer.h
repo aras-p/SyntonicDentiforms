@@ -1,10 +1,10 @@
 #pragma once
 
-class CMusicPlayer
+class MusicPlayer
 {
   public:
-    CMusicPlayer();
-    ~CMusicPlayer();
+    MusicPlayer();
+    ~MusicPlayer();
 
     void play(const char *fileName);
 

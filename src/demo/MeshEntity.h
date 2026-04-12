@@ -24,24 +24,24 @@ enum eCubeFaces
     CFACE_COUNT
 };
 
-class CMeshEntity
+class MeshEntity
 {
   public:
-    CMeshEntity(DataMesh type);
-    ~CMeshEntity();
+    MeshEntity(DataMesh type);
+    ~MeshEntity();
 
-    bool frustumCull(const SPlane planes[6]) const
+    bool frustumCull(const Plane planes[6]) const
     {
         return mMesh->getTotalAABB().frustumCull(mMatrix, planes);
     }
 
-    void render(eRenderMode renderMode, sg_bindings *binds, const SPlane planes[6]);
+    void render(eRenderMode renderMode, sg_bindings *binds, const Plane planes[6]);
 
   public:
-    SMatrix4x4 mMatrix;
+    Matrix4x4 mMatrix;
 
   private:
-    CMesh *mMesh;
+    Mesh *mMesh;
     int mRenderModesMask;
     int mCubeFace; // reflection cube face
 };

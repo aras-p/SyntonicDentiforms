@@ -1,11 +1,11 @@
 #include "Anim.h"
 
-CAnim::CAnim(DataAnim animation, const std::string &curve, int anims)
+Anim::Anim(DataAnim animation, const std::string &curve, int anims)
     : mDefaultPos(0, 0, 0),
       mDefaultRot(0, 0, 0, 1),
       mPosAnim(0), mRotAnim(0)
 {
-    CAnimationBunch *ab = g_data_anim[animation];
+    AnimationBunch *ab = g_data_anim[animation];
     mCurve = ab->getCurveIndexByName(curve);
     if (anims & POSITION)
     {
@@ -17,10 +17,10 @@ CAnim::CAnim(DataAnim animation, const std::string &curve, int anims)
     }
 }
 
-void CAnim::sample(float t, SMatrix4x4 &dest) const
+void Anim::sample(float t, Matrix4x4 &dest) const
 {
-    SVector3 pos;
-    SQuaternion rot;
+    Vector3 pos;
+    Quaternion rot;
 
     if (mPosAnim)
         mPosAnim->sample(t, mCurve, 1, &pos.x);
@@ -31,10 +31,10 @@ void CAnim::sample(float t, SMatrix4x4 &dest) const
     else
         rot = mDefaultRot;
 
-    dest = SMatrix4x4(pos, rot);
+    dest = Matrix4x4(pos, rot);
 }
 
-void CAnim::samplePos(float t, SVector3 &dest) const
+void Anim::samplePos(float t, Vector3 &dest) const
 {
     if (mPosAnim)
         mPosAnim->sample(t, mCurve, 1, &dest.x);
