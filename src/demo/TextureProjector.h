@@ -1,6 +1,6 @@
 #pragma once
 
-#include <src/math/Matrix4x4.h>
+#include "../math/Maths.h"
 
 /**
  *  Computes texture projection matrix.

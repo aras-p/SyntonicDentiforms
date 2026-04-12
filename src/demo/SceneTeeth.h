@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Scene.h"
-#include <src/animator/Animation.h>
-#include <src/math/Matrix4x4.h>
+#include "../animator/Animation.h"
+#include "../math/Maths.h"
 
 // ------------------------------------
 

@@ -3,9 +3,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#include <src/math/Vector4.h>
-#include <src/math/Matrix4x4.h>
-#include <src/gfx/Texture.h>
+#include "../math/Maths.h"
+#include "../gfx/Texture.h"
 
 // Multi-pass rendering of reflections causes garbage artifacts on
 // the web, but only on Apple systems.

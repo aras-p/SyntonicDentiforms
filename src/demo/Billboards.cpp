@@ -1,7 +1,7 @@
 #include "Billboards.h"
 #include "DemoResources.h"
 #include "DynamicVB.h"
-#include "../math/Vector3.h"
+#include "../math/Maths.h"
 #include <vector>
 #include <assert.h>
 

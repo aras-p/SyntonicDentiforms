@@ -1,8 +1,3 @@
-#include <src/math/Matrix4x4.h>
-#include <src/math/Plane.h>
-#include <src/math/MathUtils.h>
-
-
 #include "Billboards.h"
 #include "Demo.h"
 #include "DemoResources.h"
@@ -17,6 +12,8 @@
 #include "TextureProjector.h"
 #include "LineRenderer.h"
 #include "MusicPlayer.h"
+
+#include "../math/Maths.h"
 
 #include <assert.h>
 

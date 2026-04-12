@@ -1,9 +1,6 @@
 #pragma once
 
-#include <src/math/Matrix4x4.h>
-#include <src/math/Vector3.h>
-#include <src/math/Quaternion.h>
-
+#include "../math/Maths.h"
 #include "DataFiles.h"
 
 class CAnim {

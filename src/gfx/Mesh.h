@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../math/AABox.h"
+#include "../math/Maths.h"
 
 #include "external/sokol_gfx.h"
 

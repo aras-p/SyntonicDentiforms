@@ -7,7 +7,7 @@
 #include "LineRenderer.h"
 #include "DataFiles.h"
 #include "SceneData.h"
-#include <src/math/MathUtils.h>
+#include "../math/Maths.h"
 #include <stdio.h>
 
 const int TOTAL_FRAMES = 1500;

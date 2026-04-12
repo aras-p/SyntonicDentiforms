@@ -62,16 +62,8 @@ set (SOURCES
     src/gfx/Texture.cpp
     src/gfx/Texture.h
     
-    src/math/AABox.h
-    src/math/Constants.h
-    src/math/Line3.h
-    src/math/MathUtils.h
-    src/math/Matrix4x4.h
-    src/math/Plane.h
-    src/math/Quaternion.h
-    src/math/Vector3.cpp
-    src/math/Vector3.h
-    src/math/Vector4.h
+    src/math/Maths.cpp
+    src/math/Maths.h
 )
 
 add_executable(Demo ${SOURCES})
