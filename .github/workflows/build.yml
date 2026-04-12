@@ -6,7 +6,16 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            suffix: windows
+            exe: SyntonicDentiforms.exe
+          - os: macos-latest
+            suffix: mac
+            exe: SyntonicDentiforms
+          - os: ubuntu-latest
+            suffix: linux
+            exe: SyntonicDentiforms
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +52,13 @@ jobs:
           cmake --build . --clean-first
           cmake -DCMAKE_BUILD_TYPE=Release ..
           cmake --build . --clean-first
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SyntonicDentiforms-${{matrix.suffix}}
+          path: |
+            ${{matrix.exe}}
+            data/
   emscripten:
     runs-on: ubuntu-latest
     steps:
