@@ -146,9 +146,9 @@ void SceneTeeth::initialize()
             else
                 snprintf(toothName, sizeof(toothName), "Tooth2_%d", tooth2Count++);
             bool found = false;
-            for (int j = 0; j < TEETHPACKS; ++j)
+            for (TeethAnim *ta : mAnimTeeth)
             {
-                found = mAnimTeeth[j]->possiblyAddTooth(toothName, mMeshes.size());
+                found = ta->possiblyAddTooth(toothName, mMeshes.size());
                 if (found)
                     break;
             }

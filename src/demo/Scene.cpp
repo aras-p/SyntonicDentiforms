@@ -138,8 +138,7 @@ void Scene::evaluateMeshes(float t)
 
 void Scene::render(eRenderMode renderMode, sg_bindings *binds)
 {
-    int n = mMeshes.size();
-    if (n == 0)
+    if (mMeshes.empty())
         return;
 
     switch (renderMode)
@@ -167,8 +166,8 @@ void Scene::render(eRenderMode renderMode, sg_bindings *binds)
 
     Plane planes[6];
     extractFrustumPlanes(gRenderCam.getViewProjMatrix(), planes);
-    for (int i = 0; i < n; ++i)
-        mMeshes[i].mesh->render(renderMode, binds, planes);
+    for (const SceneMesh &m : mMeshes)
+        m.mesh->render(renderMode, binds, planes);
 }
 
 void Scene::addCut(float frame)
