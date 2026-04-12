@@ -9,13 +9,13 @@ CAnim::CAnim(DataAnim animation, const std::string& curve, int anims )
 	CAnimationBunch* ab = g_data_anim[animation];
 	mCurve = ab->getCurveIndexByName( curve );
 	if( anims & POSITION ) {
-		mPosAnim = ab->findVector3Anim( "pos" );
+		mPosAnim = ab->findAnim("pos", TYPE_VECTOR3);
 	}
 	if( anims & ROTATION ) {
-		mRotAnim = ab->findQuatAnim( "rot" );
+		mRotAnim = ab->findAnim("rot", TYPE_QUATERNION);
 	}
 	if( anims & SCALE ) {
-		mScaleAnim = ab->findFloatAnim( "scale" );
+		mScaleAnim = ab->findAnim("scale", TYPE_FLOAT);
 	}
 }
 
@@ -26,15 +26,15 @@ void CAnim::sample( float t, SMatrix4x4& dest ) const
 	float scale;
 
 	if( mPosAnim )
-		mPosAnim->sample( t, mCurve, 1, &pos );
+		mPosAnim->sample(t, mCurve, 1, &pos.x);
 	else
 		pos = mDefaultPos;
 	if( mRotAnim )
-		mRotAnim->sample( t, mCurve, 1, &rot );
+		mRotAnim->sample(t, mCurve, 1, &rot.x);
 	else
 		rot = mDefaultRot;
 	if( mScaleAnim )
-		mScaleAnim->sample( t, mCurve, 1, &scale );
+		mScaleAnim->sample(t, mCurve, 1, &scale);
 	else
 		scale = mDefaultScale;
 
@@ -47,7 +47,7 @@ void CAnim::sample( float t, SMatrix4x4& dest ) const
 void CAnim::samplePos( float t, SVector3& dest ) const
 {
 	if( mPosAnim )
-		mPosAnim->sample( t, mCurve, 1, &dest );
+		mPosAnim->sample(t, mCurve, 1, &dest.x);
 	else
 		dest = mDefaultPos;
 }

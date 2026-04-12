@@ -19,8 +19,8 @@ public:
 private:
 	int		mTotalFrames, mStartFrame, mEndFrame;
 	CAnimationBunch*	mAnim;
-	const CAnimationBunch::TVector3Animation* mPosAnim;
-	const CAnimationBunch::TQuatAnimation*	mRotAnim;
+	const CSampledAnimation* mPosAnim;
+	const CSampledAnimation* mRotAnim;
 	typedef std::vector<SVector3>	TVec3Vector;
 
 public:

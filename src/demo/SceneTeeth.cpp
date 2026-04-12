@@ -22,9 +22,9 @@ CTeethAnim::CTeethAnim(DataAnim animation, int startFrame, int endFrame)
 {
 	int i;
     mAnim = g_data_anim[animation];
-	mPosAnim = mAnim->findVector3Anim( "pos" );
+	mPosAnim = mAnim->findAnim("pos", TYPE_VECTOR3);
 	assert( mPosAnim );
-	mRotAnim = mAnim->findQuatAnim( "rot" );
+	mRotAnim = mAnim->findAnim("rot", TYPE_QUATERNION);
 	assert( mRotAnim );
 
 	int ncurves = mAnim->getCurveCount();
@@ -49,7 +49,7 @@ CTeethAnim::CTeethAnim(DataAnim animation, int startFrame, int endFrame)
 	}
 	for( i = 0; i < PATH_FRAMES; ++i ) {
 		float a = PATH_START + (float)i / PATH_FRAMES * PATH_LEN;
-		mPosAnim->sample( a, 0, ncurves, &mVectors[0] );
+		mPosAnim->sample(a, 0, ncurves, &mVectors[0].x);
 		for( int j = 0; j < ncurves; ++j )
 			mPaths[j].push_back( mVectors[j] );
 	}
@@ -69,8 +69,8 @@ bool CTeethAnim::evaluate( float t )
 	float reltime = getRelTime( t );
 	bool before = (reltime < 0.0f);
 	reltime = clamp( reltime, 0.0f, 1.0f );
-	mPosAnim->sample( reltime, 0, mAnim->getCurveCount(), &mVectors[0] );
-	mRotAnim->sample( reltime, 0, mAnim->getCurveCount(), &mQuats[0] );
+	mPosAnim->sample( reltime, 0, mAnim->getCurveCount(), &mVectors[0].x );
+	mRotAnim->sample( reltime, 0, mAnim->getCurveCount(), &mQuats[0].x );
 	return before;
 }
 

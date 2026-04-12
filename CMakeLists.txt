@@ -56,6 +56,7 @@ set (SOURCES
     src/demo/TextureProjector.cpp
     src/demo/TextureProjector.h
 
+
     src/gfx/Mesh.cpp
     src/gfx/Mesh.h
     src/gfx/Texture.cpp
@@ -63,13 +64,11 @@ set (SOURCES
     
     src/math/AABox.h
     src/math/Constants.h
-    src/math/Interpolation.h
     src/math/Line3.h
     src/math/MathUtils.h
     src/math/Matrix4x4.h
     src/math/Plane.h
     src/math/Quaternion.h
-    src/math/TypeTraits.h
     src/math/Vector3.cpp
     src/math/Vector3.h
     src/math/Vector4.h

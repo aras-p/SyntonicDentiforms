@@ -1,6 +1,51 @@
 #include "Animation.h"
 
 
+void CSampledAnimation::sample(float time, int firstCurve, int numCurves, float* dest) const
+{
+    assert(firstCurve >= 0 && firstCurve < getCurveCount());
+    assert(numCurves > 0 && numCurves <= getCurveCount());
+    assert(firstCurve + numCurves <= getCurveCount());
+    assert(dest);
+
+    // get sample indices and alpha
+    int sampleIdx1, sampleIdx2;
+    float alpha;
+    timeToIndex(time, sampleIdx1, sampleIdx2, alpha);
+
+    const int sampleSizeFloats = getFloatsPerSample();
+    const int sampleSizeBytes = sampleSizeFloats * sizeof(float);
+
+    for (int i = 0; i < numCurves; ++i)
+    {
+        const SAnimCurve& curve = getCurve(firstCurve + i);
+        switch (curve.ipol) {
+        case SAnimCurve::NONE:
+            memcpy(dest, &curve.collapsedValue, sampleSizeBytes);
+            break;
+        case SAnimCurve::STEP:
+            memcpy(dest, &mSampleData[(curve.firstSampleIndex + sampleIdx1) * sampleSizeFloats], sampleSizeBytes);
+            break;
+        case SAnimCurve::LINEAR:
+            const float* s1 = &mSampleData[(curve.firstSampleIndex + sampleIdx1) * sampleSizeFloats];
+            const float* s2 = &mSampleData[(curve.firstSampleIndex + sampleIdx2) * sampleSizeFloats];
+            switch (mSampleType) {
+            case TYPE_FLOAT:
+                *dest = *s1 + (*s2 - *s1) * alpha;
+                break;
+            case TYPE_VECTOR3:
+                *(SVector3*)dest = *(const SVector3*)s1 + (*(const SVector3*)s2 - *(const SVector3*)s1) * alpha;
+                break;
+            case TYPE_QUATERNION:
+                ((SQuaternion*)dest)->slerp(*(const SQuaternion*)s1, *(const SQuaternion*)s2, alpha);
+                break;
+            }
+        };
+        dest += sampleSizeFloats;
+    };
+}
+
+
 CAnimationBunch::~CAnimationBunch()
 {
 }
@@ -36,77 +81,23 @@ static void readSampledData(CAnimationBunch& bunch, FILE* f, int loop, int curve
 
         SAnimCurve curve;
         static_assert(sizeof(curve.ipol) == 4, "Expected ipol to be 4 bytes");
-        switch( groupType ) {
-        case TYPE_VECTOR3:
-            {
-                typedef SVector3 TData;
-                typedef CSampledAnimation<TData> TAnim;
-                assert( sampleSize == sizeof(TData) );
-                TAnim &anim = bunch.addVector3Anim();
-                anim.init(name, samplesPerCurve, (TAnim::eLoopType)loop);
-                // read curves
-                anim.reserveCurves( curves );
-                for( int c = 0; c < curves; ++c ) {
-                    fread( &curve.ipol, 1, 4, f );
-                    fread( &curve.firstSampleIndex, 1, 4, f );
-                    fread( &curve.collapsedValue, 1, sampleSize, f );
-                    anim.addCurve(curve);
-                }
-                // read samples
-                int totalSamples;
-                fread( &totalSamples, 1, 4, f );
-                anim.resizeSamples( totalSamples );
-                if( totalSamples > 0 )
-                    fread( (void*)&anim.getSample(0), totalSamples, sizeof(TData), f );
-            }
-            break;
-        case TYPE_QUATERNION:
-            {
-                typedef SQuaternion TData;
-                typedef CSampledAnimation<TData> TAnim;
-                assert( sampleSize == sizeof(TData) );
-                TAnim& anim = bunch.addQuatAnim();
-                anim.init(name, samplesPerCurve, loop ? (TAnim::REPEAT) : (TAnim::CLAMP));
-                // read curves
-                anim.reserveCurves( curves );
-                for( int c = 0; c < curves; ++c ) {
-                    fread(&curve.ipol, 1, 4, f);
-                    fread(&curve.firstSampleIndex, 1, 4, f);
-                    fread(&curve.collapsedValue, 1, sampleSize, f);
-                    anim.addCurve(curve);
-                }
-                // read samples
-                int totalSamples;
-                fread( &totalSamples, 1, 4, f );
-                anim.resizeSamples( totalSamples );
-                fread( (void*)&anim.getSample(0), totalSamples, sizeof(TData), f );
-            }
-            break;
-        case TYPE_FLOAT:
-            {
-                typedef float TData;
-                typedef CSampledAnimation<TData> TAnim;
-                assert( sampleSize == sizeof(TData) );
-                TAnim& anim = bunch.addFloatAnim();
-                anim.init(name, samplesPerCurve, loop ? (TAnim::REPEAT) : (TAnim::CLAMP));
-                // read curves
-                anim.reserveCurves( curves );
-                for( int c = 0; c < curves; ++c ) {
-                    fread(&curve.ipol, 1, 4, f);
-                    fread(&curve.firstSampleIndex, 1, 4, f);
-                    fread(&curve.collapsedValue, 1, sampleSize, f);
-                    anim.addCurve(curve);
-                }
-                // read samples
-                int totalSamples;
-                fread( &totalSamples, 1, 4, f );
-                anim.resizeSamples( totalSamples );
-                fread( (void*)&anim.getSample(0), totalSamples, sizeof(TData), f );
-            }
-            break;
-        default:
-            assert(false);
+
+        CSampledAnimation& anim = bunch.addAnim();
+        anim.init((eAnimType)groupType, name, samplesPerCurve, (CSampledAnimation::eLoopType)loop);
+        // read curves
+        anim.reserveCurves(curves);
+        for (int c = 0; c < curves; ++c) {
+            fread(&curve.ipol, 1, 4, f);
+            fread(&curve.firstSampleIndex, 1, 4, f);
+            fread(&curve.collapsedValue, 1, sampleSize, f);
+            anim.addCurve(curve);
         }
+        // read samples
+        int totalSamples;
+        fread(&totalSamples, 1, 4, f);
+        anim.resizeSamples(totalSamples);
+        if (totalSamples > 0)
+            fread(anim.getSampleData(), sampleSize, totalSamples, f);
     }
 }
 
