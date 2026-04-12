@@ -1,33 +1,15 @@
 #pragma once
 
-
-/**
- *  Animation curve information.
- *
- *  This just has first value index (in array of values shared between several curves),
- *  interpolation type and a collapsed value (if curve is collapsed into single value).
- *
- *  @param _V Value type.
- */
-template< typename _V >
-class CAnimCurve {
-public:
-	typedef _V value_type;
+// Animation curve information.
+// This just has first value index (in array of values shared between several curves),
+// interpolation type and a collapsed value (if curve is collapsed into single value).
+struct SAnimCurve
+{
 	enum eIpol { NONE=0, STEP, LINEAR };
 
-public:
-	CAnimCurve( const value_type& collapsedVal, int firstSampleIndex, eIpol ipol )
-		: mCollapsedValue(collapsedVal), mFirstSampleIndex(firstSampleIndex), mIpol(ipol) { }
+	bool isCollapsed() const { return ipol == NONE; }
 
-	const value_type& getCollapsedValue() const { return mCollapsedValue; }
-	int getFirstSampleIndex() const { return mFirstSampleIndex; }
-	eIpol getIpol() const { return mIpol; }
-	bool isCollapsed() const { return mIpol == NONE; }
-
-private:
-	value_type	mCollapsedValue;
-	int			mFirstSampleIndex;
-	eIpol		mIpol;
+	int			firstSampleIndex = 0;
+	eIpol		ipol = NONE;
+	float		collapsedValue[4] = { 0,0,0,0 };
 };
-
-

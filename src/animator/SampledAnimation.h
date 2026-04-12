@@ -24,7 +24,6 @@ public:
 	 *   instead, the last sample is for transition from pre-last to last).
 	 */
 	enum eLoopType { CLAMP = 0, REPEAT, REPEAT_LAST };
-	typedef CAnimCurve<value_type>	curve_type;
 
 public:
 	CSampledAnimation() { };
@@ -44,10 +43,14 @@ public:
         return mSamples[index];
     }
 
-	void	addCurve( const curve_type& curve ) { mCurves.push_back(curve); }
+	void	addCurve( const SAnimCurve& curve ) { mCurves.push_back(curve); }
 	void	reserveCurves( int curveCount ) { mCurves.reserve(curveCount); }
 	int		getCurveCount() const { return mCurves.size(); }
-	const curve_type& getCurve( int index ) const;
+	const SAnimCurve& getCurve(int index) const
+	{
+		assert(index >= 0 && index < getCurveCount());
+		return mCurves[index];
+	}
 
 	/**
 	 *  @param time Relative time (zero is start, one is end).
@@ -61,7 +64,7 @@ public:
 
 private:
 	typedef std::vector<value_type>	TSampleVector;
-	typedef std::vector<curve_type> TCurveVector;
+	typedef std::vector<SAnimCurve> TCurveVector;
 
 private:
     std::string     mName;
@@ -100,13 +103,6 @@ inline void CSampledAnimation<_V>::timeToIndex( float time, int& index1, int& in
 	}
 };
 
-template<typename _V>
-inline const CAnimCurve<_V>& CSampledAnimation<_V>::getCurve( int index ) const
-{
-	assert( index>=0 && index < getCurveCount() );
-	return mCurves[index];
-};
-
 template<typename value_type>
 void CSampledAnimation<value_type>::sample( float time, int firstCurve, int numCurves, value_type* dest, int destStride ) const
 {
@@ -122,19 +118,18 @@ void CSampledAnimation<value_type>::sample( float time, int firstCurve, int numC
 	timeToIndex( time, sampleIdx1, sampleIdx2, alpha );
 
 	for( int i = 0; i < numCurves; ++i ) {
-		const curve_type& curve = getCurve( firstCurve + i );
-		typename curve_type::eIpol ipol = curve.getIpol();
-
-		switch( ipol ) {
-		case curve_type::NONE:
-			*dest = curve.getCollapsedValue();
+		const SAnimCurve& curve = getCurve( firstCurve + i );
+		switch(curve.ipol) {
+		case SAnimCurve::NONE:
+			*dest = *(const value_type*)&curve.collapsedValue;
+			static_assert(sizeof(curve.collapsedValue) >= sizeof(value_type), "Too large value type");
 			break;
-		case curve_type::STEP:
-			*dest = getSample( curve.getFirstSampleIndex() + sampleIdx1 );
+		case SAnimCurve::STEP:
+			*dest = getSample( curve.firstSampleIndex + sampleIdx1 );
 			break;
-		case curve_type::LINEAR:
-			const value_type& s1 = getSample( curve.getFirstSampleIndex() + sampleIdx1 );
-			const value_type& s2 = getSample( curve.getFirstSampleIndex() + sampleIdx2 );
+		case SAnimCurve::LINEAR:
+			const value_type& s1 = getSample( curve.firstSampleIndex + sampleIdx1 );
+			const value_type& s2 = getSample( curve.firstSampleIndex + sampleIdx2 );
 			*dest = math_type_traits<value_type>::interpolate( s1, s2, alpha );
 			break;
 		};

@@ -36,24 +36,24 @@ static void readSampledData(CAnimationBunch& bunch, FILE* f, int loop, int curve
         fread( &sampleSize, 1, 4, f );
         // group name
         std::string name = gReadString( f );
+
+        SAnimCurve curve;
+        static_assert(sizeof(curve.ipol) == 4, "Expected ipol to be 4 bytes");
         switch( groupType ) {
         case TYPE_VECTOR3:
             {
                 typedef SVector3 TData;
                 typedef CSampledAnimation<TData> TAnim;
-                typedef CAnimCurve<TData> TCurve;
                 assert( sampleSize == sizeof(TData) );
                 TAnim &anim = bunch.addVector3Anim();
                 anim.init(name, samplesPerCurve, (TAnim::eLoopType)loop);
                 // read curves
                 anim.reserveCurves( curves );
                 for( int c = 0; c < curves; ++c ) {
-                    int ipol, firstSample;
-                    fread( &ipol, 1, 4, f );
-                    fread( &firstSample, 1, 4, f );
-                    TData coll;
-                    fread( &coll, 1, sizeof(coll), f );
-                    anim.addCurve( TCurve( coll, firstSample, (TCurve::eIpol)ipol ) );
+                    fread( &curve.ipol, 1, 4, f );
+                    fread( &curve.firstSampleIndex, 1, 4, f );
+                    fread( &curve.collapsedValue, 1, sampleSize, f );
+                    anim.addCurve(curve);
                 }
                 // read samples
                 int totalSamples;
@@ -67,19 +67,16 @@ static void readSampledData(CAnimationBunch& bunch, FILE* f, int loop, int curve
             {
                 typedef SQuaternion TData;
                 typedef CSampledAnimation<TData> TAnim;
-                typedef CAnimCurve<TData> TCurve;
                 assert( sampleSize == sizeof(TData) );
                 TAnim& anim = bunch.addQuatAnim();
                 anim.init(name, samplesPerCurve, loop ? (TAnim::REPEAT) : (TAnim::CLAMP));
                 // read curves
                 anim.reserveCurves( curves );
                 for( int c = 0; c < curves; ++c ) {
-                    int ipol, firstSample;
-                    fread( &ipol, 1, 4, f );
-                    fread( &firstSample, 1, 4, f );
-                    TData coll;
-                    fread( &coll, 1, sizeof(coll), f );
-                    anim.addCurve( TCurve( coll, firstSample, (TCurve::eIpol)ipol ) );
+                    fread(&curve.ipol, 1, 4, f);
+                    fread(&curve.firstSampleIndex, 1, 4, f);
+                    fread(&curve.collapsedValue, 1, sampleSize, f);
+                    anim.addCurve(curve);
                 }
                 // read samples
                 int totalSamples;
@@ -92,19 +89,16 @@ static void readSampledData(CAnimationBunch& bunch, FILE* f, int loop, int curve
             {
                 typedef float TData;
                 typedef CSampledAnimation<TData> TAnim;
-                typedef CAnimCurve<TData> TCurve;
                 assert( sampleSize == sizeof(TData) );
                 TAnim& anim = bunch.addFloatAnim();
                 anim.init(name, samplesPerCurve, loop ? (TAnim::REPEAT) : (TAnim::CLAMP));
                 // read curves
                 anim.reserveCurves( curves );
                 for( int c = 0; c < curves; ++c ) {
-                    int ipol, firstSample;
-                    fread( &ipol, 1, 4, f );
-                    fread( &firstSample, 1, 4, f );
-                    TData coll;
-                    fread( &coll, 1, sizeof(coll), f );
-                    anim.addCurve( TCurve( coll, firstSample, (TCurve::eIpol)ipol ) );
+                    fread(&curve.ipol, 1, 4, f);
+                    fread(&curve.firstSampleIndex, 1, 4, f);
+                    fread(&curve.collapsedValue, 1, sampleSize, f);
+                    anim.addCurve(curve);
                 }
                 // read samples
                 int totalSamples;
