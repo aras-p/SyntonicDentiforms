@@ -16,10 +16,10 @@ struct CMusicPlayer::Impl
     static constexpr int kRequestedChannels = 2;
     static constexpr int kDecodeBufferFrames = 4096;
 
-    stb_vorbis* vorbis = nullptr;
-    stb_vorbis_info info {};
+    stb_vorbis *vorbis = nullptr;
+    stb_vorbis_info info{};
 
-    std::atomic<uint64_t> decodedSourceFrames {0};
+    std::atomic<uint64_t> decodedSourceFrames{0};
 
     std::vector<float> decodeBuffer; // interleaved source samples
     int decodeBufferFrames = 0;
@@ -31,12 +31,12 @@ struct CMusicPlayer::Impl
 
     mutable std::mutex stateMutex;
 
-    static void audioCallback(float* buffer, int numFrames, int numChannels, void* userData)
+    static void audioCallback(float *buffer, int numFrames, int numChannels, void *userData)
     {
-        static_cast<Impl*>(userData)->render(buffer, numFrames, numChannels);
+        static_cast<Impl *>(userData)->render(buffer, numFrames, numChannels);
     }
 
-    void render(float* buffer, int numFrames, int numChannels)
+    void render(float *buffer, int numFrames, int numChannels)
     {
         std::fill(buffer, buffer + numFrames * numChannels, 0.0f);
 
@@ -91,7 +91,7 @@ struct CMusicPlayer::Impl
         return true;
     }
 
-    bool getDecodedFrameStereo(int frameIndex, float& l, float& r)
+    bool getDecodedFrameStereo(int frameIndex, float &l, float &r)
     {
         if (frameIndex < 0 || frameIndex >= decodeBufferFrames)
         {
@@ -116,7 +116,7 @@ struct CMusicPlayer::Impl
         return true;
     }
 
-    bool readResampledStereoFrame(float& l, float& r)
+    bool readResampledStereoFrame(float &l, float &r)
     {
         if (!vorbis || eof)
         {
@@ -231,7 +231,7 @@ CMusicPlayer::~CMusicPlayer()
     m_impl = nullptr;
 }
 
-void CMusicPlayer::play(const char* fileName)
+void CMusicPlayer::play(const char *fileName)
 {
     m_impl->closeFile();
 
@@ -239,7 +239,7 @@ void CMusicPlayer::play(const char* fileName)
         return;
 
     int error = 0;
-    stb_vorbis* v = stb_vorbis_open_filename(fileName, &error, nullptr);
+    stb_vorbis *v = stb_vorbis_open_filename(fileName, &error, nullptr);
     if (!v)
         return;
 
@@ -256,8 +256,8 @@ void CMusicPlayer::play(const char* fileName)
 
     const int outRate = saudio_sample_rate();
     m_impl->srcFramesPerDstFrame = (outRate > 0)
-        ? double(m_impl->info.sample_rate) / double(outRate)
-        : 1.0;
+                                       ? double(m_impl->info.sample_rate) / double(outRate)
+                                       : 1.0;
 }
 
 double CMusicPlayer::getTime() const

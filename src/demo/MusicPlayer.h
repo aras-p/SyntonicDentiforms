@@ -1,15 +1,16 @@
 #pragma once
 
-class CMusicPlayer {
-public:
-	CMusicPlayer();
-	~CMusicPlayer();
+class CMusicPlayer
+{
+  public:
+    CMusicPlayer();
+    ~CMusicPlayer();
 
-	void play( const char* fileName );
+    void play(const char *fileName);
 
-	double getTime() const;
+    double getTime() const;
 
-private:
-	struct Impl;
-	Impl* m_impl = nullptr;
+  private:
+    struct Impl;
+    Impl *m_impl = nullptr;
 };

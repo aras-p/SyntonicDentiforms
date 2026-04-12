@@ -1,7 +1,6 @@
 #include "Animation.h"
 
-
-void CSampledAnimation::sample(float time, int firstCurve, int numCurves, float* dest) const
+void CSampledAnimation::sample(float time, int firstCurve, int numCurves, float *dest) const
 {
     assert(firstCurve >= 0 && firstCurve < getCurveCount());
     assert(numCurves > 0 && numCurves <= getCurveCount());
@@ -18,20 +17,22 @@ void CSampledAnimation::sample(float time, int firstCurve, int numCurves, float*
 
     for (int i = 0; i < numCurves; ++i)
     {
-        const SAnimCurve& curve = getCurve(firstCurve + i);
-        switch (curve.ipol) {
+        const SAnimCurve &curve = getCurve(firstCurve + i);
+        switch (curve.ipol)
+        {
         case SAnimCurve::NONE:
             memcpy(dest, &curve.collapsedValue, sampleSizeBytes);
             break;
         case SAnimCurve::LINEAR:
-            const float* s1 = &mSampleData[(curve.firstSampleIndex + sampleIdx1) * sampleSizeFloats];
-            const float* s2 = &mSampleData[(curve.firstSampleIndex + sampleIdx2) * sampleSizeFloats];
-            switch (mSampleType) {
+            const float *s1 = &mSampleData[(curve.firstSampleIndex + sampleIdx1) * sampleSizeFloats];
+            const float *s2 = &mSampleData[(curve.firstSampleIndex + sampleIdx2) * sampleSizeFloats];
+            switch (mSampleType)
+            {
             case TYPE_VECTOR3:
-                *(SVector3*)dest = *(const SVector3*)s1 + (*(const SVector3*)s2 - *(const SVector3*)s1) * alpha;
+                *(SVector3 *)dest = *(const SVector3 *)s1 + (*(const SVector3 *)s2 - *(const SVector3 *)s1) * alpha;
                 break;
             case TYPE_QUATERNION:
-                ((SQuaternion*)dest)->slerp(*(const SQuaternion*)s1, *(const SQuaternion*)s2, alpha);
+                ((SQuaternion *)dest)->slerp(*(const SQuaternion *)s1, *(const SQuaternion *)s2, alpha);
                 break;
             }
         };
@@ -39,49 +40,51 @@ void CSampledAnimation::sample(float time, int firstCurve, int numCurves, float*
     };
 }
 
-
 CAnimationBunch::~CAnimationBunch()
 {
 }
 
-static inline std::string gReadString( FILE* f )
+static inline std::string gReadString(FILE *f)
 {
     std::string str;
-    while( true ) {
-        int c = fgetc( f );
-        if( c==0 || c==EOF )
+    while (true)
+    {
+        int c = fgetc(f);
+        if (c == 0 || c == EOF)
             break;
         str += (char)c;
     }
     return str;
 }
 
-static void readSampledData(CAnimationBunch& bunch, FILE* f, int curves, int groups)
+static void readSampledData(CAnimationBunch &bunch, FILE *f, int curves, int groups)
 {
     // samples per curve
     int samplesPerCurve;
-    fread( &samplesPerCurve, 1, 4, f );
-    assert( samplesPerCurve > 0 );
+    fread(&samplesPerCurve, 1, 4, f);
+    assert(samplesPerCurve > 0);
 
-    for( int g = 0; g < groups; ++g ) {
+    for (int g = 0; g < groups; ++g)
+    {
         // group type
         int groupType;
-        fread( &groupType, 1, 4, f );
+        fread(&groupType, 1, 4, f);
         // sample size
         int sampleSize;
-        fread( &sampleSize, 1, 4, f );
+        fread(&sampleSize, 1, 4, f);
         // group name
-        std::string name = gReadString( f );
+        std::string name = gReadString(f);
 
         SAnimCurve curve;
         static_assert(sizeof(curve.ipol) == 4, "Expected ipol to be 4 bytes");
 
-        CSampledAnimation& anim = bunch.addAnim();
+        CSampledAnimation &anim = bunch.addAnim();
         anim.init((eAnimType)groupType, name, samplesPerCurve);
-        
+
         // read curves
         anim.reserveCurves(curves);
-        for (int c = 0; c < curves; ++c) {
+        for (int c = 0; c < curves; ++c)
+        {
             fread(&curve.ipol, 1, 4, f);
             fread(&curve.firstSampleIndex, 1, 4, f);
             fread(&curve.collapsedValue, 1, sampleSize, f);
@@ -96,49 +99,50 @@ static void readSampledData(CAnimationBunch& bunch, FILE* f, int curves, int gro
     }
 }
 
-
-CAnimationBunch* load_animation(const char* path)
+CAnimationBunch *load_animation(const char *path)
 {
     // try open file
-    FILE* f = fopen(path, "rb");
-    if( !f )
+    FILE *f = fopen(path, "rb");
+    if (!f)
         return NULL;
 
     // create bunch
-    CAnimationBunch* bunch = new CAnimationBunch();
-    assert( bunch );
+    CAnimationBunch *bunch = new CAnimationBunch();
+    assert(bunch);
 
     // read magic
     char magic[4];
-    fread( &magic, 1, 4, f );
-    if( magic[0]!='D' || magic[1]!='A' || magic[2]!='N' || magic[3]!='I' )
+    fread(&magic, 1, 4, f);
+    if (magic[0] != 'D' || magic[1] != 'A' || magic[2] != 'N' || magic[3] != 'I')
     {
         assert(false);
         return nullptr;
     }
     // read anim type
     int animType;
-    fread( &animType, 1, 4, f );
+    fread(&animType, 1, 4, f);
     // loop type (not used)
     int loopType;
-    fread( &loopType, 1, 4, f );
+    fread(&loopType, 1, 4, f);
     // curve count
     int curveCount;
-    fread( &curveCount, 1, 4, f );
+    fread(&curveCount, 1, 4, f);
     // group count
     int groupCount;
-    fread( &groupCount, 1, 4, f );
+    fread(&groupCount, 1, 4, f);
 
     // read curve infos
-    for( int i = 0; i < curveCount; ++i ) {
-        std::string name = gReadString( f );
+    for (int i = 0; i < curveCount; ++i)
+    {
+        std::string name = gReadString(f);
         int parent; // unused
-        fread( &parent, 1, 4, f );
+        fread(&parent, 1, 4, f);
         bunch->addCurveDesc(name);
     }
-    
+
     // read rest based on anim type
-    switch( animType ) {
+    switch (animType)
+    {
     case 0: // sampled
         readSampledData(*bunch, f, curveCount, groupCount);
         break;
@@ -147,8 +151,7 @@ CAnimationBunch* load_animation(const char* path)
     }
 
     // close file
-    fclose( f );
+    fclose(f);
 
     return bunch;
 }
-

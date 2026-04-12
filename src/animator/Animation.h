@@ -2,13 +2,14 @@
 
 #include "../math/Maths.h"
 
+#include <assert.h>
 #include <memory>
+#include <string.h>
 #include <string>
 #include <vector>
-#include <assert.h>
-#include <string.h>
 
-enum eAnimType {
+enum eAnimType
+{
     TYPE_VECTOR3 = 3,
     TYPE_QUATERNION = 4,
 };
@@ -18,98 +19,111 @@ enum eAnimType {
 // interpolation type and a collapsed value (if curve is collapsed into single value).
 struct SAnimCurve
 {
-    enum eIpol { NONE = 0, LINEAR = 2 };
+    enum eIpol
+    {
+        NONE = 0,
+        LINEAR = 2
+    };
 
     bool isCollapsed() const { return ipol == NONE; }
 
-    int			firstSampleIndex = 0;
-    eIpol		ipol = NONE;
-    float		collapsedValue[4] = { 0,0,0,0 };
+    int firstSampleIndex = 0;
+    eIpol ipol = NONE;
+    float collapsedValue[4] = {0, 0, 0, 0};
 };
 
 //  A sampled animation.
 //  Each curve consists of the same number of samples (but can be collapsed
 //  into a single value).
-class CSampledAnimation {
-public:
-	void init(eAnimType sampleType, const std::string& name, int samplesInCurve)
-	{
-		mSampleType = sampleType;
-		mName = name;
-		mSamplesInCurve = samplesInCurve;
-	}
-	eAnimType getType() const { return mSampleType; }
-	const std::string& getName() const { return mName; }
+class CSampledAnimation
+{
+  public:
+    void init(eAnimType sampleType, const std::string &name, int samplesInCurve)
+    {
+        mSampleType = sampleType;
+        mName = name;
+        mSamplesInCurve = samplesInCurve;
+    }
+    eAnimType getType() const { return mSampleType; }
+    const std::string &getName() const { return mName; }
 
-	void	resizeSamples(int sampleCount) { mSampleData.resize(sampleCount * getFloatsPerSample()); }
-	float* getSampleData() { return mSampleData.data(); }
+    void resizeSamples(int sampleCount) { mSampleData.resize(sampleCount * getFloatsPerSample()); }
+    float *getSampleData() { return mSampleData.data(); }
 
-	void	addCurve(const SAnimCurve& curve) { mCurves.push_back(curve); }
-	void	reserveCurves(int curveCount) { mCurves.reserve(curveCount); }
-	int		getCurveCount() const { return mCurves.size(); }
-	const SAnimCurve& getCurve(int index) const
-	{
-		assert(index >= 0 && index < getCurveCount());
-		return mCurves[index];
-	}
+    void addCurve(const SAnimCurve &curve) { mCurves.push_back(curve); }
+    void reserveCurves(int curveCount) { mCurves.reserve(curveCount); }
+    int getCurveCount() const { return mCurves.size(); }
+    const SAnimCurve &getCurve(int index) const
+    {
+        assert(index >= 0 && index < getCurveCount());
+        return mCurves[index];
+    }
 
-	/**
-	 *  @param time Relative time (zero is start, one is end).
-	 */
-	void	timeToIndex(float time, int& index1, int& index2, float& alpha) const;
+    /**
+     *  @param time Relative time (zero is start, one is end).
+     */
+    void timeToIndex(float time, int &index1, int &index2, float &alpha) const;
 
-	/**
-	 *  @param time Relative time (zero is start, one is end).
-	 */
-	void sample(float time, int firstCurve, int numCurves, float* dest) const;
+    /**
+     *  @param time Relative time (zero is start, one is end).
+     */
+    void sample(float time, int firstCurve, int numCurves, float *dest) const;
 
-private:
-	int getFloatsPerSample() const {
-		switch (mSampleType) {
-		case TYPE_VECTOR3: return 3;
-		case TYPE_QUATERNION: return 4;
-		}
-		return 0;
-	}
+  private:
+    int getFloatsPerSample() const
+    {
+        switch (mSampleType)
+        {
+        case TYPE_VECTOR3:
+            return 3;
+        case TYPE_QUATERNION:
+            return 4;
+        }
+        return 0;
+    }
 
-private:
-	std::string     mName;
-	std::vector<float> mSampleData;
-	std::vector<SAnimCurve>	mCurves;
-	eAnimType		mSampleType;
-	int				mSamplesInCurve;
+  private:
+    std::string mName;
+    std::vector<float> mSampleData;
+    std::vector<SAnimCurve> mCurves;
+    eAnimType mSampleType;
+    int mSamplesInCurve;
 };
-
 
 // --------------------------------------------------------------------------
 
-inline void CSampledAnimation::timeToIndex(float time, int& index1, int& index2, float& alpha) const
+inline void CSampledAnimation::timeToIndex(float time, int &index1, int &index2, float &alpha) const
 {
-	int n = mSamplesInCurve;
-	float frame = time * n;
-	index1 = int(frame);
-	index2 = index1 + 1;
-	alpha = frame - float(index1);
+    int n = mSamplesInCurve;
+    float frame = time * n;
+    index1 = int(frame);
+    index2 = index1 + 1;
+    alpha = frame - float(index1);
 
-	if (index1 < 0) index1 = 0;
-	else if (index1 >= n) index1 = n - 1;
-	if (index2 < 0) index2 = 0;
-	else if (index2 >= n) index2 = n - 1;
+    if (index1 < 0)
+        index1 = 0;
+    else if (index1 >= n)
+        index1 = n - 1;
+    if (index2 < 0)
+        index2 = 0;
+    else if (index2 >= n)
+        index2 = n - 1;
 };
 
-class CAnimationBunch {
-public:
-	CAnimationBunch() { };
-	~CAnimationBunch();
+class CAnimationBunch
+{
+  public:
+    CAnimationBunch() {};
+    ~CAnimationBunch();
 
-	CSampledAnimation& addAnim()
+    CSampledAnimation &addAnim()
     {
         mAnims.emplace_back(CSampledAnimation());
         return mAnims.back();
     }
-	const CSampledAnimation* findAnim(const std::string& name, eAnimType type)
+    const CSampledAnimation *findAnim(const std::string &name, eAnimType type)
     {
-        for(const CSampledAnimation& anim : mAnims)
+        for (const CSampledAnimation &anim : mAnims)
         {
             if (anim.getType() == type && anim.getName() == name)
                 return &anim;
@@ -117,38 +131,36 @@ public:
         return nullptr;
     }
 
-	void	addCurveDesc(const std::string& name);
-    int     getCurveCount() const { return (int)mCurveNames.size(); }
-	const std::string& getCurveName( int curveIdx ) const;
-	int		getCurveIndexByName( const std::string& name ) const;
+    void addCurveDesc(const std::string &name);
+    int getCurveCount() const { return (int)mCurveNames.size(); }
+    const std::string &getCurveName(int curveIdx) const;
+    int getCurveIndexByName(const std::string &name) const;
 
-private:
-	std::vector<CSampledAnimation>	mAnims;
-    std::vector<std::string>        mCurveNames;
+  private:
+    std::vector<CSampledAnimation> mAnims;
+    std::vector<std::string> mCurveNames;
 };
-
 
 // --------------------------------------------------------------------------
 
-inline void CAnimationBunch::addCurveDesc(const std::string& name)
+inline void CAnimationBunch::addCurveDesc(const std::string &name)
 {
-	assert( getCurveIndexByName(name) == -1 );
+    assert(getCurveIndexByName(name) == -1);
     mCurveNames.push_back(name);
 }
-inline const std::string& CAnimationBunch::getCurveName( int curveIdx ) const
+inline const std::string &CAnimationBunch::getCurveName(int curveIdx) const
 {
-    assert( curveIdx >= 0 && curveIdx < mCurveNames.size() );
-	return mCurveNames[curveIdx];
+    assert(curveIdx >= 0 && curveIdx < mCurveNames.size());
+    return mCurveNames[curveIdx];
 }
-inline int CAnimationBunch::getCurveIndexByName( const std::string& name ) const
+inline int CAnimationBunch::getCurveIndexByName(const std::string &name) const
 {
-	for (int i = 0; i < mCurveNames.size(); ++i)
+    for (int i = 0; i < mCurveNames.size(); ++i)
     {
         if (mCurveNames[i] == name)
-			return i;
-	}
-	return -1;
+            return i;
+    }
+    return -1;
 }
 
-CAnimationBunch* load_animation(const char* path);
-
+CAnimationBunch *load_animation(const char *path);

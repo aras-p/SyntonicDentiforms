@@ -4,22 +4,22 @@
 
 struct sokol_texture
 {
-	~sokol_texture()
-	{
-		destroy();
-	}
+    ~sokol_texture()
+    {
+        destroy();
+    }
 
-	void create(const sg_image_desc& desc);
+    void create(const sg_image_desc &desc);
 
-	void destroy();
+    void destroy();
 
-	bool valid() const { return image.id != 0; }
+    bool valid() const { return image.id != 0; }
 
-	sg_image image = {};
-	sg_view view_rt = {};
-	sg_view view_z = {};
-	sg_view view_resolve = {};
-	sg_view view_tex = {};
+    sg_image image = {};
+    sg_view view_rt = {};
+    sg_view view_z = {};
+    sg_view view_resolve = {};
+    sg_view view_tex = {};
 };
 
-sokol_texture* load_texture(const char* path);
+sokol_texture *load_texture(const char *path);

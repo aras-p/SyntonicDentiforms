@@ -2,14 +2,13 @@
 
 #include "Scene.h"
 
+class CSceneOut : public CScene
+{
+  public:
+    CSceneOut(int number) : CScene(number) {};
 
-class CSceneOut : public CScene {
-public:
-	CSceneOut( int number ) : CScene(number) { };
+    virtual void initialize();
 
-	virtual void initialize();
-
-protected:
-	virtual void	evaluateMeshes( float t ) { };
+  protected:
+    virtual void evaluateMeshes(float t) {};
 };
-
