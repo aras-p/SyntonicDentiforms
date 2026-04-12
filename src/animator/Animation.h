@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <assert.h>
+#include <string.h>
 
 enum eAnimType {
     TYPE_FLOAT = 1,
