@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/animator/AnimationBunch.h"
+#include "src/animator/Animation.h"
 #include "src/gfx/Mesh.h"
 #include "src/gfx/Texture.h"
 

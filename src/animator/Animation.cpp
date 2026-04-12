@@ -1,7 +1,4 @@
-#include "AnimationBunch.h"
-#include "AnimType.h"
-#include "SampledAnimation.h"
-#include <assert.h>
+#include "Animation.h"
 
 
 CAnimationBunch::~CAnimationBunch()

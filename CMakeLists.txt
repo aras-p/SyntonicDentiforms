@@ -18,11 +18,8 @@ else()
 endif()
 
 set (SOURCES
-    src/animator/AnimationBunch.cpp
-    src/animator/AnimationBunch.h
-    src/animator/AnimCurve.h
-    src/animator/AnimType.h
-    src/animator/SampledAnimation.h
+    src/animator/Animation.cpp
+    src/animator/Animation.h
     
     src/demo/Anim.cpp
     src/demo/Anim.h
