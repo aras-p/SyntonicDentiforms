@@ -1,6 +1,7 @@
 #include "Pipelines.h"
-#include "DemoResources.h"
 #include <assert.h>
+
+#include "Rendering.h"
 
 #include "billboards.glsl.h"
 #include "blit.glsl.h"
@@ -14,8 +15,6 @@
 #include "renderLitShadowed.glsl.h"
 #include "renderReflective.glsl.h"
 #include "renderWhite.glsl.h"
-
-#include "../../external/sokol_gfx.h"
 
 static sg_pipeline s_fx_pipes[pipCount] = {};
 

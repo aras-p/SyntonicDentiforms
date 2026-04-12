@@ -1,16 +1,11 @@
-#include "Billboards.h"
 #include "Demo.h"
-#include "DemoResources.h"
-#include "DynamicVB.h"
 #include "Pipelines.h"
 #include "Scene.h"
 #include "SceneTeeth.h"
 #include "SceneOut.h"
-#include "Glare.h"
 #include "DataFiles.h"
 
-#include "TextureProjector.h"
-#include "LineRenderer.h"
+#include "Rendering.h"
 #include "MusicPlayer.h"
 
 #include "../math/Maths.h"

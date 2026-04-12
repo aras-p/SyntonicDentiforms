@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "DemoResources.h"
+#include "Rendering.h"
 
 CRenderCamera gRenderCam;
 

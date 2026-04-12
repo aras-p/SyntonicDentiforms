@@ -23,22 +23,13 @@ set (SOURCES
     
     src/demo/Anim.cpp
     src/demo/Anim.h
-    src/demo/Billboards.cpp
-    src/demo/Billboards.h
     src/demo/Camera.cpp
     src/demo/Camera.h
     src/demo/DataFiles.cpp
     src/demo/DataFiles.h
     src/demo/Demo.cpp
     src/demo/Demo.h
-    src/demo/DemoResources.h
-    src/demo/DynamicVB.cpp
-    src/demo/DynamicVB.h
     src/demo/ExternalsImpl.cpp
-    src/demo/Glare.cpp
-    src/demo/Glare.h
-    src/demo/LineRenderer.cpp
-    src/demo/LineRenderer.h
     src/demo/main.cpp
     src/demo/MeshEntity.cpp
     src/demo/MeshEntity.h
@@ -46,6 +37,8 @@ set (SOURCES
     src/demo/MusicPlayer.h
     src/demo/Pipelines.cpp
     src/demo/Pipelines.h
+    src/demo/Rendering.cpp
+    src/demo/Rendering.h
     src/demo/Scene.cpp
     src/demo/Scene.h
     src/demo/SceneData.h
@@ -53,9 +46,6 @@ set (SOURCES
     src/demo/SceneOut.h
     src/demo/SceneTeeth.cpp
     src/demo/SceneTeeth.h
-    src/demo/TextureProjector.cpp
-    src/demo/TextureProjector.h
-
 
     src/gfx/Mesh.cpp
     src/gfx/Mesh.h

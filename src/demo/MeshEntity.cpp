@@ -1,5 +1,5 @@
 #include "MeshEntity.h"
-#include "DemoResources.h"
+#include "Rendering.h"
 #include <assert.h>
 
 CMeshEntity::CMeshEntity(DataMesh type)

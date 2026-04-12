@@ -1,10 +1,7 @@
 #include "SceneTeeth.h"
 
-#include "Billboards.h"
-#include "DemoResources.h"
-#include "Glare.h"
 #include "Pipelines.h"
-#include "LineRenderer.h"
+#include "Rendering.h"
 #include "DataFiles.h"
 #include "SceneData.h"
 #include "../math/Maths.h"

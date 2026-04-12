@@ -1,8 +1,7 @@
 #include "Scene.h"
 #include "Pipelines.h"
-
-#include "DemoResources.h"
 #include "SceneData.h"
+#include "Rendering.h"
 
 #include <assert.h>
 
