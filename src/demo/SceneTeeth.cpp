@@ -100,8 +100,8 @@ CSceneTeeth::CSceneTeeth( int number )
 	mAnimTeeth[1] = new CTeethAnim(DataAnim6TeethB, 490, 590 );
 	mAnimTeeth[2] = new CTeethAnim(DataAnim6TeethC, 745, 860 );
 	mAnimTeeth[3] = new CTeethAnim(DataAnim6TeethD, 860, 965 );
-	mAnimAxes[0] = new CAnim(DataAnim6Axes, "Axis1", CAnim::POSITION | CAnim::ROTATION );
-	mAnimAxes[1] = new CAnim(DataAnim6Axes, "Axis2", CAnim::POSITION | CAnim::ROTATION );
+	mAnimAxes[0] = new CAnim(DataAnim6Axes, "Axis1");
+	mAnimAxes[1] = new CAnim(DataAnim6Axes, "Axis2");
 }
 
 CSceneTeeth::~CSceneTeeth()

@@ -8,16 +8,11 @@ public:
 	enum eAnims {
 		POSITION	= 1<<0,
 		ROTATION	= 1<<1,
-		SCALE		= 1<<2,
-		ALL			= POSITION | ROTATION | SCALE
+		ALL			= POSITION | ROTATION
 	};
 
 public:
     CAnim(DataAnim animation, const std::string& curve, int anims = ALL);
-
-	void	setDefaultPos( const SVector3& pos ) { mDefaultPos = pos; }
-	void	setDefaultRot( const SQuaternion& rot ) { mDefaultRot = rot; }
-	void	setDefaultScale( float s ) { mDefaultScale = s; }
 
 	void sample( float t, SMatrix4x4& dest ) const;
 	void samplePos( float t, SVector3& dest ) const;
@@ -25,11 +20,9 @@ public:
 private:
 	SVector3	mDefaultPos;
 	SQuaternion	mDefaultRot;
-	float		mDefaultScale;
 
 	const CSampledAnimation* mPosAnim;
 	const CSampledAnimation* mRotAnim;
-	const CSampledAnimation* mScaleAnim;
 	int mCurve;
 };
 

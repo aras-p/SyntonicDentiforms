@@ -23,16 +23,10 @@ void CSampledAnimation::sample(float time, int firstCurve, int numCurves, float*
         case SAnimCurve::NONE:
             memcpy(dest, &curve.collapsedValue, sampleSizeBytes);
             break;
-        case SAnimCurve::STEP:
-            memcpy(dest, &mSampleData[(curve.firstSampleIndex + sampleIdx1) * sampleSizeFloats], sampleSizeBytes);
-            break;
         case SAnimCurve::LINEAR:
             const float* s1 = &mSampleData[(curve.firstSampleIndex + sampleIdx1) * sampleSizeFloats];
             const float* s2 = &mSampleData[(curve.firstSampleIndex + sampleIdx2) * sampleSizeFloats];
             switch (mSampleType) {
-            case TYPE_FLOAT:
-                *dest = *s1 + (*s2 - *s1) * alpha;
-                break;
             case TYPE_VECTOR3:
                 *(SVector3*)dest = *(const SVector3*)s1 + (*(const SVector3*)s2 - *(const SVector3*)s1) * alpha;
                 break;
@@ -62,7 +56,7 @@ static inline std::string gReadString( FILE* f )
     return str;
 }
 
-static void readSampledData(CAnimationBunch& bunch, FILE* f, int loop, int curves, int groups)
+static void readSampledData(CAnimationBunch& bunch, FILE* f, int curves, int groups)
 {
     // samples per curve
     int samplesPerCurve;
@@ -83,7 +77,8 @@ static void readSampledData(CAnimationBunch& bunch, FILE* f, int loop, int curve
         static_assert(sizeof(curve.ipol) == 4, "Expected ipol to be 4 bytes");
 
         CSampledAnimation& anim = bunch.addAnim();
-        anim.init((eAnimType)groupType, name, samplesPerCurve, (CSampledAnimation::eLoopType)loop);
+        anim.init((eAnimType)groupType, name, samplesPerCurve);
+        
         // read curves
         anim.reserveCurves(curves);
         for (int c = 0; c < curves; ++c) {
@@ -124,7 +119,7 @@ CAnimationBunch* load_animation(const char* path)
     // read anim type
     int animType;
     fread( &animType, 1, 4, f );
-    // loop
+    // loop type (not used)
     int loopType;
     fread( &loopType, 1, 4, f );
     // curve count
@@ -145,7 +140,7 @@ CAnimationBunch* load_animation(const char* path)
     // read rest based on anim type
     switch( animType ) {
     case 0: // sampled
-        readSampledData( *bunch, f, loopType, curveCount, groupCount );
+        readSampledData(*bunch, f, curveCount, groupCount);
         break;
     default:
         assert(false);

@@ -9,7 +9,6 @@
 #include <string.h>
 
 enum eAnimType {
-    TYPE_FLOAT = 1,
     TYPE_VECTOR3 = 3,
     TYPE_QUATERNION = 4,
 };
@@ -19,7 +18,7 @@ enum eAnimType {
 // interpolation type and a collapsed value (if curve is collapsed into single value).
 struct SAnimCurve
 {
-    enum eIpol { NONE = 0, STEP, LINEAR };
+    enum eIpol { NONE = 0, LINEAR = 2 };
 
     bool isCollapsed() const { return ipol == NONE; }
 
@@ -33,19 +32,11 @@ struct SAnimCurve
 //  into a single value).
 class CSampledAnimation {
 public:
-	// CLAMP clamps animation to ends.
-	// REPEAT loops animation (with interpolation from last sample to first).
-	// REPEAT_LAST loops animation (no interpolation from last to first,
-	//   instead, the last sample is for transition from pre-last to last).
-	enum eLoopType { CLAMP = 0, REPEAT, REPEAT_LAST };
-
-public:
-	void init(eAnimType sampleType, const std::string& name, int samplesInCurve, eLoopType loopType)
+	void init(eAnimType sampleType, const std::string& name, int samplesInCurve)
 	{
 		mSampleType = sampleType;
 		mName = name;
 		mSamplesInCurve = samplesInCurve;
-		mLoopType = loopType;
 	}
 	eAnimType getType() const { return mSampleType; }
 	const std::string& getName() const { return mName; }
@@ -75,7 +66,6 @@ public:
 private:
 	int getFloatsPerSample() const {
 		switch (mSampleType) {
-		case TYPE_FLOAT: return 1;
 		case TYPE_VECTOR3: return 3;
 		case TYPE_QUATERNION: return 4;
 		}
@@ -88,7 +78,6 @@ private:
 	std::vector<SAnimCurve>	mCurves;
 	eAnimType		mSampleType;
 	int				mSamplesInCurve;
-	eLoopType		mLoopType;
 };
 
 
@@ -97,26 +86,15 @@ private:
 inline void CSampledAnimation::timeToIndex(float time, int& index1, int& index2, float& alpha) const
 {
 	int n = mSamplesInCurve;
-	float frame = time * (mLoopType == REPEAT_LAST ? n - 1 : n);
+	float frame = time * n;
 	index1 = int(frame);
 	index2 = index1 + 1;
 	alpha = frame - float(index1);
 
-	switch (mLoopType) {
-	case CLAMP:
-		if (index1 < 0) index1 = 0;
-		else if (index1 >= n) index1 = n - 1;
-		if (index2 < 0) index2 = 0;
-		else if (index2 >= n) index2 = n - 1;
-		break;
-	case REPEAT:
-		index1 %= n;
-		index2 %= n;
-		break;
-	case REPEAT_LAST:
-		index1 %= (n - 1);
-		index2 = index1 + 1;
-	}
+	if (index1 < 0) index1 = 0;
+	else if (index1 >= n) index1 = n - 1;
+	if (index2 < 0) index2 = 0;
+	else if (index2 >= n) index2 = n - 1;
 };
 
 class CAnimationBunch {
