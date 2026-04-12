@@ -5,7 +5,6 @@
 #include "billboards.glsl.h"
 #include "blit.glsl.h"
 #include "shadowCaster.glsl.h"
-#include "postComposeBloom.glsl.h"
 #include "postComposeToon.glsl.h"
 #include "postBlurStep.glsl.h"
 #include "postToon.glsl.h"
