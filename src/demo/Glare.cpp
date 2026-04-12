@@ -1,5 +1,6 @@
 #include "Glare.h"
 #include "Pipelines.h"
+#include "Demo.h"
 #include "DemoResources.h"
 
 #include "external/sokol_app.h"
@@ -71,23 +72,40 @@ void renderBloom()
 	// blur
 	pingPongBlur( BLOOM_PASSES );
 
-	// composite into backbuffer
+	// add back into resolved
 	{
 		sg_pass pass = {};
         pass.label = "compose bloom";
-		pass.swapchain = sglue_swapchain();
+		pass.attachments.colors[0] = rt_main_resolved.view_rt;
+		pass.attachments.depth_stencil = {};
 		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
-		pass.action.colors[0].load_action = SG_LOADACTION_CLEAR;
-		pass.action.colors[0].clear_value = { 0, 0, 0, 0 };
+		pass.action.colors[0].load_action = SG_LOADACTION_LOAD;
 		sg_begin_pass(&pass);
 
 		sg_bindings binds = {};
-		binds.views[0] = rt_main_resolved.view_tex;
-		binds.views[1] = !(BLOOM_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex;
+		binds.views[0] = !(BLOOM_PASSES & 1) ? rt_4th_1.view_tex : rt_4th_2.view_tex;
 		binds.samplers[0] = s_smp_linear_clamp;		
 
 		pipeline_apply(pip_postComposeBloom);
 		sg_apply_bindings(binds);
 		sg_draw(0, 3, 1);
+		sg_end_pass();
+	}
+
+	// blit into swapchain backbuffer
+	{
+		sg_pass pass = {};
+		pass.swapchain = sglue_swapchain();
+		pass.action.colors[0].store_action = SG_STOREACTION_STORE;
+		pass.action.colors[0].load_action = SG_LOADACTION_DONTCARE;
+		pass.action.depth.load_action = SG_LOADACTION_DONTCARE;
+		sg_begin_pass(&pass);
+		sg_bindings binds = {};
+		binds.views[0] = rt_main_resolved.view_tex;
+		binds.samplers[0] = s_smp_linear_clamp;
+		pipeline_apply(pip_blitToSwap);
+		sg_apply_bindings(binds);
+		sg_draw(0, 3, 1);
+		// do not end pass; debug text will continue rendering
 	}
 }

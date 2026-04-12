@@ -191,7 +191,6 @@ set(SHADER_FILES
     src/fx/billboards.glsl
     src/fx/blit.glsl
     src/fx/shadowCaster.glsl
-    src/fx/postComposeBloom.glsl
     src/fx/postComposeToon.glsl
     src/fx/postBlurStep.glsl
     src/fx/postToon.glsl

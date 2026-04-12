@@ -2,6 +2,7 @@
 
 enum Pipeline {
 	pip_blit,
+	pip_blitToSwap,
 	pip_overlay1,
 	pip_overlay2,
 

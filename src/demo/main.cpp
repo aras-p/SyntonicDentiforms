@@ -66,7 +66,7 @@ sapp_desc sokol_main(int argc, char* argv[])
     app_desc.logger.func = slog_func;
     app_desc.event_cb = onevent;
 
-#ifdef _DEBUG
+#if DEMO_PLAY_MODE == PLAY_MODE_DEBUG
     app_desc.fullscreen = false;
     app_desc.swap_interval = 0;
 #else

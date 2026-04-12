@@ -30,18 +30,21 @@
 #include "external/sokol_gfx_utils.h"
 #endif
 
-#ifndef _DEBUG
-#define WITHMUSIC
-#endif
-
-#ifdef WITHMUSIC
+#if DEMO_PLAY_MODE == PLAY_MODE_MUSIC
 	CMusicPlayer*	gMusicPlayer;
 	#define DELAY_ACTION (0.25)
 	#define GET_TIME (gMusicPlayer->getTime() + DELAY_ACTION)
-#else
-	double gDebugTime = 0.0;
+#elif DEMO_PLAY_MODE == PLAY_MODE_CAPTURE
+	static int gCapturedFrames = 0;
+	CMusicPlayer* gMusicPlayer;
+	#define DELAY_ACTION (0.25)
+	#define GET_TIME (double(gCapturedFrames) / 60.0 + DELAY_ACTION)
+#elif DEMO_PLAY_MODE == PLAY_MODE_DEBUG
+	static double gDebugTime = 0.0;
 	#define GET_TIME gDebugTime
 	#define DELAY_ACTION (0.0)
+#else
+#error Unknown play mode
 #endif
 
 
@@ -305,14 +308,17 @@ bool demo_init()
 	gSceneMode = SC_OUTER;
 	gSceneIndex = 0;
 
-#ifdef WITHMUSIC
+#if DEMO_PLAY_MODE == PLAY_MODE_MUSIC
 	gMusicPlayer = new CMusicPlayer();
 	gMusicPlayer->play( "data/music.ogg" );
 	gSceneStartTime = float(GET_TIME - DELAY_ACTION);
-#else
+#elif DEMO_PLAY_MODE == PLAY_MODE_CAPTURE
+#elif DEMO_PLAY_MODE == PLAY_MODE_DEBUG
 	gSceneMode = SC_SCENE;
 	gSceneIndex = 5;
 	gSceneStartTime = -15.0f;
+#else
+#error Unknown play mode
 #endif
 
 	gCut.reset();
@@ -560,6 +566,43 @@ static void gRenderCredits( float cutAlpha )
 	billboards_render();
 }
 
+
+static bool write_tga(const char* filename, const uint8_t* rgba, int width, int height)
+{
+	FILE* f = fopen(filename, "wb");
+	if (!f)
+		return false;
+
+	uint8_t header[18] = { 0 };
+	header[2] = 2; // uncompressed, true color
+	header[12] = (uint8_t)(width & 0xFF);
+	header[13] = (uint8_t)((width >> 8) & 0xFF);
+	header[14] = (uint8_t)(height & 0xFF);
+	header[15] = (uint8_t)((height >> 8) & 0xFF);
+	header[16] = 24;	// 24 bpp
+	header[17] = 0;		// no alpha, origin bottom left
+
+	fwrite(header, 1, sizeof(header), f);
+
+	uint8_t* rowBuf = new uint8_t[width * 3];
+
+	for (int y = height - 1; y >= 0; --y)
+	{
+		const uint8_t* row = rgba + y * width * 4;
+		for (int x = 0; x < width; ++x)
+		{
+			const uint8_t* p = row + x * 4;
+			rowBuf[x * 3 + 0] = p[2];
+			rowBuf[x * 3 + 1] = p[1];
+			rowBuf[x * 3 + 2] = p[0];
+		}
+		fwrite(rowBuf, 3, width, f);
+	}
+	delete[] rowBuf;
+	fclose(f);
+	return true;
+}
+
 static bool s_display_stats = false;
 static uint64_t s_time_frame_accum, s_time_cpu_accum, s_time_frame_prev;
 static int s_time_frame_count;
@@ -789,7 +832,7 @@ bool demo_update()
 	}
 
 	// click to start (web, while not clicked yet -- since music can't play)
-	#if defined(__EMSCRIPTEN__) && defined(WITHMUSIC)
+	#if defined(__EMSCRIPTEN__) && DEMO_PLAY_MODE == PLAY_MODE_MUSIC
 	if (saudio_suspended())
 	{
 		billboards_clear();
@@ -876,13 +919,31 @@ bool demo_update()
 	}
 	s_time_frame_prev = time0;
 
+	#if DEMO_PLAY_MODE == PLAY_MODE_CAPTURE
+	{
+		char shotPath[100];
+		snprintf(shotPath, sizeof(shotPath), "capture%05i.tga", gCapturedFrames++);
+		sg_image shot_image = rt_main_resolved.image;
+		int width = sg_query_image_width(shot_image);
+		int height = sg_query_image_height(shot_image);
+		void* readback = sg_readback_request(shot_image);
+		sg_readback_wait(readback);
+		uint8_t* shot_data = new uint8_t[width * height * 4];
+		sg_readback_copy_data(readback, shot_data);
+
+		write_tga(shotPath, shot_data, width, height);
+
+		delete[] shot_data;
+		sg_readback_destroy(readback);
+	}
+#endif
 
 	return continue_exec;
 }
 
 void demo_shutdown()
 {
-#ifdef WITHMUSIC
+#if DEMO_PLAY_MODE == PLAY_MODE_MUSIC
 	delete gMusicPlayer;
 #endif
 
@@ -911,42 +972,12 @@ void demo_shutdown()
 	dynamic_vb_shutdown();
 }
 
-static bool write_tga(const char* filename, const uint8_t* rgba, int width, int height)
-{
-	FILE* f = fopen(filename, "wb");
-	if (!f)
-		return false;
-
-	uint8_t header[18] = { 0 };
-	header[2] = 2; // uncompressed, true color
-	header[12] = (uint8_t)(width & 0xFF);
-	header[13] = (uint8_t)((width >> 8) & 0xFF);
-	header[14] = (uint8_t)(height & 0xFF);
-	header[15] = (uint8_t)((height >> 8) & 0xFF);
-	header[16] = 24;	// 24 bpp
-	header[17] = 0;		// no alpha, origin bottom left
-
-	fwrite(header, 1, sizeof(header), f);
-	for (int y = height - 1; y >= 0; --y)
-	{
-		const uint8_t* row = rgba + y * width * 4;
-		for (int x = 0; x < width; ++x)
-		{
-			const uint8_t* p = row + x * 4;
-			uint8_t bgr[4] = { p[2], p[1], p[0] };
-			fwrite(bgr, 1, 3, f);
-		}
-	}
-	fclose(f);
-	return true;
-}
-
 void demo_event(const sapp_event* evt)
 {
 	static bool spaceDown = false;
 	if (evt->type == SAPP_EVENTTYPE_KEY_DOWN)
 	{
-#ifndef WITHMUSIC
+#if DEMO_PLAY_MODE == PLAY_MODE_DEBUG
 		float dt = 1.0f / 60.0f;
 		if (evt->key_code == SAPP_KEYCODE_LEFT)		gDebugTime -= dt * 1.0f;
 		if (evt->key_code == SAPP_KEYCODE_RIGHT)	gDebugTime += dt * 1.0f;
@@ -1016,7 +1047,7 @@ void demo_event(const sapp_event* evt)
 	}
 	if (evt->type == SAPP_EVENTTYPE_KEY_UP)
 	{
-#ifndef WITHMUSIC
+#if DEMO_PLAY_MODE == PLAY_MODE_DEBUG
 		if (evt->key_code == SAPP_KEYCODE_SPACE)
 			spaceDown = false;
 #endif

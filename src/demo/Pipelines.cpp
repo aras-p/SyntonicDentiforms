@@ -30,16 +30,21 @@ void pipelines_init()
 		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
 		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
 		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
-		s_fx_pipes[pip_blit] = sg_make_pipeline(desc);
-	}
-	{
-		sg_pipeline_desc desc = {};
-        desc.label = "postComposeBloom";
-		desc.shader = sg_make_shader(postComposeBloom_prog_shader_desc(backend));
-		desc.primitive_type = SG_PRIMITIVETYPE_TRIANGLES;
-		// Z off
 		desc.depth.compare = SG_COMPAREFUNC_ALWAYS;
 		desc.depth.write_enabled = false;
+		s_fx_pipes[pip_blit] = sg_make_pipeline(desc);
+
+		desc.colors[0].pixel_format = _SG_PIXELFORMAT_DEFAULT;
+		desc.depth.pixel_format = _SG_PIXELFORMAT_DEFAULT;
+		s_fx_pipes[pip_blitToSwap] = sg_make_pipeline(desc);
+
+		desc.colors[0].pixel_format = SG_PIXELFORMAT_RGBA8;
+		desc.depth.pixel_format = SG_PIXELFORMAT_NONE;
+		desc.colors[0].blend.enabled = true;
+		desc.colors[0].blend.src_factor_rgb = SG_BLENDFACTOR_ONE;
+		desc.colors[0].blend.src_factor_alpha = SG_BLENDFACTOR_ONE;
+		desc.colors[0].blend.dst_factor_rgb = SG_BLENDFACTOR_ONE;
+		desc.colors[0].blend.dst_factor_alpha = SG_BLENDFACTOR_ONE;
 		s_fx_pipes[pip_postComposeBloom] = sg_make_pipeline(desc);
 	}
 	{
