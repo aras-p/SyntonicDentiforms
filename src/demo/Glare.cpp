@@ -3,8 +3,8 @@
 #include "Demo.h"
 #include "DemoResources.h"
 
-#include "external/sokol_app.h"
-#include "external/sokol_glue.h"
+#include "../../external/sokol_app.h"
+#include "../../external/sokol_glue.h"
 
 const int BLOOM_PASSES = 4;
 

@@ -17,14 +17,14 @@
 
 #include <assert.h>
 
-#include "external/sokol_app.h"
-#include "external/sokol_glue.h"
-#include "external/sokol_time.h"
-#include "external/sokol_audio.h"
-#include "external/sokol_debugtext.h"
+#include "../../external/sokol_app.h"
+#include "../../external/sokol_glue.h"
+#include "../../external/sokol_time.h"
+#include "../../external/sokol_audio.h"
+#include "../../external/sokol_debugtext.h"
 
 #if !USE_WINDOWS_OPENGL
-#include "external/sokol_gfx_utils.h"
+#include "../../external/sokol_gfx_utils.h"
 #endif
 
 #if DEMO_PLAY_MODE == PLAY_MODE_MUSIC

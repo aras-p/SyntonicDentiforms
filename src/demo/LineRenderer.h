@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include "../math/Maths.h"
-#include "external/sokol_gfx.h"
+#include "../../external/sokol_gfx.h"
 
 struct SLinePoint {
 	SVector3	pos;

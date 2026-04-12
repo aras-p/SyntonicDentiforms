@@ -1,6 +1,6 @@
 #pragma once
 
-#include "external/sokol_gfx.h"
+#include "../../external/sokol_gfx.h"
 
 struct SOBillboard {
 public:

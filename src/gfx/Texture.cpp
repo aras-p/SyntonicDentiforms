@@ -4,7 +4,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
-#include "external/stb_image.h"
+#include "../../external/stb_image.h"
 
 void sokol_texture::create(const sg_image_desc& desc)
 {

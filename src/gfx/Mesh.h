@@ -2,7 +2,7 @@
 
 #include "../math/Maths.h"
 
-#include "external/sokol_gfx.h"
+#include "../../external/sokol_gfx.h"
 
 #include <assert.h>
 

@@ -15,7 +15,7 @@
 #include "renderReflective.glsl.h"
 #include "renderWhite.glsl.h"
 
-#include "external/sokol_gfx.h"
+#include "../../external/sokol_gfx.h"
 
 static sg_pipeline s_fx_pipes[pipCount] = {};
 

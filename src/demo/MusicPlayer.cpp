@@ -6,9 +6,9 @@
 #include <vector>
 
 #define SOKOL_AUDIO_IMPL
-#include "external/sokol_audio.h"
+#include "../../external/sokol_audio.h"
 
-#include "external/stb_vorbis.c"
+#include "../../external/stb_vorbis.c"
 
 struct CMusicPlayer::Impl
 {

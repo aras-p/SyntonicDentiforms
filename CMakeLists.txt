@@ -69,10 +69,6 @@ set (SOURCES
 add_executable(Demo ${SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
-target_include_directories(Demo PRIVATE
-    ${CMAKE_SOURCE_DIR}
-)
-
 set_property(TARGET Demo PROPERTY CXX_STANDARD 17)
 set_property(TARGET Demo PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 

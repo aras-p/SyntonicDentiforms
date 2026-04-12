@@ -1,8 +1,8 @@
 #pragma once
 
-#include "src/animator/Animation.h"
-#include "src/gfx/Mesh.h"
-#include "src/gfx/Texture.h"
+#include "../animator/Animation.h"
+#include "../gfx/Mesh.h"
+#include "../gfx/Texture.h"
 
 enum DataTexture {
 	DataTexAlphaEdge,

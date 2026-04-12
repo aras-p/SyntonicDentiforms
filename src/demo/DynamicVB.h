@@ -1,6 +1,6 @@
 #pragma once
 
-#include "external/sokol_gfx.h"
+#include "../../external/sokol_gfx.h"
 
 void dynamic_vb_init(size_t capacityBytes = 2 * 1024 * 1024);
 void dynamic_vb_shutdown();
