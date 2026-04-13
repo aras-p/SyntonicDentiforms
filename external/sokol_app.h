@@ -1863,7 +1863,7 @@ typedef enum sapp_pixel_format {
     SAPP_PIXELFORMAT_SBGRA8,
     SAPP_PIXELFORMAT_DEPTH,
     SAPP_PIXELFORMAT_DEPTH_STENCIL,
-    _SA_PPPIXELFORMAT_FORCE_U32 = 0x7FFFFFFF
+    _SAPP_PIXELFORMAT_FORCE_U32 = 0x7FFFFFFF
 } sapp_pixel_format;
 
 /*
@@ -2565,7 +2565,7 @@ typedef struct {
             uint64_t start;
         } mach;
     #elif defined(_SAPP_EMSCRIPTEN)
-        // empty
+        int _dummy;
     #elif defined(_SAPP_WIN32)
         struct {
             LARGE_INTEGER freq;
@@ -4103,13 +4103,25 @@ _SOKOL_PRIVATE void _sapp_wgpu_create_device_and_swapchain(void) {
         SOKOL_ASSERT(cur_feature_index < _SAPP_WGPU_MAX_REQUESTED_FEATURES);
         requiredFeatures[cur_feature_index++] = WGPUFeatureName_TextureCompressionASTC;
     }
+    if (wgpuAdapterHasFeature(_sapp.wgpu.adapter, WGPUFeatureName_DualSourceBlending)) {
+        SOKOL_ASSERT(cur_feature_index < _SAPP_WGPU_MAX_REQUESTED_FEATURES);
+        requiredFeatures[cur_feature_index++] = WGPUFeatureName_DualSourceBlending;
+    }
+    if (wgpuAdapterHasFeature(_sapp.wgpu.adapter, WGPUFeatureName_ShaderF16)) {
+        SOKOL_ASSERT(cur_feature_index < _SAPP_WGPU_MAX_REQUESTED_FEATURES);
+        requiredFeatures[cur_feature_index++] = WGPUFeatureName_ShaderF16;
+    }
     if (wgpuAdapterHasFeature(_sapp.wgpu.adapter, WGPUFeatureName_Float32Filterable)) {
         SOKOL_ASSERT(cur_feature_index < _SAPP_WGPU_MAX_REQUESTED_FEATURES);
         requiredFeatures[cur_feature_index++] = WGPUFeatureName_Float32Filterable;
     }
-    if (wgpuAdapterHasFeature(_sapp.wgpu.adapter, WGPUFeatureName_DualSourceBlending)) {
+    if (wgpuAdapterHasFeature(_sapp.wgpu.adapter, WGPUFeatureName_Float32Blendable)) {
         SOKOL_ASSERT(cur_feature_index < _SAPP_WGPU_MAX_REQUESTED_FEATURES);
-        requiredFeatures[cur_feature_index++] = WGPUFeatureName_DualSourceBlending;
+        requiredFeatures[cur_feature_index++] = WGPUFeatureName_Float32Blendable;
+    }
+    if (wgpuAdapterHasFeature(_sapp.wgpu.adapter, WGPUFeatureName_TextureFormatsTier2)) {
+        SOKOL_ASSERT(cur_feature_index < _SAPP_WGPU_MAX_REQUESTED_FEATURES);
+        requiredFeatures[cur_feature_index++] = WGPUFeatureName_TextureFormatsTier2;
     }
     #undef _SAPP_WGPU_MAX_REQUESTED_FEATURES
 
@@ -6160,7 +6172,7 @@ static void _sapp_gl_make_current(void) {
     _sapp_macos_mouse_update_from_nsevent(event, false);
     if (2 == event.buttonNumber) {
         _sapp_macos_mouse_event(SAPP_EVENTTYPE_MOUSE_UP, SAPP_MOUSEBUTTON_MIDDLE, _sapp_macos_mods(event));
-        _sapp.macos.mouse_buttons &= (1<<SAPP_MOUSEBUTTON_MIDDLE);
+        _sapp.macos.mouse_buttons &= ~(1<<SAPP_MOUSEBUTTON_MIDDLE);
     }
 }
 - (void)otherMouseDragged:(NSEvent*)event {
@@ -6700,6 +6712,11 @@ _SOKOL_PRIVATE void _sapp_ios_show_keyboard(bool shown) {
 - (void)sceneWillResignActive:(UIScene*)scene {
     if (!_sapp.ios.suspended) {
         _sapp.ios.suspended = true;
+        #if defined(SOKOL_METAL)
+        if (nil != _sapp.ios.mtl.display_link) {
+            _sapp.ios.mtl.display_link.paused = YES;
+        }
+        #endif
         _sapp_ios_app_event(SAPP_EVENTTYPE_SUSPENDED);
     }
 }
@@ -6707,6 +6724,11 @@ _SOKOL_PRIVATE void _sapp_ios_show_keyboard(bool shown) {
 - (void)sceneDidBecomeActive:(UIScene*)scene {
     if (_sapp.ios.suspended) {
         _sapp.ios.suspended = false;
+        #if defined(SOKOL_METAL)
+        if (nil != _sapp.ios.mtl.display_link) {
+            _sapp.ios.mtl.display_link.paused = NO;
+        }
+        #endif
         _sapp_ios_app_event(SAPP_EVENTTYPE_RESUMED);
     }
 }
@@ -7195,6 +7217,8 @@ _SOKOL_PRIVATE void _sapp_emsc_update_cursor(sapp_mouse_cursor cursor, bool show
     sapp_js_set_cursor((int)cursor, shown ? 1 : 0, custom_cursor ? 1 : 0);
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdollar-in-identifier-extension"
 EM_JS(void, sapp_js_make_custom_mouse_cursor, (int cursor_slot_idx, int width, int height, const void* pixels_ptr, int hotspot_x, int hotspot_y), {
     // encode the cursor pixels into a BMP which then is encoded into an 'object url'
     const bmp_hdr_size = 14;
@@ -7266,6 +7290,7 @@ EM_JS(void, sapp_js_make_custom_mouse_cursor, (int cursor_slot_idx, int width, i
     Module.__sapp_custom_cursors[cursor_slot_idx] = cursor_slot;
 })
 
+#pragma GCC diagnostic pop
 EM_JS(void, sapp_js_destroy_custom_mouse_cursor, (int cursor_slot_idx), {
     if (Module.__sapp_custom_cursors) {
         const cursor = Module.__sapp_custom_cursors[cursor_slot_idx];
@@ -12090,8 +12115,8 @@ _SOKOL_PRIVATE void _sapp_x11_init_keytable(void) {
                 continue;
             }
             for (int j = 0; j < num_keymap_items; j++) {
-                if (strncmp(desc->names->key_aliases[i].alias, keymap[i].name, XkbKeyNameLength) == 0) {
-                    key = keymap[i].key;
+                if (strncmp(desc->names->key_aliases[i].alias, keymap[j].name, XkbKeyNameLength) == 0) {
+                    key = keymap[j].key;
                     break;
                 }
             }
@@ -12539,7 +12564,7 @@ _SOKOL_PRIVATE void _sapp_x11_create_standard_cursors(void) {
     _sapp_x11_create_standard_cursor(SAPP_MOUSECURSOR_RESIZE_NWSE, "nwse-resize", cursor_theme, size, 0);
     _sapp_x11_create_standard_cursor(SAPP_MOUSECURSOR_RESIZE_NESW, "nesw-resize", cursor_theme, size, 0);
     _sapp_x11_create_standard_cursor(SAPP_MOUSECURSOR_RESIZE_ALL, "all-scroll", cursor_theme, size, XC_fleur);
-    _sapp_x11_create_standard_cursor(SAPP_MOUSECURSOR_NOT_ALLOWED, "no-allowed", cursor_theme, size, 0);
+    _sapp_x11_create_standard_cursor(SAPP_MOUSECURSOR_NOT_ALLOWED, "not-allowed", cursor_theme, size, 0);
     _sapp_x11_create_hidden_cursor();
 }
 

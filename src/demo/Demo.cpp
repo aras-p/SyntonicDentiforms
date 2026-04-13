@@ -23,12 +23,12 @@
 #endif
 
 #if DEMO_PLAY_MODE == PLAY_MODE_MUSIC
-MusicPlayer *gMusicPlayer;
+VorbisPlayer *gMusicPlayer;
 #define DELAY_ACTION (0.25)
 #define GET_TIME (gMusicPlayer->getTime() + DELAY_ACTION)
 #elif DEMO_PLAY_MODE == PLAY_MODE_CAPTURE
 static int gCapturedFrames = 0;
-MusicPlayer *gMusicPlayer;
+VorbisPlayer *gMusicPlayer;
 #define DELAY_ACTION (0.25)
 #define GET_TIME (double(gCapturedFrames) / 60.0 + DELAY_ACTION)
 #elif DEMO_PLAY_MODE == PLAY_MODE_DEBUG
@@ -312,7 +312,7 @@ bool demo_init()
     gSceneIndex = 0;
 
 #if DEMO_PLAY_MODE == PLAY_MODE_MUSIC
-    gMusicPlayer = new MusicPlayer();
+    gMusicPlayer = new VorbisPlayer();
     gMusicPlayer->play("data/music.ogg");
     gSceneStartTime = float(GET_TIME - DELAY_ACTION);
 #elif DEMO_PLAY_MODE == PLAY_MODE_CAPTURE

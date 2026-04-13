@@ -10,7 +10,7 @@
 
 #include "../../external/stb_vorbis.c"
 
-struct MusicPlayer::Impl
+struct VorbisPlayer::Impl
 {
     static constexpr int kRequestedSampleRate = 44100;
     static constexpr int kRequestedChannels = 2;
@@ -208,7 +208,7 @@ struct MusicPlayer::Impl
     }
 };
 
-MusicPlayer::MusicPlayer()
+VorbisPlayer::VorbisPlayer()
 {
     m_impl = new Impl();
 
@@ -220,7 +220,7 @@ MusicPlayer::MusicPlayer()
     saudio_setup(&desc);
 }
 
-MusicPlayer::~MusicPlayer()
+VorbisPlayer::~VorbisPlayer()
 {
     if (m_impl)
     {
@@ -231,7 +231,7 @@ MusicPlayer::~MusicPlayer()
     m_impl = nullptr;
 }
 
-void MusicPlayer::play(const char *fileName)
+void VorbisPlayer::play(const char *fileName)
 {
     m_impl->closeFile();
 
@@ -260,7 +260,7 @@ void MusicPlayer::play(const char *fileName)
                                        : 1.0;
 }
 
-double MusicPlayer::getTime() const
+double VorbisPlayer::getTime() const
 {
     return m_impl->currentTimeSeconds();
 }
