@@ -15,7 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: install-ninja
         run: |
           sudo apt-get update && sudo apt-get install -y ninja-build
@@ -28,7 +28,6 @@ jobs:
           cd ..
       - name: Download sokol-shdc
         run: |
-          mkdir -p tools/bin
           URL="https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/linux/sokol-shdc"
           OUT="tools/sokol-shdc"
           curl -L -o "$OUT" "$URL"
@@ -42,7 +41,7 @@ jobs:
           mkdir web
           cp SyntonicDentiforms.wasm index.html SyntonicDentiforms.js web
       - name: upload-artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: webpage
           path: web

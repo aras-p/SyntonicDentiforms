@@ -18,12 +18,11 @@ jobs:
             exe: SyntonicDentiforms
     runs-on: ${{matrix.os}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Download sokol-shdc (linux/mac)
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          mkdir -p tools/bin
           if [ "${{ runner.os }}" = "Linux" ]; then
             URL="https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/linux/sokol-shdc"
           else
@@ -53,7 +52,7 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=Release ..
           cmake --build . --clean-first
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: SyntonicDentiforms-${{matrix.suffix}}
           path: |
@@ -63,7 +62,7 @@ jobs:
   emscripten:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: install-ninja
         run: |
           sudo apt-get update && sudo apt-get install -y ninja-build
@@ -76,7 +75,6 @@ jobs:
           cd ..
       - name: Download sokol-shdc
         run: |
-          mkdir -p tools/bin
           URL="https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/linux/sokol-shdc"
           OUT="tools/sokol-shdc"
           curl -L -o "$OUT" "$URL"
