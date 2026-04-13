@@ -8,7 +8,7 @@
 
     ______________________________________________________________
 
-    A demo for Breakpoint'04 ---------------------- rebuilt in '26
+    A demo for Breakpoint'04   ..................   rebuilt in '26
 
 
 
@@ -36,7 +36,6 @@
           Live.........https://aras-p.github.io/SyntonicDentiforms
           Source......https://github.com/aras-p/SyntonicDentiforms
           Nesnausk!.......................https://www.nesnausk.org
-          NeARAZ...............................https://aras-p.info
 
 
     C o n c e p t :
@@ -57,5 +56,5 @@
 
 
 
-    2 0 0 4   N e s n a u s k !
+    2 0 0 4 / 2 0 2 6   N e s n a u s k !
 
