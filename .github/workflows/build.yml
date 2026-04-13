@@ -10,41 +10,36 @@ jobs:
           - os: windows-latest
             suffix: windows
             exe: SyntonicDentiforms.exe
+            shdc_url: https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/win32/sokol-shdc.exe
+            shdc_out: tools/sokol-shdc.exe
           - os: macos-latest
             suffix: mac
             exe: SyntonicDentiforms
+            shdc_url: https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/osx/sokol-shdc
+            shdc_out: tools/sokol-shdc
           - os: ubuntu-latest
             suffix: linux
             exe: SyntonicDentiforms
+            shdc_url: https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/linux/sokol-shdc
+            shdc_out: tools/sokol-shdc
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v5
-      - name: Download sokol-shdc (linux/mac)
-        if: runner.os != 'Windows'
+      - name: Download sokol-shdc
         shell: bash
         run: |
-          if [ "${{ runner.os }}" = "Linux" ]; then
-            URL="https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/linux/sokol-shdc"
-          else
-            URL="https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/osx/sokol-shdc"
-          fi
-          OUT="tools/sokol-shdc"
-          curl -L -o "$OUT" "$URL"
-          chmod +x "$OUT"      
-      - name: Download sokol-shdc (win)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          Invoke-WebRequest `
-            -Uri "https://raw.githubusercontent.com/floooh/sokol-tools-bin/master/bin/win32/sokol-shdc.exe" `
-            -OutFile "tools/sokol-shdc.exe"          
-
-      - name: prepare-linux
+          curl -fL -o "${{ matrix.shdc_out }}" "${{ matrix.shdc_url }}"
+          case "${{ runner.os }}" in
+            Windows) ;;
+            *) chmod +x "${{ matrix.shdc_out }}" ;;
+          esac
+      - name: Prepare Linux deps
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
-      - run: |
+      - name: Configure and build
+        run: |
           mkdir build
           cd build
           cmake -DCMAKE_BUILD_TYPE=Debug ..
