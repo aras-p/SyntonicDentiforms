@@ -35,6 +35,8 @@
 
           Live.........https://aras-p.github.io/SyntonicDentiforms
           Source......https://github.com/aras-p/SyntonicDentiforms
+          Blog post...............................................
+          ...aras-p.info/blog/2026/04/13/Syntonic-Dentiforms-redux
           Nesnausk!.......................https://www.nesnausk.org
 
 
