@@ -58,6 +58,7 @@ jobs:
           name: SyntonicDentiforms-${{matrix.suffix}}
           path: |
             ${{matrix.exe}}
+            readme.txt
             data/
   emscripten:
     runs-on: ubuntu-latest
