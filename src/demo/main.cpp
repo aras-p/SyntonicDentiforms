@@ -11,6 +11,14 @@
 
 #include "Demo.h"
 
+#include <string>
+#ifdef _WIN32
+    #include <direct.h>
+    #define chdir _chdir
+#else
+    #include <unistd.h>
+#endif
+
 static void init(void)
 {
     {
@@ -52,8 +60,26 @@ static void onevent(const sapp_event *evt)
     demo_event(evt);
 }
 
+static void change_curdir(const char* appPath)
+{
+    std::string path = appPath;
+#ifdef _WIN32
+    size_t lastSlash = path.find_last_of('\\');
+#else
+    size_t lastSlash = path.find_last_of('/');
+#endif
+    if (lastSlash != std::string::npos)
+    {
+        path[lastSlash] = 0;
+        chdir(path.c_str());
+    }
+}
+
 sapp_desc sokol_main(int argc, char *argv[])
 {
+    if (argc >= 1 && argv[0]) {
+        change_curdir(argv[0]);
+    }
     (void)argc;
     (void)argv;
     sapp_desc app_desc = {};
