@@ -10,8 +10,8 @@
 #include "../../external/stb_image.h"
 
 #include "Demo.h"
+#include <string.h>
 
-#include <string>
 #ifdef _WIN32
     #include <direct.h>
     #define chdir _chdir
@@ -62,16 +62,19 @@ static void onevent(const sapp_event *evt)
 
 static void change_curdir(const char* appPath)
 {
-    std::string path = appPath;
 #ifdef _WIN32
-    size_t lastSlash = path.find_last_of('\\');
+    const char* lastSlash = strrchr(appPath, '\\');
 #else
-    size_t lastSlash = path.find_last_of('/');
+    const char *lastSlash = strrchr(appPath, '/');
 #endif
-    if (lastSlash != std::string::npos)
+    if (lastSlash != nullptr)
     {
-        path[lastSlash] = 0;
-        chdir(path.c_str());
+        size_t len = lastSlash - appPath;
+        char *buf = new char[len + 1];
+        memcpy(buf, appPath, len);
+        buf[len] = 0;
+        chdir(buf);
+        delete[] buf;
     }
 }
 
